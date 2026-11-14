@@ -115,16 +115,16 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important } }
 .protection-status {
-  position: absolute; z-index: 2; top: 16px; right: 16px;
+  position: absolute; z-index: 2; top: 16px; left: 16px;
   padding: 7px 10px; background: #101c2a; border: 1px solid #49617a;
   border-radius: 7px; font-size: 12px;
 }
 .hotspot-control {
-  position: absolute; z-index: 2; top: 54px; right: 16px;
+  position: absolute; z-index: 2; top: 88px; left: 16px;
   padding: 6px 9px; background: #101c2a; border: 1px solid #49617a;
   border-radius: 7px; font-size: 12px;
 }
-.school-control { top: 88px }
+.school-control { top: 54px }
 
 .protection-popup {
   width: 220px; box-sizing: border-box; padding: 12px 24px 12px 12px;
@@ -298,8 +298,8 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
     <canvas id="basemap" aria-hidden="true"></canvas>
     <div id="kakao-map" aria-label="서울 카카오맵" style="position: absolute; inset: 0; z-index: 0;" hidden></div>
     <div id="protection-status" class="protection-status" role="status" hidden>노인보호구역 불러오는 중</div>
-    <button id="hotspot-control" class="hotspot-control" type="button" aria-pressed="true" hidden>사고다발지역</button>
     <button id="school-control" class="hotspot-control school-control" type="button" aria-pressed="true" hidden>어린이보호구역</button>
+    <button id="hotspot-control" class="hotspot-control" type="button" aria-pressed="true" hidden>사고다발지역</button>
     <div class="pins" id="pins"></div>
     <div class="map-head"><div class="layers" id="layers" aria-label="지도 표시 항목"></div></div>
     <div class="zoom" aria-label="지도 확대·축소">
