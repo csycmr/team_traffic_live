@@ -274,15 +274,20 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
 }
 .map-marker-legend button {
   position: static;
+  display: inline-grid;
+  grid-template-columns: 14px auto;
+  align-items: center;
+  column-gap: 6px;
   min-height: 32px;
   padding: 6px 9px;
   white-space: nowrap;
   pointer-events: auto;
 }
 .map-marker-legend button { text-align: left }
+.map-marker-legend button[hidden] { display: none }
 .map-marker-legend button::before {
-  width: 10px;
-  vertical-align: middle;
+  margin: 0;
+  justify-self: center;
 }
 </style>
 </head>
