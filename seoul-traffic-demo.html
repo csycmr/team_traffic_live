@@ -275,7 +275,7 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
 .metric-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; gap: 8px; height: clamp(155px, 24vh, 230px); padding-top: 22px; border-bottom: 1px solid #7994ad }
 .metric-bar { position: relative; width: 76%; max-width: 42px; justify-self: center; height: var(--bar-height); background: var(--metric-color); border-radius: 4px 4px 0 0 }
 .metric-bar strong { position: absolute; bottom: calc(100% + 5px); inset-inline-start: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 10px; font-variant-numeric: tabular-nums }
-.metric-group h3 { font-size: 13px; margin: 7px 0 0 }
+.metric-group h3 { font-size: 13px; margin: 0 0 6px }
 .metric-labels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 4px }
 .metric-labels small { font-size: 11px; color: var(--muted); line-height: 1.45; overflow-wrap: anywhere }
 .compare-chart figcaption { margin-top: 10px; line-height: 1.55 }
@@ -457,19 +457,19 @@ main { min-height: calc(100dvh - 118px) }
         <div class="metric-legend"><span class="children">어린이</span><span class="older">노인</span></div>
         <div class="metric-groups" role="group" aria-label="인구와 보호구역별 어린이·노인 비교">
           <div class="metric-group">
-            <div class="metric-pair" role="group" aria-label="인구">
+            <h3 id="population-chart">인구</h3>
+            <div class="metric-pair" role="group" aria-labelledby="population-chart">
               <div class="metric-bar children" style="--bar-height:40.24%"><strong aria-label="어린이 791,163명">791,163명</strong></div>
               <div class="metric-bar older" style="--bar-height:100%"><strong aria-label="노인 1,965,896명">1,965,896명</strong></div>
             </div>
-            <h3>인구</h3>
             <div class="metric-labels"><small>어린이<br>0~14세</small><small>노인<br>65세 이상</small></div>
           </div>
           <div class="metric-group">
-            <div class="metric-pair" role="group" aria-label="보호구역">
+            <h3 id="zones-chart">보호구역</h3>
+            <div class="metric-pair" role="group" aria-labelledby="zones-chart">
               <div class="metric-bar children" style="--bar-height:100%"><strong aria-label="어린이 1,601건">1,601건</strong></div>
               <div class="metric-bar older" style="--bar-height:12.18%"><strong aria-label="노인 195개">195개</strong></div>
             </div>
-            <h3>보호구역</h3>
             <div class="metric-labels"><small>어린이<br>표준자료</small><small>노인<br>2025년 명단</small></div>
           </div>
         </div>
