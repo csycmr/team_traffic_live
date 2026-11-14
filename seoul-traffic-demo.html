@@ -395,6 +395,19 @@ function countUpTraffic(values) {
   requestAnimationFrame(tick);
 }
 
+const situationHeadlines = document.querySelectorAll('section[aria-labelledby="situation"] .feed-row h3');
+const headlineMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+function revealSituationHeadlines() {
+  if (headlineMotion.matches) return;
+  for (const headline of situationHeadlines) {
+    headline.animate(
+      [{ clipPath: "inset(0 100% 0 0)" }, { clipPath: "inset(0 0 0 0)" }],
+      { duration: 650, easing: "cubic-bezier(.2,.65,.35,1)" }
+    );
+  }
+}
+
 function renderBoard() {
   const index = frame % samples.length;
   const [accidents, deaths, injuries, flow, speed, cctv] = samples[index];
@@ -425,6 +438,7 @@ function renderBoard() {
       : '가상 차량 고장 처리로 잠실 방향 일부 차로 서행.';
     byId('incident-time').textContent = timeNow().slice(0, 5);
   }
+  revealSituationHeadlines();
   draw();
 }
 function start() {
