@@ -247,8 +247,8 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
 .compare-chart { margin: 0 }
 .metric-legend { display: flex; gap: 14px; font-size: 12px; margin-bottom: 12px }
 .metric-legend span::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 5px; border-radius: 2px; background: var(--metric-color) }
-.population { --metric-color: #73adff }
-.zones { --metric-color: #ffd54f }
+.compare-chart .older { --metric-color: #73adff }
+.compare-chart .children { --metric-color: #ffd54f }
 .metric-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px }
 .metric-group { text-align: center; min-width: 0 }
 .metric-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; gap: 8px; height: clamp(155px, 24vh, 230px); padding-top: 22px; border-bottom: 1px solid var(--line) }
@@ -366,23 +366,23 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
     <section class="feed" aria-labelledby="zone-summary">
       <div class="panel-title"><h2 id="zone-summary">서울시 보호 구역 지정 현황</h2></div>
       <figure class="compare-chart">
-        <div class="metric-legend"><span class="population">인구</span><span class="zones">보호구역</span></div>
-        <div class="metric-groups" role="group" aria-label="어린이와 노인의 인구 및 보호구역 비교">
+        <div class="metric-legend"><span class="children">어린이</span><span class="older">노인</span></div>
+        <div class="metric-groups" role="group" aria-label="인구와 보호구역별 어린이·노인 비교">
           <div class="metric-group">
-            <div class="metric-pair">
-              <div class="metric-bar population" style="--bar-height:40.24%"><strong>791,163명</strong></div>
-              <div class="metric-bar zones" style="--bar-height:100%"><strong>1,601건</strong></div>
+            <div class="metric-pair" role="group" aria-label="인구">
+              <div class="metric-bar children" style="--bar-height:40.24%"><strong aria-label="어린이 791,163명">791,163명</strong></div>
+              <div class="metric-bar older" style="--bar-height:100%"><strong aria-label="노인 1,965,896명">1,965,896명</strong></div>
             </div>
-            <h3>어린이</h3>
-            <small>0~14세</small>
+            <h3>인구</h3>
+            <small>어린이 0~14세 · 노인 65세 이상</small>
           </div>
           <div class="metric-group">
-            <div class="metric-pair">
-              <div class="metric-bar population" style="--bar-height:100%"><strong>1,965,896명</strong></div>
-              <div class="metric-bar zones" style="--bar-height:12.18%"><strong>195개</strong></div>
+            <div class="metric-pair" role="group" aria-label="보호구역">
+              <div class="metric-bar children" style="--bar-height:100%"><strong aria-label="어린이 1,601건">1,601건</strong></div>
+              <div class="metric-bar older" style="--bar-height:12.18%"><strong aria-label="노인 195개">195개</strong></div>
             </div>
-            <h3>노인</h3>
-            <small>65세 이상</small>
+            <h3>보호구역</h3>
+            <small>어린이 표준자료 · 노인 2025년 명단</small>
           </div>
         </div>
         <figcaption class="muted">막대는 지표별 최댓값을 100%로 표시했어요. 인구는 2026년 9월 말 기준이에요. 보호구역은 어린이 표준자료 시설 기록과 노인 2025년 명단 기준이에요. <a href="https://opus.ai.kr/semteo/region/population/seoul/" target="_blank" rel="noopener">인구 출처</a></figcaption>
