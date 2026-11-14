@@ -329,8 +329,8 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   background: #0b121d url("./assets/traffic-header.jpg") center / cover no-repeat;
 }
 body { isolation: isolate }
-main > aside { background: rgb(14 23 35 / 88%) }
-.traffic-background-video, .traffic-header::before {
+main > aside { background: transparent }
+.traffic-background-video, .traffic-backdrop::after {
   position: absolute;
   inset: 0;
   width: 100%;
@@ -338,9 +338,8 @@ main > aside { background: rgb(14 23 35 / 88%) }
   pointer-events: none;
 }
 .traffic-background-video { object-fit: cover }
-.traffic-header::before {
+.traffic-backdrop::after {
   content: "";
-  z-index: -1;
   background: linear-gradient(90deg, #081421de 0%, #0b1a297a 58%, #081421c9 100%);
 }
 .traffic-header .eyebrow { color: #d5e1ee }
