@@ -119,6 +119,13 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   padding: 7px 10px; background: #101c2a; border: 1px solid #49617a;
   border-radius: 7px; font-size: 12px;
 }
+.hotspot-control {
+  position: absolute; z-index: 2; top: 54px; right: 16px;
+  padding: 6px 9px; background: #101c2a; border: 1px solid #49617a;
+  border-radius: 7px; font-size: 12px;
+}
+.hotspot-control::before { content: "●"; color: #ff837e; margin-right: 6px }
+.hotspot-control[aria-pressed="false"]::before { color: #a5b5c8 }
 .protection-popup {
   width: 220px; box-sizing: border-box; padding: 12px 24px 12px 12px;
   color: #182d3b; background: #fff; font-size: 12px; line-height: 1.45;
@@ -172,6 +179,7 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
     <canvas id="basemap" aria-hidden="true"></canvas>
     <div id="kakao-map" aria-label="서울 카카오맵" style="position: absolute; inset: 0; z-index: 0;" hidden></div>
     <div id="protection-status" class="protection-status" role="status" hidden>노인보호구역 불러오는 중</div>
+    <button id="hotspot-control" class="hotspot-control" type="button" aria-pressed="true" hidden>2025년 사고다발지역</button>
     <div class="pins" id="pins"></div>
     <div class="map-head"><div class="layers" id="layers" aria-label="지도 표시 항목"></div></div>
     <div class="zoom" aria-label="지도 확대·축소">
@@ -631,6 +639,59 @@ function resolveFacilityCoordinates(facility, geocoder, places) {
   });
 }
 
+async function showAccidentHotspots(kakaoMap) {
+  const control = document.getElementById("hotspot-control");
+  control.hidden = false;
+  control.disabled = true;
+
+  try {
+    const response = await fetch("./data/accident-hotspots-2025.json");
+    if (!response.ok) throw new Error("사고다발지역 HTTP " + response.status);
+    const { year, locations } = await response.json();
+    const popup = new kakao.maps.InfoWindow({ removable: true });
+
+    const markers = locations.map(location => {
+      const position = new kakao.maps.LatLng(location.lat, location.lng);
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.title = location.name;
+      dot.setAttribute("aria-label", location.name + " 사고다발지역");
+      dot.style.cssText = "display:block;width:13px;height:13px;padding:0;border:2px solid white;border-radius:50%;background:#d53c42;box-shadow:0 0 0 1px #a7242c;";
+      const marker = new kakao.maps.CustomOverlay({
+        map: kakaoMap, position, content: dot, clickable: true, zIndex: 1
+      });
+
+      dot.addEventListener("click", () => {
+        const detail = document.createElement("div");
+        detail.className = "protection-popup";
+        const title = document.createElement("strong");
+        title.textContent = location.name;
+        const summary = document.createElement("p");
+        summary.textContent = year + "년 사고 " + location.crashes + "건 · 사망 " + location.deaths + "명";
+        detail.append(title, summary);
+        popup.close();
+        popup.setContent(detail);
+        popup.setPosition(position);
+        popup.open(kakaoMap);
+      });
+      return marker;
+    });
+
+    control.textContent = year + "년 사고다발지역 " + markers.length + "곳";
+    control.disabled = false;
+    control.addEventListener("click", () => {
+      const visible = control.getAttribute("aria-pressed") !== "true";
+      control.setAttribute("aria-pressed", visible);
+      for (const marker of markers) marker.setMap(visible ? kakaoMap : null);
+      if (!visible) popup.close();
+    });
+    kakao.maps.event.addListener(kakaoMap, "click", () => popup.close());
+  } catch (error) {
+    control.textContent = "사고다발지역 로드 실패";
+    console.error("사고다발지역 자료 로드 실패", error);
+  }
+}
+
 async function showProtectionZones(kakaoMap) {
   const status = document.getElementById("protection-status");
   status.hidden = false;
@@ -723,6 +784,7 @@ if (window.kakao?.maps?.load) {
       });
       showSeoulBoundaries(kakaoMap).catch(error => console.error("서울 경계 로드 실패", error));
       showProtectionZones(kakaoMap);
+      showAccidentHotspots(kakaoMap);
     } catch (error) {
       mapElement.hidden = true;
       console.error("카카오맵을 표시할 수 없습니다.", error);
