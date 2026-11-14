@@ -46,8 +46,6 @@ aside { padding: 21px; border-right: 1px solid var(--line); background: #0e1723 
 .stat dd { margin: 5px 0 0; white-space: nowrap; font-variant-numeric: tabular-nums }
 .stat strong { font-size: clamp(17px, 2.2vw, 25px); letter-spacing: -.045em }
 .stat small { font-size: 10px; margin-left: 2px; color: var(--muted) }
-.stat:nth-child(1) strong, .stat:nth-child(5) strong { color: var(--mint) }
-.stat:nth-child(2) strong { color: #ffaaa7 }
 .stat .status { font-size: 17px }
 .pulse .stat strong { animation: flash .65s ease-out }
 @keyframes flash { from { opacity: .45 } to { opacity: 1 } }
@@ -193,16 +191,16 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 6px;
   padding: 6px;
-  border: 1px solid #3a4148;
+  border: 1px solid #2b4c66;
   border-radius: 8px;
-  background: #080a0c;
-  box-shadow: inset 0 0 0 2px #15191e;
+  background: linear-gradient(135deg, #15334b, #0e2033);
+  box-shadow: inset 0 0 0 2px #102739;
 }
 .board .stat {
-  background-color: #111214;
-  background-image: radial-gradient(circle, #f9a23b16 0.65px, transparent 0.9px);
+  background-color: #071521;
+  background-image: radial-gradient(circle, #5cc9ef24 0.65px, transparent 0.9px);
   background-size: 4px 4px;
-  border-color: #3a3027;
+  border-color: #244359;
   border-radius: 4px;
 }
 #board .stat {
@@ -212,7 +210,7 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
 }
 
 .board .stat dt {
-  color: #e7d4bc;
+  color: #e1effb;
   white-space: normal;
   overflow-wrap: anywhere;
 }
@@ -222,8 +220,8 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   line-height: 1.15;
 }
 .board .stat strong {
-  color: #ffba62;
-  text-shadow: 0 0 7px #ff9a3850;
+  color: #8cf0e8;
+  text-shadow: 0 0 7px #66eadd45;
   font-size: clamp(19px, 2.2vw, 26px);
 }
 .board .stat .status {
@@ -231,7 +229,7 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   font-family: inherit;
 }
 .board .stat dd small {
-  color: #d2ab7c;
+  color: #c4daed;
   font-family: system-ui, sans-serif;
 }
 .board .stat dd.pending-rate {
