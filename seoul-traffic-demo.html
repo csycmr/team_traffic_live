@@ -552,6 +552,52 @@ function protectionPopup(record) {
   return popup;
 }
 
+
+async function showSeoulBoundaries(kakaoMap) {
+  const response = await fetch("./data/08_서울_자치구_경계.geojson");
+  if (!response.ok) throw new Error("경계 GeoJSON HTTP " + response.status);
+
+  const { features } = await response.json();
+  const [city, districts] = [
+    features.find(feature => feature.properties.자치구명 === "서울 전체"),
+    features.filter(feature => feature.properties.자치구명 !== "서울 전체")
+  ];
+  const toMapRing = ring => ring.map(([lng, lat]) => new kakao.maps.LatLng(lat, lng));
+  const cityRing = toMapRing(city.geometry.coordinates[0]);
+  const outsideRing = toMapRing([
+    [118, 28], [118, 46], [137, 46], [137, 28], [118, 28]
+  ]);
+
+  new kakao.maps.Polygon({
+    map: kakaoMap,
+    path: [outsideRing, cityRing],
+    strokeOpacity: 0,
+    fillColor: "#172632",
+    fillOpacity: 1,
+    zIndex: 1
+  });
+
+  for (const district of districts) {
+    new kakao.maps.Polyline({
+      map: kakaoMap,
+      path: district.geometry.coordinates.map(toMapRing),
+      strokeWeight: 2,
+      strokeColor: "#304b5d",
+      strokeOpacity: 0.9,
+      zIndex: 2
+    });
+  }
+
+  new kakao.maps.Polyline({
+    map: kakaoMap,
+    path: cityRing,
+    strokeWeight: 3,
+    strokeColor: "#304b5d",
+    strokeOpacity: 1,
+    zIndex: 3
+  });
+}
+
 async function showProtectionZones(kakaoMap) {
   const status = document.getElementById("protection-status");
   status.hidden = false;
@@ -601,6 +647,7 @@ async function showProtectionZones(kakaoMap) {
         center: new kakao.maps.LatLng(37.5665, 126.9780),
         level: 8
       });
+      showSeoulBoundaries(kakaoMap).catch(error => console.error("서울 경계 로드 실패", error));
       showProtectionZones(kakaoMap);
 
       const demoElements = document.querySelectorAll(
