@@ -288,6 +288,18 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
 .metric-pair { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; gap: 8px; height: clamp(155px, 24vh, 230px); padding-top: 22px; border-bottom: 1px solid #7994ad }
 .metric-bar { position: relative; width: 76%; max-width: 42px; justify-self: center; height: var(--bar-height); background: var(--metric-color); border-radius: 4px 4px 0 0 }
 .metric-bar strong { position: absolute; bottom: calc(100% + 5px); inset-inline-start: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 10px; font-variant-numeric: tabular-nums }
+@media (prefers-reduced-motion: no-preference) {
+  .metric-bar { animation: grow-metric-bar 700ms ease-out both }
+  .metric-bar strong { animation: reveal-metric-value 180ms ease-out 520ms both }
+}
+@keyframes grow-metric-bar {
+  from { height: 0 }
+  to { height: var(--bar-height) }
+}
+@keyframes reveal-metric-value {
+  from { opacity: 0 }
+  to { opacity: 1 }
+}
 .metric-group h3 { font-size: 13px; margin: 0 0 6px }
 .metric-labels { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-top: 4px }
 .metric-labels small { font-size: 11px; color: var(--muted); line-height: 1.45; overflow-wrap: anywhere }
