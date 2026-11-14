@@ -132,14 +132,6 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   overflow-wrap: anywhere;
 }
 .protection-popup p { margin-top: 5px }
-.compare-chart h3 { font-size: 12px; margin: 10px 0 7px }
-.compare-chart h3 small { color: var(--muted); font-weight: 400 }
-.compare-row { display: grid; grid-template-columns: 1fr auto; gap: 4px; margin-bottom: 8px; font-size: 11px }
-.compare-row strong { font-variant-numeric: tabular-nums }
-.track { display: block; grid-column: 1 / -1; border-radius: 5px; background: #243447; height: 5px; overflow: hidden }
-.track span { display: block; height: 100%; border-radius: inherit }
-.track .children { background: #ffd54f }
-.track .older { background: #73adff }
 .compare-chart a { color: var(--muted) }
 .safety-board { margin-top: 12px }
 .safety-board .stat { margin: 0; padding: 8px 6px; display: flex; flex-direction: column }
@@ -252,14 +244,19 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
 .board.safety-board { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 0 }
 .safety-board .hotspot-total { grid-column: 1 / -1 }
 .safety-board-note a { color: inherit }
-.zone-panel .compare-chart h3 { font-size: 13px; margin: 17px 0 8px }
-.vertical-chart { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin-bottom: 8px }
-.vertical-column { display: grid; gap: 6px; text-align: center; font-size: 12px }
-.vertical-track { height: clamp(140px, 22vh, 210px); display: flex; align-items: end; justify-content: center; padding-top: 24px; border-bottom: 1px solid var(--line) }
-.vertical-bar { height: var(--bar-height); width: 60%; max-width: 70px; position: relative; border-radius: 5px 5px 0 0 }
-.vertical-bar strong { position: absolute; bottom: calc(100% + 5px); left: 50%; transform: translateX(-50%); white-space: nowrap; font-variant-numeric: tabular-nums }
-.vertical-bar.children { background: #ffd54f }
-.vertical-bar.older { background: #73adff }
+.compare-chart { margin: 0 }
+.metric-legend { display: flex; gap: 14px; font-size: 12px; margin-bottom: 12px }
+.metric-legend span::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 5px; border-radius: 2px; background: var(--metric-color) }
+.population { --metric-color: #73adff }
+.zones { --metric-color: #ffd54f }
+.metric-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px }
+.metric-group { text-align: center; min-width: 0 }
+.metric-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; gap: 8px; height: clamp(155px, 24vh, 230px); padding-top: 22px; border-bottom: 1px solid var(--line) }
+.metric-bar { position: relative; width: 76%; max-width: 42px; justify-self: center; height: var(--bar-height); background: var(--metric-color); border-radius: 4px 4px 0 0 }
+.metric-bar strong { position: absolute; bottom: calc(100% + 5px); inset-inline-start: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 10px; font-variant-numeric: tabular-nums }
+.metric-group h3 { font-size: 13px; margin: 7px 0 0 }
+.metric-group small { font-size: 11px; color: var(--muted) }
+.compare-chart figcaption { margin-top: 10px; line-height: 1.55 }
 .map-marker-legend {
   position: absolute;
   z-index: 2;
@@ -368,20 +365,28 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
     </section>
     <section class="feed" aria-labelledby="zone-summary">
       <div class="panel-title"><h2 id="zone-summary">서울시 보호 구역 지정 현황</h2></div>
-      <div class="compare-chart">
-        <h3>보호구역</h3>
-        <div class="vertical-chart">
-          <div class="vertical-column"><div class="vertical-track"><div class="vertical-bar children" style="--bar-height:100%"><strong>1,601건</strong></div></div><span>어린이</span></div>
-          <div class="vertical-column"><div class="vertical-track"><div class="vertical-bar older" style="--bar-height:12.18%"><strong>195개</strong></div></div><span>노인</span></div>
+      <figure class="compare-chart">
+        <div class="metric-legend"><span class="population">인구</span><span class="zones">보호구역</span></div>
+        <div class="metric-groups" role="group" aria-label="어린이와 노인의 인구 및 보호구역 비교">
+          <div class="metric-group">
+            <div class="metric-pair">
+              <div class="metric-bar population" style="--bar-height:40.24%"><strong>791,163명</strong></div>
+              <div class="metric-bar zones" style="--bar-height:100%"><strong>1,601건</strong></div>
+            </div>
+            <h3>어린이</h3>
+            <small>0~14세</small>
+          </div>
+          <div class="metric-group">
+            <div class="metric-pair">
+              <div class="metric-bar population" style="--bar-height:100%"><strong>1,965,896명</strong></div>
+              <div class="metric-bar zones" style="--bar-height:12.18%"><strong>195개</strong></div>
+            </div>
+            <h3>노인</h3>
+            <small>65세 이상</small>
+          </div>
         </div>
-        <p class="muted">어린이는 표준자료의 시설 기록 수 · 노인은 2025년 명단 기준</p>
-        <h3>주민등록 인구 <small>2026년 9월 말</small></h3>
-        <div class="vertical-chart">
-          <div class="vertical-column"><div class="vertical-track"><div class="vertical-bar children" style="--bar-height:40.24%"><strong>791,163명</strong></div></div><span>어린이 · 0~14세</span></div>
-          <div class="vertical-column"><div class="vertical-track"><div class="vertical-bar older" style="--bar-height:100%"><strong>1,965,896명</strong></div></div><span>노인 · 65세 이상</span></div>
-        </div>
-        <p class="muted"><a href="https://opus.ai.kr/semteo/region/population/seoul/" target="_blank" rel="noopener">인구 출처</a></p>
-      </div>
+        <figcaption class="muted">막대는 지표별 최댓값을 100%로 표시했어요. 인구는 2026년 9월 말 기준이에요. 보호구역은 어린이 표준자료 시설 기록과 노인 2025년 명단 기준이에요. <a href="https://opus.ai.kr/semteo/region/population/seoul/" target="_blank" rel="noopener">인구 출처</a></figcaption>
+      </figure>
           </section>
   </aside>
 </main>
