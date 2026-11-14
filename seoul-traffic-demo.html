@@ -266,13 +266,26 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
 .safety-board .hotspot-total { grid-column: 1 / -1 }
 .safety-board-note a { color: inherit }
 .compare-chart { margin: 0 }
-.metric-legend { display: flex; gap: 14px; font-size: 12px; margin-bottom: 12px }
+.metric-legend {
+  position: absolute;
+  top: 18%;
+  left: 0;
+  width: calc((100% - 8px) / 2);
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  font-size: 11px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.metric-legend span { justify-self: start }
+.metric-legend-items { display: grid; gap: 4px }
 .metric-legend span::before { content: ""; display: inline-block; width: 8px; height: 8px; margin-right: 5px; border-radius: 2px; background: var(--metric-color) }
 .compare-chart .older { --metric-color: #73adff }
 .compare-chart .children { --metric-color: #ffd54f }
 .metric-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px }
 .metric-group { text-align: center; min-width: 0 }
-.metric-pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; gap: 8px; height: clamp(155px, 24vh, 230px); padding-top: 22px; border-bottom: 1px solid #7994ad }
+.metric-pair { position: relative; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; gap: 8px; height: clamp(155px, 24vh, 230px); padding-top: 22px; border-bottom: 1px solid #7994ad }
 .metric-bar { position: relative; width: 76%; max-width: 42px; justify-self: center; height: var(--bar-height); background: var(--metric-color); border-radius: 4px 4px 0 0 }
 .metric-bar strong { position: absolute; bottom: calc(100% + 5px); inset-inline-start: 50%; transform: translateX(-50%); white-space: nowrap; font-size: 10px; font-variant-numeric: tabular-nums }
 .metric-group h3 { font-size: 13px; margin: 0 0 6px }
@@ -454,11 +467,16 @@ main { min-height: calc(100dvh - 118px) }
     <section class="feed" aria-labelledby="zone-summary">
       <div class="panel-title"><h2 id="zone-summary">서울시 보호 구역 지정 현황</h2></div>
       <figure class="compare-chart">
-        <div class="metric-legend"><span class="children">어린이</span><span class="older">노인</span></div>
         <div class="metric-groups" role="group" aria-label="인구와 보호구역별 어린이·노인 비교">
           <div class="metric-group">
             <h3 id="population-chart">인구</h3>
             <div class="metric-pair" role="group" aria-labelledby="population-chart">
+              <div class="metric-legend">
+                <div class="metric-legend-items">
+                  <span class="children">어린이</span>
+                  <span class="older">노인</span>
+                </div>
+              </div>
               <div class="metric-bar children" style="--bar-height:40.24%"><strong aria-label="어린이 791,163명">791,163명</strong></div>
               <div class="metric-bar older" style="--bar-height:100%"><strong aria-label="노인 1,965,896명">1,965,896명</strong></div>
             </div>
