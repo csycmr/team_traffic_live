@@ -128,10 +128,21 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
 
 .protection-popup {
   width: 220px; box-sizing: border-box; padding: 12px 24px 12px 12px;
+  position: relative; white-space: normal;
   color: #182d3b; background: #fff; font-size: 12px; line-height: 1.45;
+  border: 1px solid #667d98; border-radius: 10px;
+  box-shadow: 0 3px 12px rgb(15 34 55 / 20%);
   overflow-wrap: anywhere;
 }
 .protection-popup p { margin-top: 5px }
+.protection-popup-close {
+  position: absolute; top: 5px; right: 5px;
+  display: grid; place-items: center;
+  width: 21px; height: 21px; padding: 0;
+  color: #25466e; background: transparent; border: 0; border-radius: 4px;
+  font-size: 17px; line-height: 1;
+}
+.protection-popup-close:hover { background: #e9eff6 }
 .compare-chart a { color: var(--muted) }
 .safety-board { margin-top: 12px }
 .safety-board .stat { margin: 0; padding: 8px 6px; display: flex; flex-direction: column }
@@ -329,7 +340,7 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   background: #0b121d url("./assets/traffic-header.jpg") center / cover no-repeat;
 }
 body { isolation: isolate }
-main > aside { background: transparent }
+main > aside { background: rgb(8 20 33 / 14%) }
 .traffic-background-video, .traffic-backdrop::after {
   position: absolute;
   inset: 0;
@@ -925,16 +936,26 @@ async function showSeoulBoundaries(kakaoMap) {
     zIndex: 1
   });
 
+  const boundaryStyle = {
+    map: kakaoMap,
+    strokeWeight: 2,
+    strokeColor: "#25466e",
+    strokeOpacity: 0.9,
+    zIndex: 2
+  };
   for (const district of districts) {
     new kakao.maps.Polyline({
-      map: kakaoMap,
-      path: district.geometry.coordinates.map(toMapRing),
-      strokeWeight: 2,
-      strokeColor: "#595959",
-      strokeOpacity: 0.9,
-      zIndex: 2
+      ...boundaryStyle,
+      path: district.geometry.coordinates.map(toMapRing)
     });
   }
+
+  new kakao.maps.Polyline({
+    ...boundaryStyle,
+    path: cityRing,
+    strokeWeight: 3,
+    zIndex: 3
+  });
 
 }
 
@@ -980,6 +1001,44 @@ function resolveFacilityCoordinates(facility, geocoder, places) {
   });
 }
 
+function createMapPopup(kakaoMap) {
+  const overlay = new kakao.maps.CustomOverlay({
+    clickable: true,
+    yAnchor: 1,
+    zIndex: 100
+  });
+
+  function close() {
+    overlay.setMap(null);
+  }
+
+  function open(content, position, pinHeight) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "protection-popup-close";
+    button.setAttribute("aria-label", "팝업 닫기");
+    button.textContent = "×";
+    button.addEventListener("click", close);
+    content.append(button);
+    content.style.marginBottom = pinHeight + "px";
+
+    overlay.setContent(content);
+    overlay.setPosition(position);
+    overlay.setMap(kakaoMap);
+
+    const popupBounds = content.getBoundingClientRect();
+    const mapBounds = document.getElementById("kakao-map").getBoundingClientRect();
+    const padding = 8;
+    const horizontal = Math.max(0, popupBounds.right - mapBounds.right + padding)
+      + Math.min(0, popupBounds.left - mapBounds.left - padding);
+    const vertical = Math.max(0, popupBounds.bottom - mapBounds.bottom + padding)
+      + Math.min(0, popupBounds.top - mapBounds.top - padding);
+    if (horizontal || vertical) kakaoMap.panBy(horizontal, vertical);
+  }
+
+  return { open, close };
+}
+
 async function showAccidentHotspots(kakaoMap) {
   const control = document.getElementById("hotspot-control");
   control.hidden = false;
@@ -989,7 +1048,7 @@ async function showAccidentHotspots(kakaoMap) {
     const response = await fetch("./data/accident-hotspots-2025.json");
     if (!response.ok) throw new Error("사고다발지역 HTTP " + response.status);
     const { year, locations } = await response.json();
-    const popup = new kakao.maps.InfoWindow({ removable: true });
+    const popup = createMapPopup(kakaoMap);
 
     const markers = locations.map(location => {
       const position = new kakao.maps.LatLng(location.lat, location.lng);
@@ -1010,10 +1069,7 @@ async function showAccidentHotspots(kakaoMap) {
         const summary = document.createElement("p");
         summary.textContent = year + "년 사고 " + location.crashes + "건 · 사망 " + location.deaths + "명";
         detail.append(title, summary);
-        popup.close();
-        popup.setContent(detail);
-        popup.setPosition(position);
-        popup.open(kakaoMap);
+        popup.open(detail, position, 8);
       });
       return marker;
     });
@@ -1041,7 +1097,7 @@ async function showSchoolZones(kakaoMap) {
 
   try {
     const rows = await readProtectionCsv("./data/09_어린이보호구역_서울.csv");
-    const popup = new kakao.maps.InfoWindow({ removable: true });
+    const popup = createMapPopup(kakaoMap);
     const pinUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAEzUlEQVR4nH1UW2hcZRD+Zv5zzu6mqU1SGmMvovgSSWsQ+mKaKAEviCIo9oJFfKwvjYkvqSm0pmBosZiYUrGPpSA1FeuDVPDBtKRWsBWJbbFoI22TbNMkm2xDsrvn8s/4cHbT3MjAD4fDzDffzHwzhAWmJ2BoP2xfB7wtlWUfGNJ3jWPqjOGNAGCtpG1kb1ql74anc6d3dSEoxZQwqPRxuAfc2Qq5ciy1M5Xgg5WVifqKigS8hAMQFzMKAj9CNutjetofzPvyWUN7/lwptghI0BNqqIXsr0dT3dVVbuumzeVwk54wASIgQIuJSZmhokBYCHh0ZBbjU2HPjgP5Nu1VQ/vJUn8LnOZeRJePlXU/sznRWln9WOS4zGKVVQnEDEDnC1IRECnYkEShyPT4jDM04vc0tufa+lvgEABcOZZ6u3q99/2WpypCZnZEhIgNICEQzALGjfFsCHjlALtQsWBmFZFo+E7WHc8E7zS0589T/1EkU07Zn8/VVdZ6KU9spEzMQJgHEuvAz74Prm4CAMj4AOTvM4D/EHBTUBEYhyTIB/zXzelb+Sj3vONoYm/NhmStm/RErDIxATYAUpVwmr4BoX5eBaa6CVz9BqKB9wB/BmRciFV2k57UbEjWDqftXmY2eyoqEsoEVS3OSUI4TadAqEdgAdH4BRYg1MNpOhW3AwRVgAlaUZFQZrOHXZe3up5DIqVSc8D6bVBphFXAMwBT/DwDWAVUGoH124AwB2KGiLLrOeS6vJVdl2qIaV5CkBBUvgnEC0S6wAixLKl80zxLAERMcF2q4UXeqvEEZ0eh8kgsi1xifUNnRwF245gFxmGoYypa9BXALQMy10F8GYawrIeGAOLLQOZ67BsviKoowlDHOAzlRhhEykyiJVx2EQ3sg2JwWQ8Vg4gG9sXsoHFRTBIGkYah3HBE7Nls1n95zWNJIiqWbTwgP43o0p5VdQgVEAGioGzWJxF7dmVhlzq/yqZAJc69RNjcfAAFsdqRHp2FjcQyU6xHFYAcIFkFuOXxS1bF/4pgzKQ2EpsenYVY7Wg+gAL3t8BpaM+fH8uEPVMPZlxrxRqHZH6maotjlfi7OHtmUhGxUw9m3LFM2NPQnj9fPA6Lz9eGKrf1iY3lSCQ9fXS2lmiRSP1CROmRGUxMLz5fDChoP+zhbuUd7bm2B1P+7tu3s3fFWqX5dVwkVSVSHb438zA94e/e0Z5rO9ytHF9tXbwM13rhbm9B+POh5Et1teUXH9+49tGQSgIwZMO8b64OZj998ZNc541v4W3djWBe2AsBt7cgvNYL99UjhUvD9wsXEVlihl3AUglKQ3fnJrOZ3Ek9AVN3BuGiTVnan//GYunn58LOiYkccbznJYnYqBBwZio4+dZxTOI1gH5cvKHLAHd1wfZ1wDQf8i/eSxfOkVjDDAtADKn5987cUBDku/UCGB9DlsYvAwSAnY1x1vH7wcGRdM53HCJjSPKzAU1O+kde6cRDDIGWslvV9B8YAPjt8zWn5ZcnVS89Lde/Wnfry9eR0AtgrHzdVmYIALgN1TdB2cxc1+j9XCHI+ZTJ+F0f/QQfQyCsfN1Wt76OmOXVL9ae/aNn7di1D+Guxg4AnNUAdzbGLH9HdDwK+YcXvkbYVwUDLB9Gyf4H8sitOLtbDjcAAAAASUVORK5CYII=";
     control.style.setProperty("--legend-pin", "url(" + pinUrl + ")");
     const image = new kakao.maps.MarkerImage(
@@ -1059,9 +1115,8 @@ async function showSchoolZones(kakaoMap) {
         clickable: true
       });
       kakao.maps.event.addListener(marker, "click", () => {
-        popup.close();
-        popup.setContent(protectionPopup({ ...row, API시설명: row.시설명 }));
-        popup.open(kakaoMap, marker);
+        const detail = protectionPopup({ ...row, API시설명: row.시설명 });
+        popup.open(detail, marker.getPosition(), 28);
       });
       marker.setMap(kakaoMap);
       return marker;
@@ -1109,7 +1164,7 @@ async function showProtectionZones(kakaoMap) {
     const services = kakao.maps.services;
     const geocoder = services && new services.Geocoder();
     const places = services && new services.Places();
-    const popup = new kakao.maps.InfoWindow({ removable: true });
+    const popup = createMapPopup(kakaoMap);
     const markers = [];
 
     const pinUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAEs0lEQVR4nIVUTWxUVRT+zrnvvZmObW1JCkXEYFhYBSREVgVsmujKYNAwQCRANEaWtltIWmsiKxO6cYE7ilHaIcJCN26KkRATIKTy4w8UI6XttFPa6dDOzPu557h4M6W2pZ7kbt4993vfOd93DmFxpNUgQxbpAS+V2nhMyew3xmxhY14AALF2zFp7h9ReKBZHziJzIFh4UwlaAOvuZvT0SM2Rq2n2ak4m6hu3J+oa4CQ8cCVLFIj8AP6TPPzCzJAEpS9K51oz1bcVQALSYnCBberIldNu/dqO2nUb4CVdATEgQlr5MQEKZoUKgnLIcxOjCAuTvcVzuzuxXwwybAltgw5+bo9SR6+cTjRt7qhvaozYcVitMEHBTFCtlEOAiEJBIMMiUSSF3Izj54Z7i327O9E26BAA1By9+p5Xv/b7hhc3hszsiAgZJoQCzPmAa2LA0AK1CcBlwIqCmVVEovyjETcoTL5f6mu9SDg2mExRzc3Gza+3eDWeaGSZmVAKgeeTwJEdjD0vMwDgl78F524KZstAjRuzJcdIUAp4Zvi3P4pa2uEkrHM42dTc4iVdUStMTAgs0JgCvj3oYPv6p7rt2WTwTgvjg/4IhTLgGoJaYS/pSrKxucXmRg6zYT6UqGtQECtUQZXSzuyLwQIbqysKBBbYvp5wZp+D0FaUUgWINVHXoIb5ELPjbnU8l1SEmQnFENjWDLS+RLAKeAZgio9nAKvx3bZmoBgiFk2EHc8ldtytTI7bTLHRqMpuQz2BeLFJnwYBII5zFlgCREwgx23mxcmqsaKjBYUKoCsAKgCVOMc1WLBUNVijMKuiqOQh5QK3ssDVhwpDWNZDQ/HdrWycK1UuotAozLJE4e0oCJWYBapQxCyPX4owNK7Lejg0rjh+KYrZVcoiZomCUCUKbztW5Lz/JP9Wsu45AsVT4Rlgpggc+i5a3Yda6bwK+U/yZEXOr2hsEIEJq06KaIXdEmMzzraXVeTE3MQYJLKWOPajKOAQsCYF1HrxWZOKvy2AMatE1s5NjEFFTuBse5nRNuiU+lovhoVsbyE37YpYS46RqqJWnopiFylPzCoqtpCbdsNCtrfU13qxshyWrq+mjtq16+ElEqorWxFEpJHvUyE7hvBJ7j/riwEFMmTR1cXFvl2dfmHiYP7h/X+sFQWRLnejqhJpYXxk1s+PHSz27epEVxfHW1uXMPjkuouvd4bJ9E9ttZu2XK5bt25BpKqtiY31S6HJ/3Xts+I3b/ag+7aHnq3B4knCSqC1H/46uOaVnW3MKlAx8b5WhXF05sHv07MjD15Fzd4ZZCAALZTBywBnHggAhMVST3E6R8RcdTDIMTYoRRwUHn+FH96dQhpYDLYyYOaARXrA+P3tl8u5hxlryYDZAhCFMfPj94ZLQXAa3co4UJ281QAB4LW0AkAwOXmymHvkk3GI2EgwXyI/P/U5Mm/P4i5oKbtnA/aQYEBN8OPee6Wp0X4bKYOMmc8O/1m+NtSPbmVkaBm7ZwMCwB0ooDQ/nT9VnBot+6WA/PzjU7j/qR+zW3G7/U+kBwwA1H107XzdxzeyeOO6i25lPMPwqzMEKr1UiiBfShh04MbOEHczq7L7F/9Iq9hEVdfGAAAAAElFTkSuQmCC";
@@ -1130,14 +1185,13 @@ async function showProtectionZones(kakaoMap) {
       });
 
       kakao.maps.event.addListener(marker, "click", () => {
-        popup.close();
-        popup.setContent(protectionPopup({
+        const detail = protectionPopup({
           ...location,
           API시설명: facility.시설명,
           자치구명: facility.자치구명,
           도로명주소: facility.위치
-        }));
-        popup.open(kakaoMap, marker);
+        });
+        popup.open(detail, marker.getPosition(), 28);
       });
       marker.setMap(kakaoMap);
       markers.push(marker);
