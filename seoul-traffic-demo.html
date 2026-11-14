@@ -880,7 +880,7 @@ function draw() {
 }
 
 byId('zoom-in').addEventListener('click', () => { zoom = Math.min(2.5, zoom * 1.25); draw(); });
-byId('zoom-out').addEventListener('click', () => { zoom = Math.max(.65, zoom / 1.25); draw(); });
+byId('zoom-out').addEventListener('click', () => { zoom = Math.max(1 / 1.25, zoom / 1.25); draw(); });
 byId('reset').addEventListener('click', () => { zoom = 1; offset = [0, 0]; draw(); });
 let drag;
 canvas.addEventListener('pointerdown', event => {
@@ -1281,10 +1281,12 @@ if (window.kakao?.maps?.load) {
     mapElement.hidden = false;
 
     try {
+      const initialLevel = 8;
       const kakaoMap = new kakao.maps.Map(mapElement, {
         center: new kakao.maps.LatLng(37.5665, 126.9780),
-        level: 8
+        level: initialLevel
       });
+      kakaoMap.setMaxLevel(initialLevel + 1);
       showSeoulBoundaries(kakaoMap).catch(error => console.error("서울 경계 로드 실패", error));
       showProtectionZones(kakaoMap);
       showAccidentHotspots(kakaoMap);
