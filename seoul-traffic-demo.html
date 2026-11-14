@@ -367,13 +367,45 @@ const samples = [
 let frame = 0;
 let paused = false;
 let timer;
+function countUpTraffic(values) {
+  const duration = 650;
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const counters = Object.entries(values).map(([key, target]) => ({
+    element: byId(key), target, decimals: key === "speed" ? 1 : 0
+  }));
+
+  function update(progress) {
+    for (const { element, target, decimals } of counters) {
+      element.textContent = (target * progress).toFixed(decimals);
+    }
+  }
+
+  if (reducedMotion) {
+    update(1);
+    return;
+  }
+
+  const start = performance.now();
+  update(0);
+  function tick(now) {
+    const progress = Math.min(1, Math.max(0, (now - start) / duration));
+    update(1 - (1 - progress) ** 3);
+    if (progress < 1) requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+}
+
 function renderBoard() {
   const index = frame % samples.length;
   const [accidents, deaths, injuries, flow, speed, cctv] = samples[index];
   const totals = Math.floor(frame / samples.length);
-  const values = [accidents + totals * 4, deaths + totals, injuries + totals * 5, flow, speed.toFixed(1), cctv];
-  ['accidents', 'deaths', 'injuries', 'flow', 'speed', 'cctv'].forEach((key, i) => {
-    byId(key).textContent = values[i];
+  byId("flow").textContent = flow;
+  countUpTraffic({
+    accidents: accidents + totals * 4,
+    deaths: deaths + totals,
+    injuries: injuries + totals * 5,
+    speed,
+    cctv
   });
   byId('updated').textContent = timeNow();
   if (frame) {
