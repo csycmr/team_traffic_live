@@ -124,8 +124,11 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   padding: 6px 9px; background: #101c2a; border: 1px solid #49617a;
   border-radius: 7px; font-size: 12px;
 }
+.school-control { top: 88px }
+
 .hotspot-control::before { content: "●"; color: #ff837e; margin-right: 6px }
-.hotspot-control[aria-pressed="false"]::before { color: #a5b5c8 }
+.hotspot-control.school-control::before { color: #ffd54f }
+.hotspot-control[aria-pressed="false"]::before, .hotspot-control.school-control[aria-pressed="false"]::before { color: #a5b5c8 }
 .protection-popup {
   width: 220px; box-sizing: border-box; padding: 12px 24px 12px 12px;
   color: #182d3b; background: #fff; font-size: 12px; line-height: 1.45;
@@ -180,6 +183,7 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
     <div id="kakao-map" aria-label="서울 카카오맵" style="position: absolute; inset: 0; z-index: 0;" hidden></div>
     <div id="protection-status" class="protection-status" role="status" hidden>노인보호구역 불러오는 중</div>
     <button id="hotspot-control" class="hotspot-control" type="button" aria-pressed="true" hidden>2025년 사고다발지역</button>
+    <button id="school-control" class="hotspot-control school-control" type="button" aria-pressed="true" hidden>어린이보호구역</button>
     <div class="pins" id="pins"></div>
     <div class="map-head"><div class="layers" id="layers" aria-label="지도 표시 항목"></div></div>
     <div class="zoom" aria-label="지도 확대·축소">
@@ -692,6 +696,52 @@ async function showAccidentHotspots(kakaoMap) {
   }
 }
 
+async function showSchoolZones(kakaoMap) {
+  const control = document.getElementById("school-control");
+  control.hidden = false;
+  control.disabled = true;
+
+  try {
+    const rows = await readProtectionCsv("./data/09_어린이보호구역_서울.csv");
+    const popup = new kakao.maps.InfoWindow({ removable: true });
+    const image = new kakao.maps.MarkerImage(
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAEzUlEQVR4nH1UW2hcZRD+Zv5zzu6mqU1SGmMvovgSSWsQ+mKaKAEviCIo9oJFfKwvjYkvqSm0pmBosZiYUrGPpSA1FeuDVPDBtKRWsBWJbbFoI22TbNMkm2xDsrvn8s/4cHbT3MjAD4fDzDffzHwzhAWmJ2BoP2xfB7wtlWUfGNJ3jWPqjOGNAGCtpG1kb1ql74anc6d3dSEoxZQwqPRxuAfc2Qq5ciy1M5Xgg5WVifqKigS8hAMQFzMKAj9CNutjetofzPvyWUN7/lwptghI0BNqqIXsr0dT3dVVbuumzeVwk54wASIgQIuJSZmhokBYCHh0ZBbjU2HPjgP5Nu1VQ/vJUn8LnOZeRJePlXU/sznRWln9WOS4zGKVVQnEDEDnC1IRECnYkEShyPT4jDM04vc0tufa+lvgEABcOZZ6u3q99/2WpypCZnZEhIgNICEQzALGjfFsCHjlALtQsWBmFZFo+E7WHc8E7zS0589T/1EkU07Zn8/VVdZ6KU9spEzMQJgHEuvAz74Prm4CAMj4AOTvM4D/EHBTUBEYhyTIB/zXzelb+Sj3vONoYm/NhmStm/RErDIxATYAUpVwmr4BoX5eBaa6CVz9BqKB9wB/BmRciFV2k57UbEjWDqftXmY2eyoqEsoEVS3OSUI4TadAqEdgAdH4BRYg1MNpOhW3AwRVgAlaUZFQZrOHXZe3up5DIqVSc8D6bVBphFXAMwBT/DwDWAVUGoH124AwB2KGiLLrOeS6vJVdl2qIaV5CkBBUvgnEC0S6wAixLKl80zxLAERMcF2q4UXeqvEEZ0eh8kgsi1xifUNnRwF245gFxmGoYypa9BXALQMy10F8GYawrIeGAOLLQOZ67BsviKoowlDHOAzlRhhEykyiJVx2EQ3sg2JwWQ8Vg4gG9sXsoHFRTBIGkYah3HBE7Nls1n95zWNJIiqWbTwgP43o0p5VdQgVEAGioGzWJxF7dmVhlzq/yqZAJc69RNjcfAAFsdqRHp2FjcQyU6xHFYAcIFkFuOXxS1bF/4pgzKQ2EpsenYVY7Wg+gAL3t8BpaM+fH8uEPVMPZlxrxRqHZH6maotjlfi7OHtmUhGxUw9m3LFM2NPQnj9fPA6Lz9eGKrf1iY3lSCQ9fXS2lmiRSP1CROmRGUxMLz5fDChoP+zhbuUd7bm2B1P+7tu3s3fFWqX5dVwkVSVSHb438zA94e/e0Z5rO9ytHF9tXbwM13rhbm9B+POh5Et1teUXH9+49tGQSgIwZMO8b64OZj998ZNc541v4W3djWBe2AsBt7cgvNYL99UjhUvD9wsXEVlihl3AUglKQ3fnJrOZ3Ek9AVN3BuGiTVnan//GYunn58LOiYkccbznJYnYqBBwZio4+dZxTOI1gH5cvKHLAHd1wfZ1wDQf8i/eSxfOkVjDDAtADKn5987cUBDku/UCGB9DlsYvAwSAnY1x1vH7wcGRdM53HCJjSPKzAU1O+kde6cRDDIGWslvV9B8YAPjt8zWn5ZcnVS89Lde/Wnfry9eR0AtgrHzdVmYIALgN1TdB2cxc1+j9XCHI+ZTJ+F0f/QQfQyCsfN1Wt76OmOXVL9ae/aNn7di1D+Guxg4AnNUAdzbGLH9HdDwK+YcXvkbYVwUDLB9Gyf4H8sitOLtbDjcAAAAASUVORK5CYII=",
+      new kakao.maps.Size(20, 28),
+      { offset: new kakao.maps.Point(10, 28) }
+    );
+
+    const markers = rows.filter(hasProtectionCoordinates).map(row => {
+      const marker = new kakao.maps.Marker({
+        position: new kakao.maps.LatLng(Number(row.위도), Number(row.경도)),
+        title: row.시설명,
+        image,
+        clickable: true
+      });
+      kakao.maps.event.addListener(marker, "click", () => {
+        popup.close();
+        popup.setContent(protectionPopup({ ...row, API시설명: row.시설명 }));
+        popup.open(kakaoMap, marker);
+      });
+      marker.setMap(kakaoMap);
+      return marker;
+    });
+
+    control.textContent = "어린이보호구역 자료 " + markers.length.toLocaleString("ko-KR") + "건";
+    control.title = "전국어린이보호구역표준데이터의 서울 시설 기록";
+    control.disabled = false;
+    control.addEventListener("click", () => {
+      const visible = control.getAttribute("aria-pressed") !== "true";
+      control.setAttribute("aria-pressed", visible);
+      for (const marker of markers) marker.setMap(visible ? kakaoMap : null);
+      if (!visible) popup.close();
+    });
+    kakao.maps.event.addListener(kakaoMap, "click", () => popup.close());
+  } catch (error) {
+    control.textContent = "어린이보호구역 로드 실패";
+    console.error("어린이보호구역 자료 로드 실패", error);
+  }
+}
+
 async function showProtectionZones(kakaoMap) {
   const status = document.getElementById("protection-status");
   status.hidden = false;
@@ -785,6 +835,7 @@ if (window.kakao?.maps?.load) {
       showSeoulBoundaries(kakaoMap).catch(error => console.error("서울 경계 로드 실패", error));
       showProtectionZones(kakaoMap);
       showAccidentHotspots(kakaoMap);
+      showSchoolZones(kakaoMap);
     } catch (error) {
       mapElement.hidden = true;
       console.error("카카오맵을 표시할 수 없습니다.", error);
