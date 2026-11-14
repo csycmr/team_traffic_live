@@ -89,6 +89,11 @@ def dashboard_data(filename):
     return send_from_directory(DATA, filename)
 
 
+@app.get("/assets/<path:filename>")
+def dashboard_asset(filename):
+    return send_from_directory(ROOT / "assets", filename)
+
+
 @app.get("/api/cctv")
 def cctv():
     key = os.environ.get("ITS_CCTV_API_KEY", "").strip()
