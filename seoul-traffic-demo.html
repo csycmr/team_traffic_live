@@ -226,7 +226,7 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
     <canvas id="basemap" aria-hidden="true"></canvas>
     <div id="kakao-map" aria-label="서울 카카오맵" style="position: absolute; inset: 0; z-index: 0;" hidden></div>
     <div id="protection-status" class="protection-status" role="status" hidden>노인보호구역 불러오는 중</div>
-    <button id="hotspot-control" class="hotspot-control" type="button" aria-pressed="true" hidden>2025년 사고다발지역</button>
+    <button id="hotspot-control" class="hotspot-control" type="button" aria-pressed="true" hidden>사고다발지역</button>
     <button id="school-control" class="hotspot-control school-control" type="button" aria-pressed="true" hidden>어린이보호구역</button>
     <div class="pins" id="pins"></div>
     <div class="map-head"><div class="layers" id="layers" aria-label="지도 표시 항목"></div></div>
@@ -726,7 +726,7 @@ async function showAccidentHotspots(kakaoMap) {
     });
 
     document.getElementById("hotspot-total").textContent = markers.length.toLocaleString("ko-KR");
-    control.textContent = "사고다발지역 " + markers.length + "곳 | " + year + "년";
+    control.textContent = "사고다발지역 " + markers.length + "곳";
     control.disabled = false;
     control.addEventListener("click", () => {
       const visible = control.getAttribute("aria-pressed") !== "true";
@@ -772,7 +772,7 @@ async function showSchoolZones(kakaoMap) {
       return marker;
     });
 
-    control.textContent = "어린이보호구역 " + markers.length.toLocaleString("ko-KR") + "곳 | 표준자료";
+    control.textContent = "어린이보호구역 " + markers.length.toLocaleString("ko-KR") + "곳";
     control.title = "전국어린이보호구역표준데이터의 서울 시설 기록 · 자료 기준일 2019~2026년";
     control.disabled = false;
     control.addEventListener("click", () => {
@@ -861,7 +861,7 @@ async function showProtectionZones(kakaoMap) {
       }
     }
 
-    status.textContent = "노인보호구역 " + facilities.length + "곳 | 2025년";
+    status.textContent = "노인보호구역 " + facilities.length + "곳";
     status.title = "2025년 명단 기준 · 지도에 표시된 시설 " + count + "/" + facilities.length + "곳";
   } catch (error) {
     status.textContent = "노인보호구역을 불러오지 못했어";
