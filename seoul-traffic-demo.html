@@ -119,7 +119,6 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   padding: 7px 10px; background: #101c2a; border: 1px solid #49617a;
   border-radius: 7px; font-size: 12px;
 }
-.protection-status::before { content: "●"; color: #73adff; margin-right: 6px }
 .hotspot-control {
   position: absolute; z-index: 2; top: 54px; right: 16px;
   padding: 6px 9px; background: #101c2a; border: 1px solid #49617a;
@@ -127,9 +126,6 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
 }
 .school-control { top: 88px }
 
-.hotspot-control::before { content: "●"; color: #ff837e; margin-right: 6px }
-.hotspot-control.school-control::before { color: #ffd54f }
-.hotspot-control[aria-pressed="false"]::before, .hotspot-control.school-control[aria-pressed="false"]::before { color: #a5b5c8 }
 .protection-popup {
   width: 220px; box-sizing: border-box; padding: 12px 24px 12px 12px;
   color: #182d3b; background: #fff; font-size: 12px; line-height: 1.45;
@@ -152,6 +148,31 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
 .safety-board .pending-rate { font-size: 11px; color: var(--muted) }
 .safety-board-note { display: block; margin-top: 5px }
 .hotspot-total strong { color: #ff938e }
+#protection-status::before, #school-control::before, #hotspot-control::before {
+  content: "";
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 7px;
+}
+#protection-status::before, #school-control::before {
+  width: 10px;
+  height: 14px;
+  background: var(--legend-pin) center / contain no-repeat;
+}
+#hotspot-control::before {
+  width: 9px;
+  height: 9px;
+  box-sizing: border-box;
+  padding: 0;
+}
+.hotspot-symbol, #hotspot-control::before {
+  border: 2px solid white;
+  border-radius: 50%;
+  background: #d53c42;
+  box-shadow: 0 0 0 1px #a7242c;
+}
+.hotspot-symbol { display: block; width: 13px; height: 13px; padding: 0 }
+.hotspot-control[aria-pressed="false"]::before { opacity: .45 }
 </style>
 </head>
 <body>
@@ -704,7 +725,7 @@ async function showAccidentHotspots(kakaoMap) {
       dot.type = "button";
       dot.title = location.name;
       dot.setAttribute("aria-label", location.name + " 사고다발지역");
-      dot.style.cssText = "display:block;width:13px;height:13px;padding:0;border:2px solid white;border-radius:50%;background:#d53c42;box-shadow:0 0 0 1px #a7242c;";
+      dot.className = "hotspot-symbol";
       const marker = new kakao.maps.CustomOverlay({
         map: kakaoMap, position, content: dot, clickable: true, zIndex: 1
       });
@@ -749,8 +770,10 @@ async function showSchoolZones(kakaoMap) {
   try {
     const rows = await readProtectionCsv("./data/09_어린이보호구역_서울.csv");
     const popup = new kakao.maps.InfoWindow({ removable: true });
+    const pinUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAEzUlEQVR4nH1UW2hcZRD+Zv5zzu6mqU1SGmMvovgSSWsQ+mKaKAEviCIo9oJFfKwvjYkvqSm0pmBosZiYUrGPpSA1FeuDVPDBtKRWsBWJbbFoI22TbNMkm2xDsrvn8s/4cHbT3MjAD4fDzDffzHwzhAWmJ2BoP2xfB7wtlWUfGNJ3jWPqjOGNAGCtpG1kb1ql74anc6d3dSEoxZQwqPRxuAfc2Qq5ciy1M5Xgg5WVifqKigS8hAMQFzMKAj9CNutjetofzPvyWUN7/lwptghI0BNqqIXsr0dT3dVVbuumzeVwk54wASIgQIuJSZmhokBYCHh0ZBbjU2HPjgP5Nu1VQ/vJUn8LnOZeRJePlXU/sznRWln9WOS4zGKVVQnEDEDnC1IRECnYkEShyPT4jDM04vc0tufa+lvgEABcOZZ6u3q99/2WpypCZnZEhIgNICEQzALGjfFsCHjlALtQsWBmFZFo+E7WHc8E7zS0589T/1EkU07Zn8/VVdZ6KU9spEzMQJgHEuvAz74Prm4CAMj4AOTvM4D/EHBTUBEYhyTIB/zXzelb+Sj3vONoYm/NhmStm/RErDIxATYAUpVwmr4BoX5eBaa6CVz9BqKB9wB/BmRciFV2k57UbEjWDqftXmY2eyoqEsoEVS3OSUI4TadAqEdgAdH4BRYg1MNpOhW3AwRVgAlaUZFQZrOHXZe3up5DIqVSc8D6bVBphFXAMwBT/DwDWAVUGoH124AwB2KGiLLrOeS6vJVdl2qIaV5CkBBUvgnEC0S6wAixLKl80zxLAERMcF2q4UXeqvEEZ0eh8kgsi1xifUNnRwF245gFxmGoYypa9BXALQMy10F8GYawrIeGAOLLQOZ67BsviKoowlDHOAzlRhhEykyiJVx2EQ3sg2JwWQ8Vg4gG9sXsoHFRTBIGkYah3HBE7Nls1n95zWNJIiqWbTwgP43o0p5VdQgVEAGioGzWJxF7dmVhlzq/yqZAJc69RNjcfAAFsdqRHp2FjcQyU6xHFYAcIFkFuOXxS1bF/4pgzKQ2EpsenYVY7Wg+gAL3t8BpaM+fH8uEPVMPZlxrxRqHZH6maotjlfi7OHtmUhGxUw9m3LFM2NPQnj9fPA6Lz9eGKrf1iY3lSCQ9fXS2lmiRSP1CROmRGUxMLz5fDChoP+zhbuUd7bm2B1P+7tu3s3fFWqX5dVwkVSVSHb438zA94e/e0Z5rO9ytHF9tXbwM13rhbm9B+POh5Et1teUXH9+49tGQSgIwZMO8b64OZj998ZNc541v4W3djWBe2AsBt7cgvNYL99UjhUvD9wsXEVlihl3AUglKQ3fnJrOZ3Ek9AVN3BuGiTVnan//GYunn58LOiYkccbznJYnYqBBwZio4+dZxTOI1gH5cvKHLAHd1wfZ1wDQf8i/eSxfOkVjDDAtADKn5987cUBDku/UCGB9DlsYvAwSAnY1x1vH7wcGRdM53HCJjSPKzAU1O+kde6cRDDIGWslvV9B8YAPjt8zWn5ZcnVS89Lde/Wnfry9eR0AtgrHzdVmYIALgN1TdB2cxc1+j9XCHI+ZTJ+F0f/QQfQyCsfN1Wt76OmOXVL9ae/aNn7di1D+Guxg4AnNUAdzbGLH9HdDwK+YcXvkbYVwUDLB9Gyf4H8sitOLtbDjcAAAAASUVORK5CYII=";
+    control.style.setProperty("--legend-pin", "url(" + pinUrl + ")");
     const image = new kakao.maps.MarkerImage(
-      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAEzUlEQVR4nH1UW2hcZRD+Zv5zzu6mqU1SGmMvovgSSWsQ+mKaKAEviCIo9oJFfKwvjYkvqSm0pmBosZiYUrGPpSA1FeuDVPDBtKRWsBWJbbFoI22TbNMkm2xDsrvn8s/4cHbT3MjAD4fDzDffzHwzhAWmJ2BoP2xfB7wtlWUfGNJ3jWPqjOGNAGCtpG1kb1ql74anc6d3dSEoxZQwqPRxuAfc2Qq5ciy1M5Xgg5WVifqKigS8hAMQFzMKAj9CNutjetofzPvyWUN7/lwptghI0BNqqIXsr0dT3dVVbuumzeVwk54wASIgQIuJSZmhokBYCHh0ZBbjU2HPjgP5Nu1VQ/vJUn8LnOZeRJePlXU/sznRWln9WOS4zGKVVQnEDEDnC1IRECnYkEShyPT4jDM04vc0tufa+lvgEABcOZZ6u3q99/2WpypCZnZEhIgNICEQzALGjfFsCHjlALtQsWBmFZFo+E7WHc8E7zS0589T/1EkU07Zn8/VVdZ6KU9spEzMQJgHEuvAz74Prm4CAMj4AOTvM4D/EHBTUBEYhyTIB/zXzelb+Sj3vONoYm/NhmStm/RErDIxATYAUpVwmr4BoX5eBaa6CVz9BqKB9wB/BmRciFV2k57UbEjWDqftXmY2eyoqEsoEVS3OSUI4TadAqEdgAdH4BRYg1MNpOhW3AwRVgAlaUZFQZrOHXZe3up5DIqVSc8D6bVBphFXAMwBT/DwDWAVUGoH124AwB2KGiLLrOeS6vJVdl2qIaV5CkBBUvgnEC0S6wAixLKl80zxLAERMcF2q4UXeqvEEZ0eh8kgsi1xifUNnRwF245gFxmGoYypa9BXALQMy10F8GYawrIeGAOLLQOZ67BsviKoowlDHOAzlRhhEykyiJVx2EQ3sg2JwWQ8Vg4gG9sXsoHFRTBIGkYah3HBE7Nls1n95zWNJIiqWbTwgP43o0p5VdQgVEAGioGzWJxF7dmVhlzq/yqZAJc69RNjcfAAFsdqRHp2FjcQyU6xHFYAcIFkFuOXxS1bF/4pgzKQ2EpsenYVY7Wg+gAL3t8BpaM+fH8uEPVMPZlxrxRqHZH6maotjlfi7OHtmUhGxUw9m3LFM2NPQnj9fPA6Lz9eGKrf1iY3lSCQ9fXS2lmiRSP1CROmRGUxMLz5fDChoP+zhbuUd7bm2B1P+7tu3s3fFWqX5dVwkVSVSHb438zA94e/e0Z5rO9ytHF9tXbwM13rhbm9B+POh5Et1teUXH9+49tGQSgIwZMO8b64OZj998ZNc541v4W3djWBe2AsBt7cgvNYL99UjhUvD9wsXEVlihl3AUglKQ3fnJrOZ3Ek9AVN3BuGiTVnan//GYunn58LOiYkccbznJYnYqBBwZio4+dZxTOI1gH5cvKHLAHd1wfZ1wDQf8i/eSxfOkVjDDAtADKn5987cUBDku/UCGB9DlsYvAwSAnY1x1vH7wcGRdM53HCJjSPKzAU1O+kde6cRDDIGWslvV9B8YAPjt8zWn5ZcnVS89Lde/Wnfry9eR0AtgrHzdVmYIALgN1TdB2cxc1+j9XCHI+ZTJ+F0f/QQfQyCsfN1Wt76OmOXVL9ae/aNn7di1D+Guxg4AnNUAdzbGLH9HdDwK+YcXvkbYVwUDLB9Gyf4H8sitOLtbDjcAAAAASUVORK5CYII=",
+      pinUrl,
       new kakao.maps.Size(20, 28),
       { offset: new kakao.maps.Point(10, 28) }
     );
@@ -817,8 +840,10 @@ async function showProtectionZones(kakaoMap) {
     const popup = new kakao.maps.InfoWindow({ removable: true });
     let count = 0;
 
+    const pinUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAEs0lEQVR4nIVUTWxUVRT+zrnvvZmObW1JCkXEYFhYBSREVgVsmujKYNAwQCRANEaWtltIWmsiKxO6cYE7ilHaIcJCN26KkRATIKTy4w8UI6XttFPa6dDOzPu557h4M6W2pZ7kbt4993vfOd93DmFxpNUgQxbpAS+V2nhMyew3xmxhY14AALF2zFp7h9ReKBZHziJzIFh4UwlaAOvuZvT0SM2Rq2n2ak4m6hu3J+oa4CQ8cCVLFIj8AP6TPPzCzJAEpS9K51oz1bcVQALSYnCBberIldNu/dqO2nUb4CVdATEgQlr5MQEKZoUKgnLIcxOjCAuTvcVzuzuxXwwybAltgw5+bo9SR6+cTjRt7qhvaozYcVitMEHBTFCtlEOAiEJBIMMiUSSF3Izj54Z7i327O9E26BAA1By9+p5Xv/b7hhc3hszsiAgZJoQCzPmAa2LA0AK1CcBlwIqCmVVEovyjETcoTL5f6mu9SDg2mExRzc3Gza+3eDWeaGSZmVAKgeeTwJEdjD0vMwDgl78F524KZstAjRuzJcdIUAp4Zvi3P4pa2uEkrHM42dTc4iVdUStMTAgs0JgCvj3oYPv6p7rt2WTwTgvjg/4IhTLgGoJaYS/pSrKxucXmRg6zYT6UqGtQECtUQZXSzuyLwQIbqysKBBbYvp5wZp+D0FaUUgWINVHXoIb5ELPjbnU8l1SEmQnFENjWDLS+RLAKeAZgio9nAKvx3bZmoBgiFk2EHc8ldtytTI7bTLHRqMpuQz2BeLFJnwYBII5zFlgCREwgx23mxcmqsaKjBYUKoCsAKgCVOMc1WLBUNVijMKuiqOQh5QK3ssDVhwpDWNZDQ/HdrWycK1UuotAozLJE4e0oCJWYBapQxCyPX4owNK7Lejg0rjh+KYrZVcoiZomCUCUKbztW5Lz/JP9Wsu45AsVT4Rlgpggc+i5a3Yda6bwK+U/yZEXOr2hsEIEJq06KaIXdEmMzzraXVeTE3MQYJLKWOPajKOAQsCYF1HrxWZOKvy2AMatE1s5NjEFFTuBse5nRNuiU+lovhoVsbyE37YpYS46RqqJWnopiFylPzCoqtpCbdsNCtrfU13qxshyWrq+mjtq16+ElEqorWxFEpJHvUyE7hvBJ7j/riwEFMmTR1cXFvl2dfmHiYP7h/X+sFQWRLnejqhJpYXxk1s+PHSz27epEVxfHW1uXMPjkuouvd4bJ9E9ttZu2XK5bt25BpKqtiY31S6HJ/3Xts+I3b/ag+7aHnq3B4knCSqC1H/46uOaVnW3MKlAx8b5WhXF05sHv07MjD15Fzd4ZZCAALZTBywBnHggAhMVST3E6R8RcdTDIMTYoRRwUHn+FH96dQhpYDLYyYOaARXrA+P3tl8u5hxlryYDZAhCFMfPj94ZLQXAa3co4UJ281QAB4LW0AkAwOXmymHvkk3GI2EgwXyI/P/U5Mm/P4i5oKbtnA/aQYEBN8OPee6Wp0X4bKYOMmc8O/1m+NtSPbmVkaBm7ZwMCwB0ooDQ/nT9VnBot+6WA/PzjU7j/qR+zW3G7/U+kBwwA1H107XzdxzeyeOO6i25lPMPwqzMEKr1UiiBfShh04MbOEHczq7L7F/9Iq9hEVdfGAAAAAElFTkSuQmCC";
+    status.style.setProperty("--legend-pin", "url(" + pinUrl + ")");
     const markerImage = new kakao.maps.MarkerImage(
-      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAEs0lEQVR4nIVUTWxUVRT+zrnvvZmObW1JCkXEYFhYBSREVgVsmujKYNAwQCRANEaWtltIWmsiKxO6cYE7ilHaIcJCN26KkRATIKTy4w8UI6XttFPa6dDOzPu557h4M6W2pZ7kbt4993vfOd93DmFxpNUgQxbpAS+V2nhMyew3xmxhY14AALF2zFp7h9ReKBZHziJzIFh4UwlaAOvuZvT0SM2Rq2n2ak4m6hu3J+oa4CQ8cCVLFIj8AP6TPPzCzJAEpS9K51oz1bcVQALSYnCBberIldNu/dqO2nUb4CVdATEgQlr5MQEKZoUKgnLIcxOjCAuTvcVzuzuxXwwybAltgw5+bo9SR6+cTjRt7qhvaozYcVitMEHBTFCtlEOAiEJBIMMiUSSF3Izj54Z7i327O9E26BAA1By9+p5Xv/b7hhc3hszsiAgZJoQCzPmAa2LA0AK1CcBlwIqCmVVEovyjETcoTL5f6mu9SDg2mExRzc3Gza+3eDWeaGSZmVAKgeeTwJEdjD0vMwDgl78F524KZstAjRuzJcdIUAp4Zvi3P4pa2uEkrHM42dTc4iVdUStMTAgs0JgCvj3oYPv6p7rt2WTwTgvjg/4IhTLgGoJaYS/pSrKxucXmRg6zYT6UqGtQECtUQZXSzuyLwQIbqysKBBbYvp5wZp+D0FaUUgWINVHXoIb5ELPjbnU8l1SEmQnFENjWDLS+RLAKeAZgio9nAKvx3bZmoBgiFk2EHc8ldtytTI7bTLHRqMpuQz2BeLFJnwYBII5zFlgCREwgx23mxcmqsaKjBYUKoCsAKgCVOMc1WLBUNVijMKuiqOQh5QK3ssDVhwpDWNZDQ/HdrWycK1UuotAozLJE4e0oCJWYBapQxCyPX4owNK7Lejg0rjh+KYrZVcoiZomCUCUKbztW5Lz/JP9Wsu45AsVT4Rlgpggc+i5a3Yda6bwK+U/yZEXOr2hsEIEJq06KaIXdEmMzzraXVeTE3MQYJLKWOPajKOAQsCYF1HrxWZOKvy2AMatE1s5NjEFFTuBse5nRNuiU+lovhoVsbyE37YpYS46RqqJWnopiFylPzCoqtpCbdsNCtrfU13qxshyWrq+mjtq16+ElEqorWxFEpJHvUyE7hvBJ7j/riwEFMmTR1cXFvl2dfmHiYP7h/X+sFQWRLnejqhJpYXxk1s+PHSz27epEVxfHW1uXMPjkuouvd4bJ9E9ttZu2XK5bt25BpKqtiY31S6HJ/3Xts+I3b/ag+7aHnq3B4knCSqC1H/46uOaVnW3MKlAx8b5WhXF05sHv07MjD15Fzd4ZZCAALZTBywBnHggAhMVST3E6R8RcdTDIMTYoRRwUHn+FH96dQhpYDLYyYOaARXrA+P3tl8u5hxlryYDZAhCFMfPj94ZLQXAa3co4UJ281QAB4LW0AkAwOXmymHvkk3GI2EgwXyI/P/U5Mm/P4i5oKbtnA/aQYEBN8OPee6Wp0X4bKYOMmc8O/1m+NtSPbmVkaBm7ZwMCwB0ooDQ/nT9VnBot+6WA/PzjU7j/qR+zW3G7/U+kBwwA1H107XzdxzeyeOO6i25lPMPwqzMEKr1UiiBfShh04MbOEHczq7L7F/9Iq9hEVdfGAAAAAElFTkSuQmCC",
+      pinUrl,
       new kakao.maps.Size(20, 28),
       { offset: new kakao.maps.Point(10, 28) }
     );
