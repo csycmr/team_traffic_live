@@ -224,6 +224,22 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   .board .stat { padding-inline: 4px }
   .board .stat strong { font-size: 17px }
 }
+
+.zone-panel {
+  border-right: 0;
+  border-left: 1px solid var(--line);
+}
+.zone-panel .feed { margin-top: 0; padding-top: 0; border-top: 0 }
+@media (min-width: 1041px) {
+  main { grid-template-columns: minmax(300px, 360px) minmax(0, 1fr) minmax(290px, 340px) }
+}
+@media (max-width: 1040px) {
+  .zone-panel {
+    grid-column: 1 / -1;
+    border-left: 0;
+    border-top: 1px solid var(--line);
+  }
+}
 </style>
 </head>
 <body>
@@ -247,33 +263,6 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
         <div class="stat"><dt>CCTV 정상</dt><dd><strong id="cctv">128</strong><small>/ 132대</small></dd></div>
       </dl>
       <div class="refresh muted"><span id="refresh-label">5초마다 갱신</span><span>갱신 <time id="updated"></time></span></div>
-    </section>
-    <section class="feed" aria-labelledby="zone-summary">
-      <div class="panel-title"><h2 id="zone-summary">서울 보호구역과 인구</h2></div>
-      <div class="compare-chart">
-        <h3>주민등록 인구 <small>2026년 9월 말</small></h3>
-        <div class="compare-row"><span>어린이 · 0~14세</span><strong>791,163명</strong><span class="track"><span class="children" style="width:40.24%"></span></span></div>
-        <div class="compare-row"><span>노인 · 65세 이상</span><strong>1,965,896명</strong><span class="track"><span class="older" style="width:100%"></span></span></div>
-        <h3>보호구역</h3>
-        <div class="compare-row"><span>어린이 · 표준자료 기록</span><strong>1,601건</strong><span class="track"><span class="children" style="width:100%"></span></span></div>
-        <div class="compare-row"><span>노인 · 2025년 명단</span><strong>195개</strong><span class="track"><span class="older" style="width:12.18%"></span></span></div>
-        <p class="muted">어린이 자료는 시설 기록 수이며 기준일은 시설마다 달라요. <a href="https://opus.ai.kr/semteo/region/population/seoul/" target="_blank" rel="noopener">인구 출처</a></p>
-      </div>
-      <div class="board safety-board" role="group" aria-label="2025년 서울 보행 안전 지표">
-        <dl class="stat" title="2025년 서울 25개 자치구의 고령 보행자 사망자 수 합계">
-          <dt>노인 보행자 사고 사망수 <small>(65세 이상)</small></dt>
-          <dd><strong>82</strong><small>명</small></dd>
-        </dl>
-        <dl class="stat">
-          <dt>어린이 보행자 사고 사망수 <small>(12세 이하)</small></dt>
-          <dd><strong>1</strong><small>명</small></dd>
-        </dl>
-        <dl class="stat hotspot-total">
-          <dt>사고다발지역</dt>
-          <dd><strong id="hotspot-total">—</strong><small>곳</small></dd>
-        </dl>
-      </div>
-      <p class="muted safety-board-note">2025년 서울 · <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/10_어린이보호구역_교통안전_요약.csv" style="color: inherit">집계 자료</a></p>
     </section>
     <section class="feed" aria-labelledby="situation">
       <div class="panel-title"><h2 id="situation">기상·교통 상황</h2></div>
@@ -314,6 +303,35 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
       <span class="map-note">서울 모식도 · 지점과 교통 상태는 시연용</span>
     </div>
   </section>
+  <aside class="zone-panel" aria-labelledby="zone-summary">
+    <section class="feed" aria-labelledby="zone-summary">
+      <div class="panel-title"><h2 id="zone-summary">서울 보호구역과 인구</h2></div>
+      <div class="compare-chart">
+        <h3>주민등록 인구 <small>2026년 9월 말</small></h3>
+        <div class="compare-row"><span>어린이 · 0~14세</span><strong>791,163명</strong><span class="track"><span class="children" style="width:40.24%"></span></span></div>
+        <div class="compare-row"><span>노인 · 65세 이상</span><strong>1,965,896명</strong><span class="track"><span class="older" style="width:100%"></span></span></div>
+        <h3>보호구역</h3>
+        <div class="compare-row"><span>어린이 · 표준자료 기록</span><strong>1,601건</strong><span class="track"><span class="children" style="width:100%"></span></span></div>
+        <div class="compare-row"><span>노인 · 2025년 명단</span><strong>195개</strong><span class="track"><span class="older" style="width:12.18%"></span></span></div>
+        <p class="muted">어린이 자료는 시설 기록 수이며 기준일은 시설마다 달라요. <a href="https://opus.ai.kr/semteo/region/population/seoul/" target="_blank" rel="noopener">인구 출처</a></p>
+      </div>
+      <div class="board safety-board" role="group" aria-label="2025년 서울 보행 안전 지표">
+        <dl class="stat" title="2025년 서울 25개 자치구의 고령 보행자 사망자 수 합계">
+          <dt>노인 보행자 사고 사망수 <small>(65세 이상)</small></dt>
+          <dd><strong>82</strong><small>명</small></dd>
+        </dl>
+        <dl class="stat">
+          <dt>어린이 보행자 사고 사망수 <small>(12세 이하)</small></dt>
+          <dd><strong>1</strong><small>명</small></dd>
+        </dl>
+        <dl class="stat hotspot-total">
+          <dt>사고다발지역</dt>
+          <dd><strong id="hotspot-total">—</strong><small>곳</small></dd>
+        </dl>
+      </div>
+      <p class="muted safety-board-note">2025년 서울 · <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/10_어린이보호구역_교통안전_요약.csv" style="color: inherit">집계 자료</a></p>
+    </section>
+  </aside>
 </main>
 <dialog id="detail" aria-labelledby="detail-title">
   <div class="panel-title"><h2 id="detail-title"></h2><form method="dialog"><button class="close">닫기</button></form></div>
