@@ -68,6 +68,7 @@ aside { padding: 21px; border-right: 1px solid var(--line); background: #0e1723 
 .feed-row h3 { font-size: 13px; font-weight: 650; }
 .feed-row p { font-size: 11px; color: var(--muted); margin-top: 3px; line-height: 1.5 }
 .map { position: relative; isolation: isolate; min-height: 650px; background: #172633; overflow: hidden }
+.map:not(.show-fallback) :is(#basemap, #pins, .map-head, .zoom, .legend) { visibility: hidden }
 .map canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; cursor: grab }
 .map canvas:active { cursor: grabbing }
 .map-head { position: absolute; top: 19px; left: 19px; right: 19px; pointer-events: none }
@@ -1281,6 +1282,8 @@ async function showProtectionZones(kakaoMap) {
   }
 }
 
+const mapFrame = document.getElementById("map");
+
 if (window.kakao?.maps?.load) {
   kakao.maps.load(() => {
     const mapElement = document.getElementById("kakao-map");
@@ -1299,14 +1302,14 @@ if (window.kakao?.maps?.load) {
       showSchoolZones(kakaoMap);
     } catch (error) {
       mapElement.hidden = true;
+      mapFrame.classList.add("show-fallback");
       console.error("카카오맵을 표시할 수 없습니다.", error);
       return;
     }
 
-    document.querySelectorAll("#basemap, #pins, .map-head, .zoom, .legend").forEach(element => {
-      element.style.display = "none";
-    });
   });
+} else {
+  mapFrame.classList.add("show-fallback");
 }
 </script>
 </body>
