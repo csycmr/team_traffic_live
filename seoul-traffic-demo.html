@@ -114,6 +114,17 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   .layers button { font-size: 11px }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important } }
+.protection-status {
+  position: absolute; z-index: 2; top: 16px; right: 16px;
+  padding: 7px 10px; background: #101c2a; border: 1px solid #49617a;
+  border-radius: 7px; font-size: 12px; pointer-events: none;
+}
+.protection-popup {
+  width: 220px; box-sizing: border-box; padding: 12px 24px 12px 12px;
+  color: #182d3b; background: #fff; font-size: 12px; line-height: 1.45;
+  overflow-wrap: anywhere;
+}
+.protection-popup p { margin-top: 5px }
 </style>
 </head>
 <body>
@@ -160,6 +171,7 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   <section class="map" id="map" aria-label="서울 교통 시연 지도">
     <canvas id="basemap" aria-hidden="true"></canvas>
     <div id="kakao-map" aria-label="서울 카카오맵" style="position: absolute; inset: 0;" hidden></div>
+    <div id="protection-status" class="protection-status" role="status" hidden>노인보호구역 불러오는 중</div>
     <div class="pins" id="pins"></div>
     <div class="map-head"><div class="layers" id="layers" aria-label="지도 표시 항목"></div></div>
     <div class="zoom" aria-label="지도 확대·축소">
@@ -482,15 +494,114 @@ start();
 </script>
 <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d1608fa2d10dd9f0ccae1a7049b4f0be&autoload=false"></script>
 <script>
+function parseProtectionCsv(csv) {
+  const records = [];
+  let row = [];
+  let field = "";
+  let quoted = false;
+
+  for (let i = 0; i < csv.length; i += 1) {
+    const character = csv[i];
+
+    if (character === '"') {
+      if (quoted && csv[i + 1] === '"') {
+        field += '"';
+        i += 1;
+      } else {
+        quoted = !quoted;
+      }
+    } else if (!quoted && character === ",") {
+      row.push(field);
+      field = "";
+    } else if (!quoted && (character === "\r" || character === "\n")) {
+      if (character === "\r" && csv[i + 1] === "\n") i += 1;
+      row.push(field);
+      records.push(row);
+      row = [];
+      field = "";
+    } else {
+      field += character;
+    }
+  }
+
+  if (row.length || field) records.push([...row, field]);
+  const headers = records.shift()?.map(header => header.replace(/^\uFEFF/, "")) ?? [];
+  return records
+    .filter(record => record.length === headers.length)
+    .map(record => Object.fromEntries(headers.map((header, i) => [header, record[i]])));
+}
+
+function protectionPopup(record) {
+  const popup = document.createElement("div");
+  popup.className = "protection-popup";
+
+  const title = document.createElement("strong");
+  title.textContent = record.API시설명 || record.명단시설명;
+  popup.append(title);
+
+  for (const line of [
+    [record.자치구명, record.도로명주소 || record.지번주소].filter(Boolean).join(" · "),
+    record.데이터기준일 ? "자료 기준일 " + record.데이터기준일.replace(/^(\d{4})(\d{2})(\d{2})$/, "$1.$2.$3") : "",
+    record.명단매칭방식?.includes("검수필요") ? "시설 명단 매칭 검수 필요" : ""
+  ].filter(Boolean)) {
+    const item = document.createElement("p");
+    item.textContent = line;
+    popup.append(item);
+  }
+
+  return popup;
+}
+
+async function showProtectionZones(kakaoMap) {
+  const status = document.getElementById("protection-status");
+  status.hidden = false;
+
+  try {
+    const response = await fetch("./data/05_보호구역_경계.csv");
+    if (!response.ok) throw new Error("CSV HTTP " + response.status);
+
+    const rows = parseProtectionCsv(await response.text());
+    const popup = new kakao.maps.InfoWindow({ removable: true });
+    let count = 0;
+
+    for (const row of rows) {
+      const latitude = Number(row.위도);
+      const longitude = Number(row.경도);
+      if (!(latitude >= 37 && latitude <= 38 && longitude >= 126 && longitude <= 128)) continue;
+
+      const marker = new kakao.maps.Marker({
+        position: new kakao.maps.LatLng(latitude, longitude),
+        title: row.API시설명 || row.명단시설명 || "노인보호구역",
+        clickable: true
+      });
+
+      kakao.maps.event.addListener(marker, "click", () => {
+        popup.close();
+        popup.setContent(protectionPopup(row));
+        popup.open(kakaoMap, marker);
+      });
+      marker.setMap(kakaoMap);
+      count += 1;
+    }
+
+    kakao.maps.event.addListener(kakaoMap, "click", () => popup.close());
+    status.textContent = count ? "노인보호구역 " + count + "개 지점" : "표시할 노인보호구역이 없어";
+  } catch (error) {
+    status.textContent = "노인보호구역을 불러오지 못했어";
+    console.error("노인보호구역 자료 로드 실패", error);
+  }
+}
+
   if (window.kakao?.maps?.load) {
     kakao.maps.load(() => {
       const mapElement = document.getElementById("kakao-map");
       mapElement.hidden = false;
 
-      new kakao.maps.Map(mapElement, {
+      const kakaoMap = new kakao.maps.Map(mapElement, {
         center: new kakao.maps.LatLng(37.5665, 126.9780),
         level: 8
       });
+      showProtectionZones(kakaoMap);
 
       const demoElements = document.querySelectorAll(
         "#basemap, #pins, .map-head, .zoom, .legend"
