@@ -267,8 +267,8 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   left: 16px;
   right: 16px;
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   gap: 6px;
   pointer-events: none;
 }
@@ -279,7 +279,9 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   white-space: nowrap;
   pointer-events: auto;
 }
+.map-marker-legend button { text-align: left }
 .map-marker-legend button::before {
+  width: 10px;
   vertical-align: middle;
 }
 </style>
