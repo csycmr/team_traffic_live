@@ -948,6 +948,7 @@ function protectionPopup(record) {
   for (const line of [
     [record.자치구명, record.도로명주소 || record.지번주소].filter(Boolean).join(" · "),
     record.데이터기준일 ? "자료 기준일 " + record.데이터기준일.replace(/^(\d{4})(\d{2})(\d{2})$/, "$1.$2.$3") : "",
+    record.위치안내,
     record.명단매칭방식?.includes("검수필요") ? "시설 명단 매칭 검수 필요" : ""
   ].filter(Boolean)) {
     const item = document.createElement("p");
@@ -1247,7 +1248,12 @@ async function showProtectionZones(kakaoMap) {
 
     const missing = [];
     for (const facility of facilities) {
-      const location = boundaries.get(facility.시설ID);
+      const location = boundaries.get(facility.시설ID) ||
+        (facility.시설ID === "Z186" ? {
+          위도: 37.580216,
+          경도: 127.042424,
+          위치안내: "시장 대표 위치 · 보호구역 경계와 다를 수 있어"
+        } : null);
       if (location) addMarker(facility, location);
       else missing.push(facility);
     }
