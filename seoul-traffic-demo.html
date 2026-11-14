@@ -451,9 +451,9 @@ main { min-height: calc(100dvh - 118px) }
     <canvas id="basemap" aria-hidden="true"></canvas>
     <div id="kakao-map" aria-label="서울 카카오맵" style="position: absolute; inset: 0; z-index: 0;" hidden></div>
     <div class="map-marker-legend" role="group" aria-label="지도 핀 표시">
+      <button id="hotspot-control" class="hotspot-control" type="button" aria-pressed="true" hidden>사고다발지역</button>
       <button id="protection-status" class="protection-status" type="button" aria-pressed="true" disabled hidden>노인보호구역 불러오는 중</button>
       <button id="school-control" class="hotspot-control school-control" type="button" aria-pressed="true" hidden>어린이보호구역</button>
-      <button id="hotspot-control" class="hotspot-control" type="button" aria-pressed="true" hidden>사고다발지역</button>
     </div>
     <div class="pins" id="pins"></div>
     <div class="map-head"><div class="layers" id="layers" aria-label="지도 표시 항목"></div></div>
