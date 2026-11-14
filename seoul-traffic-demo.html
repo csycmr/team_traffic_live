@@ -114,10 +114,27 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   .layers button { font-size: 11px }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important } }
+.seoul-exterior-blur {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background: rgb(23 38 50 / 3%);
+  -webkit-backdrop-filter: blur(3px) saturate(90%);
+  backdrop-filter: blur(3px) saturate(90%);
+}
+#seoul-outline {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
 .protection-status {
   position: absolute; z-index: 2; top: 16px; right: 16px;
   padding: 7px 10px; background: #101c2a; border: 1px solid #49617a;
-  border-radius: 7px; font-size: 12px; pointer-events: none;
+  border-radius: 7px; font-size: 12px;
 }
 .protection-popup {
   width: 220px; box-sizing: border-box; padding: 12px 24px 12px 12px;
@@ -170,7 +187,7 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   </aside>
   <section class="map" id="map" aria-label="서울 교통 시연 지도">
     <canvas id="basemap" aria-hidden="true"></canvas>
-    <div id="kakao-map" aria-label="서울 카카오맵" style="position: absolute; inset: 0;" hidden></div>
+    <div id="kakao-map" aria-label="서울 카카오맵" style="position: absolute; inset: 0; z-index: 0;" hidden></div>
     <div id="protection-status" class="protection-status" role="status" hidden>노인보호구역 불러오는 중</div>
     <div class="pins" id="pins"></div>
     <div class="map-head"><div class="layers" id="layers" aria-label="지도 표시 항목"></div></div>
@@ -492,7 +509,7 @@ byId('clock').textContent = timeNow() + ' KST';
 renderBoard();
 start();
 </script>
-<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d1608fa2d10dd9f0ccae1a7049b4f0be&autoload=false"></script>
+<script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=d1608fa2d10dd9f0ccae1a7049b4f0be&amp;autoload=false&amp;libraries=services"></script>
 <script>
 function parseProtectionCsv(csv) {
   const records = [];
@@ -553,6 +570,57 @@ function protectionPopup(record) {
 }
 
 
+function applyExteriorBlur(kakaoMap, cityRing) {
+  const mapElement = document.getElementById("kakao-map");
+  const overlay = document.createElement("div");
+  overlay.className = "seoul-exterior-blur";
+  overlay.setAttribute("aria-hidden", "true");
+  const outlineCanvas = document.createElement("canvas");
+  outlineCanvas.id = "seoul-outline";
+  outlineCanvas.setAttribute("aria-hidden", "true");
+  mapElement.after(overlay, outlineCanvas);
+  const context = outlineCanvas.getContext("2d");
+
+  let frame;
+  function drawBlur() {
+    const width = mapElement.clientWidth;
+    const height = mapElement.clientHeight;
+    const projection = kakaoMap.getProjection();
+    const points = cityRing.map(coordinate => projection.containerPointFromCoords(coordinate));
+    const outline = points.map(({ x, y }) => x + " " + y);
+    overlay.style.clipPath = 'path(evenodd, "M 0 0 H ' + width +
+      ' V ' + height + ' H 0 Z M ' + outline.join(" L ") + ' Z")';
+
+    const ratio = window.devicePixelRatio || 1;
+    const pixelWidth = Math.round(width * ratio);
+    const pixelHeight = Math.round(height * ratio);
+    if (outlineCanvas.width !== pixelWidth || outlineCanvas.height !== pixelHeight) {
+      outlineCanvas.width = pixelWidth;
+      outlineCanvas.height = pixelHeight;
+    }
+    context.setTransform(ratio, 0, 0, ratio, 0, 0);
+    context.clearRect(0, 0, width, height);
+    context.beginPath();
+    context.moveTo(points[0].x, points[0].y);
+    for (const { x, y } of points.slice(1)) context.lineTo(x, y);
+    context.closePath();
+    context.lineWidth = 3;
+    context.lineJoin = "round";
+    context.strokeStyle = "#304b5d";
+    context.stroke();
+  }
+
+  function scheduleBlur() {
+    cancelAnimationFrame(frame);
+    frame = requestAnimationFrame(drawBlur);
+  }
+
+  kakao.maps.event.addListener(kakaoMap, "bounds_changed", scheduleBlur);
+  kakao.maps.event.addListener(kakaoMap, "idle", scheduleBlur);
+  new ResizeObserver(scheduleBlur).observe(mapElement);
+  drawBlur();
+}
+
 async function showSeoulBoundaries(kakaoMap) {
   const response = await fetch("./data/08_서울_자치구_경계.geojson");
   if (!response.ok) throw new Error("경계 GeoJSON HTTP " + response.status);
@@ -564,37 +632,60 @@ async function showSeoulBoundaries(kakaoMap) {
   ];
   const toMapRing = ring => ring.map(([lng, lat]) => new kakao.maps.LatLng(lat, lng));
   const cityRing = toMapRing(city.geometry.coordinates[0]);
-  const outsideRing = toMapRing([
-    [118, 28], [118, 46], [137, 46], [137, 28], [118, 28]
-  ]);
-
-  new kakao.maps.Polygon({
-    map: kakaoMap,
-    path: [outsideRing, cityRing],
-    strokeOpacity: 0,
-    fillColor: "#172632",
-    fillOpacity: 1,
-    zIndex: 1
-  });
+  applyExteriorBlur(kakaoMap, cityRing);
 
   for (const district of districts) {
     new kakao.maps.Polyline({
       map: kakaoMap,
       path: district.geometry.coordinates.map(toMapRing),
       strokeWeight: 2,
-      strokeColor: "#304b5d",
+      strokeColor: "#595959",
       strokeOpacity: 0.9,
       zIndex: 2
     });
   }
 
-  new kakao.maps.Polyline({
-    map: kakaoMap,
-    path: cityRing,
-    strokeWeight: 3,
-    strokeColor: "#304b5d",
-    strokeOpacity: 1,
-    zIndex: 3
+}
+
+async function readProtectionCsv(path) {
+  const response = await fetch(path);
+  if (!response.ok) throw new Error("CSV HTTP " + response.status);
+  return parseProtectionCsv(await response.text());
+}
+
+function hasProtectionCoordinates(row) {
+  return Number(row.위도) >= 37 && Number(row.위도) <= 38 &&
+    Number(row.경도) >= 126 && Number(row.경도) <= 128;
+}
+
+function resolveFacilityCoordinates(facility, geocoder, places) {
+  const district = "서울 " + facility.자치구명;
+  const address = district + " " + facility.위치;
+  return new Promise(resolve => {
+    const found = (results, status, accept) => {
+      const match = status === kakao.maps.services.Status.OK && results.find(accept);
+      const row = match && { 위도: match.y, 경도: match.x };
+      resolve(row && hasProtectionCoordinates(row) ? row : null);
+    };
+
+    if (/\d$/.test(facility.위치)) {
+      geocoder.addressSearch(address, (results, status) => {
+        found(results, status, result => {
+          const road = result.road_address;
+          return road?.region_2depth_name === facility.자치구명 &&
+            road.road_name + " " + road.main_building_no +
+              (road.sub_building_no ? "-" + road.sub_building_no : "") === facility.위치;
+        });
+      }, { analyze_type: kakao.maps.services.AnalyzeType.EXACT });
+      return;
+    }
+
+    places.keywordSearch(district + " " + facility.시설명, (results, status) => {
+      found(results, status, result =>
+        result.place_name.replace(/\s/g, "") === facility.시설명.replace(/\s/g, "") &&
+        result.road_address_name.includes(facility.자치구명 + " " + facility.위치)
+      );
+    });
   });
 }
 
@@ -603,63 +694,97 @@ async function showProtectionZones(kakaoMap) {
   status.hidden = false;
 
   try {
-    const response = await fetch("./data/05_보호구역_경계.csv");
-    if (!response.ok) throw new Error("CSV HTTP " + response.status);
+    const [master, rows] = await Promise.all([
+      readProtectionCsv("./data/04_보호구역_마스터.csv"),
+      readProtectionCsv("./data/05_보호구역_경계.csv")
+    ]);
+    const facilities = [...new Map(
+      master.filter(row => row.명단2025 === "1").map(row => [row.시설ID, row])
+    ).values()];
+    const boundaries = new Map();
+    const matchRank = row => row.명단매칭방식?.includes("검수필요") ? 0 :
+      row.명단매칭방식 === "주소+시설명" ? 2 : 1;
+    for (const row of rows.filter(hasProtectionCoordinates)) {
+      const previous = boundaries.get(row.시설ID);
+      if (!previous || matchRank(row) > matchRank(previous) ||
+          (matchRank(row) === matchRank(previous) && row.데이터기준일 > previous.데이터기준일)) {
+        boundaries.set(row.시설ID, row);
+      }
+    }
 
-    const rows = parseProtectionCsv(await response.text());
+    const services = kakao.maps.services;
+    const geocoder = services && new services.Geocoder();
+    const places = services && new services.Places();
     const popup = new kakao.maps.InfoWindow({ removable: true });
     let count = 0;
 
-    for (const row of rows) {
-      const latitude = Number(row.위도);
-      const longitude = Number(row.경도);
-      if (!(latitude >= 37 && latitude <= 38 && longitude >= 126 && longitude <= 128)) continue;
-
+    const addMarker = (facility, location) => {
       const marker = new kakao.maps.Marker({
-        position: new kakao.maps.LatLng(latitude, longitude),
-        title: row.API시설명 || row.명단시설명 || "노인보호구역",
+        position: new kakao.maps.LatLng(Number(location.위도), Number(location.경도)),
+        title: facility.시설명,
         clickable: true
       });
 
       kakao.maps.event.addListener(marker, "click", () => {
         popup.close();
-        popup.setContent(protectionPopup(row));
+        popup.setContent(protectionPopup({
+          ...location,
+          API시설명: facility.시설명,
+          자치구명: facility.자치구명,
+          도로명주소: facility.위치
+        }));
         popup.open(kakaoMap, marker);
       });
       marker.setMap(kakaoMap);
       count += 1;
+    };
+
+    const missing = [];
+    for (const facility of facilities) {
+      const location = boundaries.get(facility.시설ID);
+      if (location) addMarker(facility, location);
+      else missing.push(facility);
     }
 
     kakao.maps.event.addListener(kakaoMap, "click", () => popup.close());
-    status.textContent = count ? "노인보호구역 " + count + "개 지점" : "표시할 노인보호구역이 없어";
+    if (geocoder && places) {
+      for (const facility of missing) {
+        const location = await resolveFacilityCoordinates(facility, geocoder, places);
+        if (location) addMarker(facility, location);
+      }
+    }
+
+    status.textContent = "노인보호구역 " + count + "/" + facilities.length + "개 지도 표시 · 2025년 명단";
+    status.title = "시설당 핀 1개 · 좌표를 확인하지 못한 시설 " + (facilities.length - count) + "개";
   } catch (error) {
     status.textContent = "노인보호구역을 불러오지 못했어";
     console.error("노인보호구역 자료 로드 실패", error);
   }
 }
 
-  if (window.kakao?.maps?.load) {
-    kakao.maps.load(() => {
-      const mapElement = document.getElementById("kakao-map");
-      mapElement.hidden = false;
+if (window.kakao?.maps?.load) {
+  kakao.maps.load(() => {
+    const mapElement = document.getElementById("kakao-map");
+    mapElement.hidden = false;
 
+    try {
       const kakaoMap = new kakao.maps.Map(mapElement, {
         center: new kakao.maps.LatLng(37.5665, 126.9780),
         level: 8
       });
       showSeoulBoundaries(kakaoMap).catch(error => console.error("서울 경계 로드 실패", error));
       showProtectionZones(kakaoMap);
+    } catch (error) {
+      mapElement.hidden = true;
+      console.error("카카오맵을 표시할 수 없습니다.", error);
+      return;
+    }
 
-      const demoElements = document.querySelectorAll(
-        "#basemap, #pins, .map-head, .zoom, .legend"
-      );
-
-      demoElements.forEach((element) => {
-        element.hidden = true;
-        element.style.display = "none";
-      });
+    document.querySelectorAll("#basemap, #pins, .map-head, .zoom, .legend").forEach(element => {
+      element.style.display = "none";
     });
-  }
+  });
+}
 </script>
 </body>
 </html>
