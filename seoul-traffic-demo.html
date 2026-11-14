@@ -135,6 +135,17 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   overflow-wrap: anywhere;
 }
 .protection-popup p { margin-top: 5px }
+.compare-chart h3 { font-size: 12px; margin: 10px 0 7px }
+.compare-chart h3 small { color: var(--muted); font-weight: 400 }
+.compare-row { display: grid; grid-template-columns: 1fr auto; gap: 4px; margin-bottom: 8px; font-size: 11px }
+.compare-row strong { font-variant-numeric: tabular-nums }
+.track { display: block; grid-column: 1 / -1; border-radius: 5px; background: #243447; height: 5px; overflow: hidden }
+.track span { display: block; height: 100%; border-radius: inherit }
+.track .children { background: #ffd54f }
+.track .older { background: #73adff }
+.compare-chart a { color: var(--muted) }
+.hotspot-total { margin: 10px 0 0 }
+.hotspot-total strong { color: #ff938e }
 </style>
 </head>
 <body>
@@ -158,6 +169,19 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
         <div class="stat"><dt>CCTV 정상</dt><dd><strong id="cctv">128</strong><small>/ 132대</small></dd></div>
       </dl>
       <div class="refresh muted"><span id="refresh-label">5초마다 갱신</span><span>갱신 <time id="updated"></time></span></div>
+    </section>
+    <section class="feed" aria-labelledby="zone-summary">
+      <div class="panel-title"><h2 id="zone-summary">서울 보호구역과 인구</h2></div>
+      <div class="compare-chart">
+        <h3>주민등록 인구 <small>2026년 9월 말</small></h3>
+        <div class="compare-row"><span>어린이 · 0~14세</span><strong>791,163명</strong><span class="track"><span class="children" style="width:40.24%"></span></span></div>
+        <div class="compare-row"><span>노인 · 65세 이상</span><strong>1,965,896명</strong><span class="track"><span class="older" style="width:100%"></span></span></div>
+        <h3>보호구역</h3>
+        <div class="compare-row"><span>어린이 · 표준자료 기록</span><strong>1,601건</strong><span class="track"><span class="children" style="width:100%"></span></span></div>
+        <div class="compare-row"><span>노인 · 2025년 명단</span><strong>195개</strong><span class="track"><span class="older" style="width:12.18%"></span></span></div>
+        <p class="muted">어린이 자료는 시설 기록 수이며 기준일은 시설마다 달라요. <a href="https://opus.ai.kr/semteo/region/population/seoul/" target="_blank" rel="noopener">인구 출처</a></p>
+      </div>
+      <dl class="stat hotspot-total"><dt>사고다발지역 · 2025년 자료</dt><dd><strong id="hotspot-total">—</strong><small>곳</small></dd></dl>
     </section>
     <section class="feed" aria-labelledby="situation">
       <div class="panel-title"><h2 id="situation">기상·교통 상황</h2></div>
@@ -681,6 +705,7 @@ async function showAccidentHotspots(kakaoMap) {
       return marker;
     });
 
+    document.getElementById("hotspot-total").textContent = markers.length.toLocaleString("ko-KR");
     control.textContent = year + "년 사고다발지역 " + markers.length + "곳";
     control.disabled = false;
     control.addEventListener("click", () => {
@@ -715,6 +740,7 @@ async function showSchoolZones(kakaoMap) {
         position: new kakao.maps.LatLng(Number(row.위도), Number(row.경도)),
         title: row.시설명,
         image,
+        zIndex: 10,
         clickable: true
       });
       kakao.maps.event.addListener(marker, "click", () => {
@@ -782,6 +808,7 @@ async function showProtectionZones(kakaoMap) {
         position: new kakao.maps.LatLng(Number(location.위도), Number(location.경도)),
         title: facility.시설명,
         image: markerImage,
+        zIndex: 20,
         clickable: true
       });
 
