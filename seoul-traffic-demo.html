@@ -173,7 +173,16 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   box-shadow: 0 0 0 1px #a7242c;
 }
 .hotspot-symbol { display: block; width: 13px; height: 13px; padding: 0 }
-.hotspot-control[aria-pressed="false"]::before { opacity: .45 }
+#protection-status[aria-pressed="false"]::before,
+.hotspot-control[aria-pressed="false"]::before { opacity: .4 }
+.protection-status[aria-pressed="false"], .hotspot-control[aria-pressed="false"] {
+  background: #172433;
+  color: #b6c4d1;
+  border-color: #364656;
+}
+.protection-status:not(:disabled):hover, .hotspot-control:not(:disabled):hover {
+  border-color: #8ba4bc;
+}
 
 /* Roadside message-board styling for traffic and pedestrian statistics. */
 .board {
@@ -297,7 +306,7 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   <section class="map" id="map" aria-label="서울 교통 시연 지도">
     <canvas id="basemap" aria-hidden="true"></canvas>
     <div id="kakao-map" aria-label="서울 카카오맵" style="position: absolute; inset: 0; z-index: 0;" hidden></div>
-    <div id="protection-status" class="protection-status" role="status" hidden>노인보호구역 불러오는 중</div>
+    <button id="protection-status" class="protection-status" type="button" aria-pressed="true" disabled hidden>노인보호구역 불러오는 중</button>
     <button id="school-control" class="hotspot-control school-control" type="button" aria-pressed="true" hidden>어린이보호구역</button>
     <button id="hotspot-control" class="hotspot-control" type="button" aria-pressed="true" hidden>사고다발지역</button>
     <div class="pins" id="pins"></div>
@@ -981,7 +990,7 @@ async function showProtectionZones(kakaoMap) {
     const geocoder = services && new services.Geocoder();
     const places = services && new services.Places();
     const popup = new kakao.maps.InfoWindow({ removable: true });
-    let count = 0;
+    const markers = [];
 
     const pinUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAEs0lEQVR4nIVUTWxUVRT+zrnvvZmObW1JCkXEYFhYBSREVgVsmujKYNAwQCRANEaWtltIWmsiKxO6cYE7ilHaIcJCN26KkRATIKTy4w8UI6XttFPa6dDOzPu557h4M6W2pZ7kbt4993vfOd93DmFxpNUgQxbpAS+V2nhMyew3xmxhY14AALF2zFp7h9ReKBZHziJzIFh4UwlaAOvuZvT0SM2Rq2n2ak4m6hu3J+oa4CQ8cCVLFIj8AP6TPPzCzJAEpS9K51oz1bcVQALSYnCBberIldNu/dqO2nUb4CVdATEgQlr5MQEKZoUKgnLIcxOjCAuTvcVzuzuxXwwybAltgw5+bo9SR6+cTjRt7qhvaozYcVitMEHBTFCtlEOAiEJBIMMiUSSF3Izj54Z7i327O9E26BAA1By9+p5Xv/b7hhc3hszsiAgZJoQCzPmAa2LA0AK1CcBlwIqCmVVEovyjETcoTL5f6mu9SDg2mExRzc3Gza+3eDWeaGSZmVAKgeeTwJEdjD0vMwDgl78F524KZstAjRuzJcdIUAp4Zvi3P4pa2uEkrHM42dTc4iVdUStMTAgs0JgCvj3oYPv6p7rt2WTwTgvjg/4IhTLgGoJaYS/pSrKxucXmRg6zYT6UqGtQECtUQZXSzuyLwQIbqysKBBbYvp5wZp+D0FaUUgWINVHXoIb5ELPjbnU8l1SEmQnFENjWDLS+RLAKeAZgio9nAKvx3bZmoBgiFk2EHc8ldtytTI7bTLHRqMpuQz2BeLFJnwYBII5zFlgCREwgx23mxcmqsaKjBYUKoCsAKgCVOMc1WLBUNVijMKuiqOQh5QK3ssDVhwpDWNZDQ/HdrWycK1UuotAozLJE4e0oCJWYBapQxCyPX4owNK7Lejg0rjh+KYrZVcoiZomCUCUKbztW5Lz/JP9Wsu45AsVT4Rlgpggc+i5a3Yda6bwK+U/yZEXOr2hsEIEJq06KaIXdEmMzzraXVeTE3MQYJLKWOPajKOAQsCYF1HrxWZOKvy2AMatE1s5NjEFFTuBse5nRNuiU+lovhoVsbyE37YpYS46RqqJWnopiFylPzCoqtpCbdsNCtrfU13qxshyWrq+mjtq16+ElEqorWxFEpJHvUyE7hvBJ7j/riwEFMmTR1cXFvl2dfmHiYP7h/X+sFQWRLnejqhJpYXxk1s+PHSz27epEVxfHW1uXMPjkuouvd4bJ9E9ttZu2XK5bt25BpKqtiY31S6HJ/3Xts+I3b/ag+7aHnq3B4knCSqC1H/46uOaVnW3MKlAx8b5WhXF05sHv07MjD15Fzd4ZZCAALZTBywBnHggAhMVST3E6R8RcdTDIMTYoRRwUHn+FH96dQhpYDLYyYOaARXrA+P3tl8u5hxlryYDZAhCFMfPj94ZLQXAa3co4UJ281QAB4LW0AkAwOXmymHvkk3GI2EgwXyI/P/U5Mm/P4i5oKbtnA/aQYEBN8OPee6Wp0X4bKYOMmc8O/1m+NtSPbmVkaBm7ZwMCwB0ooDQ/nT9VnBot+6WA/PzjU7j/qR+zW3G7/U+kBwwA1H107XzdxzeyeOO6i25lPMPwqzMEKr1UiiBfShh04MbOEHczq7L7F/9Iq9hEVdfGAAAAAElFTkSuQmCC";
     status.style.setProperty("--legend-pin", "url(" + pinUrl + ")");
@@ -1011,7 +1020,7 @@ async function showProtectionZones(kakaoMap) {
         popup.open(kakaoMap, marker);
       });
       marker.setMap(kakaoMap);
-      count += 1;
+      markers.push(marker);
     };
 
     const missing = [];
@@ -1030,7 +1039,14 @@ async function showProtectionZones(kakaoMap) {
     }
 
     status.textContent = "노인보호구역 " + facilities.length + "곳";
-    status.title = "2025년 명단 기준 · 지도에 표시된 시설 " + count + "/" + facilities.length + "곳";
+    status.title = "2025년 명단 기준 · 지도에 표시할 수 있는 시설 " + markers.length + "/" + facilities.length + "곳";
+    status.disabled = false;
+    status.addEventListener("click", () => {
+      const visible = status.getAttribute("aria-pressed") !== "true";
+      status.setAttribute("aria-pressed", visible);
+      for (const marker of markers) marker.setMap(visible ? kakaoMap : null);
+      if (!visible) popup.close();
+    });
   } catch (error) {
     status.textContent = "노인보호구역을 불러오지 못했어";
     console.error("노인보호구역 자료 로드 실패", error);
