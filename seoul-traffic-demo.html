@@ -114,15 +114,6 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   .layers button { font-size: 11px }
 }
 @media (prefers-reduced-motion: reduce) { * { animation: none !important } }
-.seoul-exterior-blur {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  pointer-events: none;
-  background: rgb(23 38 50 / 3%);
-  -webkit-backdrop-filter: blur(3px) saturate(90%);
-  backdrop-filter: blur(3px) saturate(90%);
-}
 #seoul-outline {
   position: absolute;
   inset: 0;
@@ -570,27 +561,20 @@ function protectionPopup(record) {
 }
 
 
-function applyExteriorBlur(kakaoMap, cityRing) {
+function drawSeoulOutline(kakaoMap, cityRing) {
   const mapElement = document.getElementById("kakao-map");
-  const overlay = document.createElement("div");
-  overlay.className = "seoul-exterior-blur";
-  overlay.setAttribute("aria-hidden", "true");
   const outlineCanvas = document.createElement("canvas");
   outlineCanvas.id = "seoul-outline";
   outlineCanvas.setAttribute("aria-hidden", "true");
-  mapElement.after(overlay, outlineCanvas);
+  mapElement.after(outlineCanvas);
   const context = outlineCanvas.getContext("2d");
 
   let frame;
-  function drawBlur() {
+  function drawOutline() {
     const width = mapElement.clientWidth;
     const height = mapElement.clientHeight;
     const projection = kakaoMap.getProjection();
     const points = cityRing.map(coordinate => projection.containerPointFromCoords(coordinate));
-    const outline = points.map(({ x, y }) => x + " " + y);
-    overlay.style.clipPath = 'path(evenodd, "M 0 0 H ' + width +
-      ' V ' + height + ' H 0 Z M ' + outline.join(" L ") + ' Z")';
-
     const ratio = window.devicePixelRatio || 1;
     const pixelWidth = Math.round(width * ratio);
     const pixelHeight = Math.round(height * ratio);
@@ -610,15 +594,15 @@ function applyExteriorBlur(kakaoMap, cityRing) {
     context.stroke();
   }
 
-  function scheduleBlur() {
+  function scheduleOutline() {
     cancelAnimationFrame(frame);
-    frame = requestAnimationFrame(drawBlur);
+    frame = requestAnimationFrame(drawOutline);
   }
 
-  kakao.maps.event.addListener(kakaoMap, "bounds_changed", scheduleBlur);
-  kakao.maps.event.addListener(kakaoMap, "idle", scheduleBlur);
-  new ResizeObserver(scheduleBlur).observe(mapElement);
-  drawBlur();
+  kakao.maps.event.addListener(kakaoMap, "bounds_changed", scheduleOutline);
+  kakao.maps.event.addListener(kakaoMap, "idle", scheduleOutline);
+  new ResizeObserver(scheduleOutline).observe(mapElement);
+  drawOutline();
 }
 
 async function showSeoulBoundaries(kakaoMap) {
@@ -632,7 +616,18 @@ async function showSeoulBoundaries(kakaoMap) {
   ];
   const toMapRing = ring => ring.map(([lng, lat]) => new kakao.maps.LatLng(lat, lng));
   const cityRing = toMapRing(city.geometry.coordinates[0]);
-  applyExteriorBlur(kakaoMap, cityRing);
+  const outsideRing = toMapRing([
+    [118, 28], [118, 46], [137, 46], [137, 28], [118, 28]
+  ]);
+  new kakao.maps.Polygon({
+    map: kakaoMap,
+    path: [outsideRing, cityRing],
+    strokeOpacity: 0,
+    fillColor: "#d8dee4",
+    fillOpacity: 0.22,
+    zIndex: 1
+  });
+  drawSeoulOutline(kakaoMap, cityRing);
 
   for (const district of districts) {
     new kakao.maps.Polyline({
