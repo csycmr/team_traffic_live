@@ -660,10 +660,17 @@ async function showProtectionZones(kakaoMap) {
     const popup = new kakao.maps.InfoWindow({ removable: true });
     let count = 0;
 
+    const markerImage = new kakao.maps.MarkerImage(
+      "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAEs0lEQVR4nIVUTWxUVRT+zrnvvZmObW1JCkXEYFhYBSREVgVsmujKYNAwQCRANEaWtltIWmsiKxO6cYE7ilHaIcJCN26KkRATIKTy4w8UI6XttFPa6dDOzPu557h4M6W2pZ7kbt4993vfOd93DmFxpNUgQxbpAS+V2nhMyew3xmxhY14AALF2zFp7h9ReKBZHziJzIFh4UwlaAOvuZvT0SM2Rq2n2ak4m6hu3J+oa4CQ8cCVLFIj8AP6TPPzCzJAEpS9K51oz1bcVQALSYnCBberIldNu/dqO2nUb4CVdATEgQlr5MQEKZoUKgnLIcxOjCAuTvcVzuzuxXwwybAltgw5+bo9SR6+cTjRt7qhvaozYcVitMEHBTFCtlEOAiEJBIMMiUSSF3Izj54Z7i327O9E26BAA1By9+p5Xv/b7hhc3hszsiAgZJoQCzPmAa2LA0AK1CcBlwIqCmVVEovyjETcoTL5f6mu9SDg2mExRzc3Gza+3eDWeaGSZmVAKgeeTwJEdjD0vMwDgl78F524KZstAjRuzJcdIUAp4Zvi3P4pa2uEkrHM42dTc4iVdUStMTAgs0JgCvj3oYPv6p7rt2WTwTgvjg/4IhTLgGoJaYS/pSrKxucXmRg6zYT6UqGtQECtUQZXSzuyLwQIbqysKBBbYvp5wZp+D0FaUUgWINVHXoIb5ELPjbnU8l1SEmQnFENjWDLS+RLAKeAZgio9nAKvx3bZmoBgiFk2EHc8ldtytTI7bTLHRqMpuQz2BeLFJnwYBII5zFlgCREwgx23mxcmqsaKjBYUKoCsAKgCVOMc1WLBUNVijMKuiqOQh5QK3ssDVhwpDWNZDQ/HdrWycK1UuotAozLJE4e0oCJWYBapQxCyPX4owNK7Lejg0rjh+KYrZVcoiZomCUCUKbztW5Lz/JP9Wsu45AsVT4Rlgpggc+i5a3Yda6bwK+U/yZEXOr2hsEIEJq06KaIXdEmMzzraXVeTE3MQYJLKWOPajKOAQsCYF1HrxWZOKvy2AMatE1s5NjEFFTuBse5nRNuiU+lovhoVsbyE37YpYS46RqqJWnopiFylPzCoqtpCbdsNCtrfU13qxshyWrq+mjtq16+ElEqorWxFEpJHvUyE7hvBJ7j/riwEFMmTR1cXFvl2dfmHiYP7h/X+sFQWRLnejqhJpYXxk1s+PHSz27epEVxfHW1uXMPjkuouvd4bJ9E9ttZu2XK5bt25BpKqtiY31S6HJ/3Xts+I3b/ag+7aHnq3B4knCSqC1H/46uOaVnW3MKlAx8b5WhXF05sHv07MjD15Fzd4ZZCAALZTBywBnHggAhMVST3E6R8RcdTDIMTYoRRwUHn+FH96dQhpYDLYyYOaARXrA+P3tl8u5hxlryYDZAhCFMfPj94ZLQXAa3co4UJ281QAB4LW0AkAwOXmymHvkk3GI2EgwXyI/P/U5Mm/P4i5oKbtnA/aQYEBN8OPee6Wp0X4bKYOMmc8O/1m+NtSPbmVkaBm7ZwMCwB0ooDQ/nT9VnBot+6WA/PzjU7j/qR+zW3G7/U+kBwwA1H107XzdxzeyeOO6i25lPMPwqzMEKr1UiiBfShh04MbOEHczq7L7F/9Iq9hEVdfGAAAAAElFTkSuQmCC",
+      new kakao.maps.Size(20, 28),
+      { offset: new kakao.maps.Point(10, 28) }
+    );
+
     const addMarker = (facility, location) => {
       const marker = new kakao.maps.Marker({
         position: new kakao.maps.LatLng(Number(location.위도), Number(location.경도)),
         title: facility.시설명,
+        image: markerImage,
         clickable: true
       });
 
