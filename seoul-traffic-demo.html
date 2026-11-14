@@ -270,23 +270,50 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   gap: 6px;
   pointer-events: none;
 }
+.map-marker-legend { align-items: stretch; right: auto; max-width: calc(100% - 32px) }
 .map-marker-legend button {
   position: static;
-  display: inline-grid;
-  grid-template-columns: 14px auto;
+  display: grid;
+  grid-template-columns: 14px minmax(0, 1fr) 26px;
   align-items: center;
-  column-gap: 6px;
-  min-height: 32px;
-  padding: 6px 9px;
-  white-space: nowrap;
+  column-gap: 8px;
+  min-height: 36px;
+  padding: 7px 10px;
+  border: 1px solid #647f97;
+  border-radius: 8px;
+  background: linear-gradient(#253c51, #152738);
+  color: #f0f5fb;
+  font-weight: 600;
+  text-align: left;
   pointer-events: auto;
+  box-shadow: 0 2px 5px #0a16234d, inset 0 1px #ffffff20;
 }
-.map-marker-legend button { text-align: left }
 .map-marker-legend button[hidden] { display: none }
 .map-marker-legend button::before {
   margin: 0;
   justify-self: center;
 }
+.map-marker-legend button::after {
+  content: "";
+  grid-column: 3;
+  grid-row: 1;
+  width: 26px;
+  height: 14px;
+  border: 1px solid #92d7ff;
+  border-radius: 999px;
+  background: radial-gradient(circle at 18px center, #ffffff 4px, transparent 4.5px), #347fae;
+}
+.map-marker-legend button[aria-pressed="false"]::after {
+  border-color: #8496a8;
+  background: radial-gradient(circle at 6px center, #c6d2dd 4px, transparent 4.5px), #283746;
+}
+.map-marker-legend button:not(:disabled):hover {
+  border-color: #b9def8;
+  filter: brightness(1.12);
+}
+.map-marker-legend button:not(:disabled):active { box-shadow: inset 0 2px 4px #08121c80 }
+.map-marker-legend button:disabled { opacity: .8; cursor: default }
+
 </style>
 </head>
 <body>
