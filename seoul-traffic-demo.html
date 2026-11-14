@@ -142,9 +142,10 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
 .track .older { background: #73adff }
 .compare-chart a { color: var(--muted) }
 .safety-board { margin-top: 12px }
-.safety-board .stat { margin: 0; padding: 8px 6px }
+.safety-board .stat { margin: 0; padding: 8px 6px; display: flex; flex-direction: column }
+.safety-board .stat dd { margin-top: auto; padding-top: 5px }
 .safety-board dt { white-space: normal; line-height: 1.4 }
-.safety-board dt span { display: block }
+.safety-board dt small { font-size: inherit; white-space: nowrap }
 .safety-board .pending-rate { font-size: 11px; color: var(--muted) }
 .safety-board-note { display: block; margin-top: 5px }
 .hotspot-total strong { color: #ff938e }
@@ -210,11 +211,11 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
       </div>
       <div class="board safety-board" role="group" aria-label="2025년 서울 보행 안전 지표">
         <dl class="stat" title="2025년 서울 25개 자치구의 고령 보행자 사망자 수 합계">
-          <dt>노인 보행자 사고 사망수<span>65세 이상</span></dt>
+          <dt>노인 보행자 사고 사망수 <small>(65세 이상)</small></dt>
           <dd><strong>82</strong><small>명</small></dd>
         </dl>
         <dl class="stat">
-          <dt>어린이 보행자 사고 사망수<span>12세 이하</span></dt>
+          <dt>어린이 보행자 사고 사망수 <small>(12세 이하)</small></dt>
           <dd><strong>1</strong><small>명</small></dd>
         </dl>
         <dl class="stat hotspot-total">
