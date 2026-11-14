@@ -1001,11 +1001,12 @@ function resolveFacilityCoordinates(facility, geocoder, places) {
   });
 }
 
+let mapPopupZIndex = 100;
+
 function createMapPopup(kakaoMap) {
   const overlay = new kakao.maps.CustomOverlay({
     clickable: true,
-    yAnchor: 1,
-    zIndex: 100
+    yAnchor: 1
   });
 
   function close() {
@@ -1024,6 +1025,7 @@ function createMapPopup(kakaoMap) {
 
     overlay.setContent(content);
     overlay.setPosition(position);
+    overlay.setZIndex(++mapPopupZIndex);
     overlay.setMap(kakaoMap);
 
     const popupBounds = content.getBoundingClientRect();
