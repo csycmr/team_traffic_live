@@ -319,16 +319,25 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   isolation: isolate;
   overflow: hidden;
   min-height: 118px;
-  background: #0b121d url("./assets/traffic-header.jpg") center 56% / cover no-repeat;
+  background: transparent;
 }
-.traffic-header-video, .traffic-header::before {
+.traffic-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background: #0b121d url("./assets/traffic-header.jpg") center / cover no-repeat;
+}
+body { isolation: isolate }
+main > aside { background: rgb(14 23 35 / 88%) }
+.traffic-background-video, .traffic-header::before {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   pointer-events: none;
 }
-.traffic-header-video { z-index: -2; object-fit: cover; object-position: center 56% }
+.traffic-background-video { object-fit: cover }
 .traffic-header::before {
   content: "";
   z-index: -1;
@@ -343,10 +352,12 @@ main { min-height: calc(100dvh - 118px) }
 </style>
 </head>
 <body>
-<header class="traffic-header">
-  <video class="traffic-header-video" muted loop playsinline preload="none"
+  <div class="traffic-backdrop" aria-hidden="true">
+    <video class="traffic-background-video" muted loop playsinline preload="none"
     poster="./assets/traffic-header.jpg" data-src="./assets/traffic-header.mp4"
     aria-hidden="true"></video>
+  </div>
+<header class="traffic-header">
   <div class="brand">
     <span class="brand-icon" aria-hidden="true">↗</span>
     <div><div class="eyebrow">SEOUL TRAFFIC NEWSROOM</div><h1>서울 교통안전 라이브</h1></div>
@@ -453,7 +464,7 @@ main { min-height: calc(100dvh - 118px) }
   <canvas id="camera-view" width="400" height="195" aria-label="시연용 교통 CCTV 애니메이션" hidden></canvas>
 </dialog>
 <script>
-const headerVideo = document.querySelector(".traffic-header-video");
+const headerVideo = document.querySelector(".traffic-background-video");
 const headerMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
 
 function syncHeaderVideo() {
