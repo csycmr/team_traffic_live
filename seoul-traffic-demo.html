@@ -314,10 +314,39 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
 .map-marker-legend button:not(:disabled):active { box-shadow: inset 0 2px 4px #08121c80 }
 .map-marker-legend button:disabled { opacity: .8; cursor: default }
 
+.traffic-header {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  min-height: 118px;
+  background: #0b121d url("./assets/traffic-header.jpg") center 56% / cover no-repeat;
+}
+.traffic-header-video, .traffic-header::before {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+.traffic-header-video { z-index: -2; object-fit: cover; object-position: center 56% }
+.traffic-header::before {
+  content: "";
+  z-index: -1;
+  background: linear-gradient(90deg, #081421de 0%, #0b1a297a 58%, #081421c9 100%);
+}
+.traffic-header .eyebrow { color: #d5e1ee }
+main { min-height: calc(100dvh - 118px) }
+@media (max-width: 760px) {
+  .traffic-header { min-height: 90px }
+  main { min-height: calc(100dvh - 90px) }
+}
 </style>
 </head>
 <body>
-<header>
+<header class="traffic-header">
+  <video class="traffic-header-video" muted loop playsinline preload="none"
+    poster="./assets/traffic-header.jpg" data-src="./assets/traffic-header.mp4"
+    aria-hidden="true"></video>
   <div class="brand">
     <span class="brand-icon" aria-hidden="true">↗</span>
     <div><div class="eyebrow">SEOUL TRAFFIC NEWSROOM</div><h1>서울 교통안전 라이브</h1></div>
@@ -424,6 +453,23 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   <canvas id="camera-view" width="400" height="195" aria-label="시연용 교통 CCTV 애니메이션" hidden></canvas>
 </dialog>
 <script>
+const headerVideo = document.querySelector(".traffic-header-video");
+const headerMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+function syncHeaderVideo() {
+  if (headerMotion.matches) {
+    headerVideo.pause();
+    headerVideo.hidden = true;
+    return;
+  }
+  headerVideo.hidden = false;
+  if (!headerVideo.getAttribute("src")) headerVideo.src = headerVideo.dataset.src;
+  headerVideo.play().catch(() => {});
+}
+
+headerMotion.addEventListener("change", syncHeaderVideo);
+syncHeaderVideo();
+
 const byId = id => document.getElementById(id);
 const clockFormat = new Intl.DateTimeFormat('en-GB', {
   timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', second: '2-digit'
