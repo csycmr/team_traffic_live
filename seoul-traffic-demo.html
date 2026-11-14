@@ -229,7 +229,6 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   border-right: 0;
   border-left: 1px solid var(--line);
 }
-.zone-panel .feed { margin-top: 0; padding-top: 0; border-top: 0 }
 @media (min-width: 1041px) {
   main { grid-template-columns: minmax(300px, 360px) minmax(0, 1fr) minmax(290px, 340px) }
 }
@@ -264,18 +263,7 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
 </header>
 <main>
   <aside>
-    <section aria-labelledby="pedestrian-summary">
-      <div class="panel-title"><h2 id="pedestrian-summary">2025년 노인·어린이 보행사고</h2></div>
-      <div class="board safety-board">
-        <dl class="stat hotspot-total"><dt>사고다발지역</dt><dd><strong id="hotspot-total">—</strong><small>곳</small></dd></dl>
-        <dl class="stat"><dt>노인 보행자 사고수</dt><dd><strong>2,060</strong><small>건</small></dd></dl>
-        <dl class="stat"><dt>어린이 보행자 사고수</dt><dd><strong>339</strong><small>건</small></dd></dl>
-        <dl class="stat"><dt>노인 보행사고 사망자수</dt><dd><strong>82</strong><small>명</small></dd></dl>
-        <dl class="stat"><dt>어린이 보행사고 사망자수</dt><dd><strong>1</strong><small>명</small></dd></dl>
-      </div>
-      <p class="muted safety-board-note">서울 · 노인 65세 이상 · 어린이 12세 이하 · <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/10_어린이보호구역_교통안전_요약.csv">집계 자료</a></p>
-    </section>
-    <section class="feed" aria-labelledby="today">
+    <section aria-labelledby="today">
       <div class="panel-title"><h2 id="today">오늘의 서울 교통</h2><button id="pause" type="button" aria-pressed="false">일시정지</button></div>
       <dl class="board" id="board">
         <div class="stat"><dt>교통사고</dt><dd><strong id="accidents">38</strong><small>건</small></dd></div>
@@ -326,7 +314,18 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
       <span class="map-note">서울 모식도 · 지점과 교통 상태는 시연용</span>
     </div>
   </section>
-  <aside class="zone-panel" aria-labelledby="zone-summary">
+  <aside class="zone-panel" aria-label="보행사고와 보호구역">
+    <section aria-labelledby="pedestrian-summary">
+      <div class="panel-title"><h2 id="pedestrian-summary">2025년 노인·어린이 보행사고</h2></div>
+      <div class="board safety-board">
+        <dl class="stat hotspot-total"><dt>사고다발지역</dt><dd><strong id="hotspot-total">—</strong><small>곳</small></dd></dl>
+        <dl class="stat"><dt>노인 보행자 사고수</dt><dd><strong>2,060</strong><small>건</small></dd></dl>
+        <dl class="stat"><dt>어린이 보행자 사고수</dt><dd><strong>339</strong><small>건</small></dd></dl>
+        <dl class="stat"><dt>노인 보행사고 사망자수</dt><dd><strong>82</strong><small>명</small></dd></dl>
+        <dl class="stat"><dt>어린이 보행사고 사망자수</dt><dd><strong>1</strong><small>명</small></dd></dl>
+      </div>
+      <p class="muted safety-board-note">서울 · 노인 65세 이상 · 어린이 12세 이하 · <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/10_어린이보호구역_교통안전_요약.csv">집계 자료</a></p>
+    </section>
     <section class="feed" aria-labelledby="zone-summary">
       <div class="panel-title"><h2 id="zone-summary">서울시 보호 구역 지정 현황</h2></div>
       <div class="compare-chart">
