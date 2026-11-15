@@ -584,6 +584,23 @@ section.story-screen {
 }
 
 @media (prefers-reduced-motion: no-preference) {
+  .audit-trend-plot polyline {
+    transform-box: view-box;
+    transform-origin: 0 148px;
+  }
+  .audit-trend-plot.chart-awaiting polyline { transform: scaleY(0) }
+  .audit-trend-plot.chart-entered polyline {
+    animation: audit-trend-rise 850ms cubic-bezier(.22, .61, .36, 1) both;
+  }
+  .audit-trend-plot.chart-awaiting g text { opacity: 0 }
+  .audit-trend-plot.chart-entered g :is(circle, text) {
+    animation: reveal-metric-value 180ms ease-out 850ms both;
+  }
+  @keyframes audit-trend-rise {
+    from { transform: scaleY(0) }
+    to { transform: scaleY(1) }
+  }
+
   .national-total { --chart-bar-height: var(--total) }
   .oecd-column-bar { --chart-bar-height: var(--level) }
   .chart-awaiting :is(.national-total, .oecd-column-bar) { height: 0 }
@@ -2797,7 +2814,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
     }
   }, { threshold: 0.35 });
 
-  for (const chart of document.querySelectorAll('#national-fatalities .national-plot, #national-fatalities .national-population, #national-fatalities .national-donut, #audit-video .oecd-chart')) {
+  for (const chart of document.querySelectorAll('#national-fatalities .national-plot, #national-fatalities .national-population, #national-fatalities .national-donut, #audit-video .oecd-chart, #audit-video .audit-trend-plot')) {
     chart.classList.add('chart-awaiting');
     chartObserver.observe(chart);
   }
