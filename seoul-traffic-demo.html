@@ -2612,7 +2612,13 @@ if (window.kakao?.maps?.load) {
         level: initialLevel
       });
       kakaoMap.setMaxLevel(initialLevel + 1);
-      kakaoMap.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
+      const trafficLayer = kakao.maps.MapTypeId.TRAFFIC;
+      kakaoMap.addOverlayMapTypeId(trafficLayer);
+      setInterval(() => {
+        if (citydataPaused || citydataMotion.matches || document.hidden) return;
+        kakaoMap.removeOverlayMapTypeId(trafficLayer);
+        setTimeout(() => kakaoMap.addOverlayMapTypeId(trafficLayer), 180);
+      }, citydataRefreshMs);
       citydataPlace.addEventListener('change', () => {
         kakaoMap.setLevel(citydataPlace.value === 'gwanghwamun' ? initialLevel : 5);
         kakaoMap.setCenter(selectedCenter());
