@@ -424,7 +424,7 @@ html { scroll-snap-type: y mandatory }
 .oecd-screen, .oecd-video-screen {
   display: grid;
   align-content: center;
-  padding: clamp(14px, 3.3vh, 38px) clamp(14px, 4vw, 60px);
+  padding: clamp(14px, 2.3svh, 28px) clamp(14px, 4vw, 60px);
   background: linear-gradient(145deg, #0d2032, #0b121d 70%);
   border-top: 1px solid var(--line);
 }
@@ -444,25 +444,25 @@ html { scroll-snap-type: y mandatory }
 }
 .oecd-chart h3 { font-size: clamp(17px, 2.9vh, 26px); line-height: 1.1; letter-spacing: -.04em }
 .oecd-chart-header span { font-size: 11px; color: var(--muted) }
-.oecd-groups { display: grid; grid-template-columns: minmax(0, 1fr) 13px minmax(0, 1fr); gap: 5px }
-.oecd-group h4 { color: #becdde; margin: 0 0 3px; font-size: 11px; font-weight: 650 }
-.oecd-bars { list-style: none; display: grid; gap: clamp(0px, .28vh, 3px); padding: 0; margin: 0 }
+.oecd-groups { display: grid }
+.oecd-bars { list-style: none; padding: 0; margin: 0 }
 .oecd-row {
   display: grid;
-  grid-template-columns: 1.6em max-content minmax(5px, 1fr) 2.4em;
-  gap: clamp(3px, .55vw, 7px);
+  grid-template-columns: 1.7em 5.8em minmax(0, 1fr) 3em;
+  gap: clamp(5px, .65vw, 10px);
+  min-height: clamp(17px, 2.55svh, 28px);
   align-items: center;
-  font-size: clamp(10px, 1.65vh, 13px);
+  font-size: clamp(11px, 1.65svh, 15px);
   line-height: 1.25;
 }
 .oecd-rank { color: var(--muted); font-variant-numeric: tabular-nums }
-.oecd-country { min-width: 5em; white-space: nowrap }
+.oecd-country { white-space: nowrap }
 .oecd-row strong { text-align: right; font-variant-numeric: tabular-nums }
-.oecd-track { display: block; height: 8px; border-radius: 2px; background: #25374b }
+.oecd-track { display: block; height: clamp(6px, 1.05svh, 11px); border-radius: 2px; background: #25374b }
 .oecd-track span { display: block; width: var(--bar-width); height: 100%; border-radius: 2px; background: #729bc5 }
 .oecd-korea, .oecd-korea .oecd-rank { color: var(--mint); font-weight: 700 }
 .oecd-korea .oecd-track span { background: var(--mint) }
-.oecd-gap { align-self: center; text-align: center; color: var(--muted); font-size: 15px }
+.oecd-gap { text-align: center; color: var(--muted); font-size: 18px; line-height: clamp(15px, 2.15svh, 22px) }
 .oecd-sr { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap }
 .oecd-sources { margin-top: 8px; color: var(--muted); font-size: 11px; line-height: 1.45 }
 .oecd-sources a, .oecd-video a { color: #c1dcf5 }
@@ -472,7 +472,6 @@ html { scroll-snap-type: y mandatory }
 .oecd-video a { display: inline-block; margin-top: 8px; font-size: 12px }
 @media (max-width: 900px) {
   .oecd-row { gap: 3px }
-  .oecd-country { min-width: 4.6em }
 }
 @media (max-width: 760px), (max-height: 600px) {
   html { scroll-snap-type: y proximity }
@@ -619,77 +618,71 @@ html { scroll-snap-type: y mandatory }
           <span>비교 29개국</span>
         </header>
         <div class="oecd-groups">
-          <div class="oecd-group">
-            <h4>상위 5개국</h4>
-            <ol class="oecd-bars" role="list" aria-label="상위 5개국">
-              <li class="oecd-row oecd-korea">
-                <span class="oecd-rank" title="1위" aria-label="1위">1</span>
-                <span class="oecd-country">대한민국</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 51.3333%"></span></span>
-                <strong>7.7</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="2위" aria-label="2위">2</span>
-                <span class="oecd-country">리투아니아</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 28.0000%"></span></span>
-                <strong>4.2</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="3위" aria-label="3위">3</span>
-                <span class="oecd-country">칠레</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 25.3333%"></span></span>
-                <strong>3.8</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="4위" aria-label="4위">4</span>
-                <span class="oecd-country">이스라엘</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 24.6667%"></span></span>
-                <strong>3.7</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="5위" aria-label="5위">5</span>
-                <span class="oecd-country">폴란드</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 21.3333%"></span></span>
-                <strong>3.2</strong>
-              </li>
-            </ol>
-          </div>
-          <div class="oecd-gap"><span aria-hidden="true">⋯</span><span class="oecd-sr">중간 19개국 생략</span></div>
-          <div class="oecd-group">
-            <h4>하위 5개국</h4>
-            <ol class="oecd-bars" role="list" aria-label="하위 5개국">
-              <li class="oecd-row">
-                <span class="oecd-rank" title="25위" aria-label="25위">25</span>
-                <span class="oecd-country">슬로베니아</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 6.0000%"></span></span>
-                <strong>0.9</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="26위" aria-label="26위">26</span>
-                <span class="oecd-country">스웨덴</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 5.3333%"></span></span>
-                <strong>0.8</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="27위" aria-label="27위">27</span>
-                <span class="oecd-country">호주</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 4.6667%"></span></span>
-                <strong>0.7</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="28위" aria-label="28위">28</span>
-                <span class="oecd-country">노르웨이</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 2.6667%"></span></span>
-                <strong>0.4</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="29위" aria-label="29위">29</span>
-                <span class="oecd-country">아이슬란드</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 0.0000%"></span></span>
-                <strong>0.0</strong>
-              </li>
-            </ol>
-          </div>
+          <ol class="oecd-bars" role="list" aria-label="상위 5개국">
+            <li class="oecd-row oecd-korea">
+              <span class="oecd-rank" title="1위" aria-label="1위">1</span>
+              <span class="oecd-country">대한민국</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 51.3333%"></span></span>
+              <strong>7.7</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="2위" aria-label="2위">2</span>
+              <span class="oecd-country">리투아니아</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 28.0000%"></span></span>
+              <strong>4.2</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="3위" aria-label="3위">3</span>
+              <span class="oecd-country">칠레</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 25.3333%"></span></span>
+              <strong>3.8</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="4위" aria-label="4위">4</span>
+              <span class="oecd-country">이스라엘</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 24.6667%"></span></span>
+              <strong>3.7</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="5위" aria-label="5위">5</span>
+              <span class="oecd-country">폴란드</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 21.3333%"></span></span>
+              <strong>3.2</strong>
+            </li>
+          </ol>
+          <div class="oecd-gap"><span aria-hidden="true">⋮</span><span class="oecd-sr">중간 19개국 생략</span></div>
+          <ol class="oecd-bars" role="list" aria-label="하위 5개국">
+            <li class="oecd-row">
+              <span class="oecd-rank" title="25위" aria-label="25위">25</span>
+              <span class="oecd-country">슬로베니아</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 6.0000%"></span></span>
+              <strong>0.9</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="26위" aria-label="26위">26</span>
+              <span class="oecd-country">스웨덴</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 5.3333%"></span></span>
+              <strong>0.8</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="27위" aria-label="27위">27</span>
+              <span class="oecd-country">호주</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 4.6667%"></span></span>
+              <strong>0.7</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="28위" aria-label="28위">28</span>
+              <span class="oecd-country">노르웨이</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 2.6667%"></span></span>
+              <strong>0.4</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="29위" aria-label="29위">29</span>
+              <span class="oecd-country">아이슬란드</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 0.0000%"></span></span>
+              <strong>0.0</strong>
+            </li>
+          </ol>
         </div>
       </article>
       <article class="oecd-chart" aria-labelledby="oecd-2021">
@@ -698,77 +691,71 @@ html { scroll-snap-type: y mandatory }
           <span>비교 31개국</span>
         </header>
         <div class="oecd-groups">
-          <div class="oecd-group">
-            <h4>상위 5개국</h4>
-            <ol class="oecd-bars" role="list" aria-label="상위 5개국">
-              <li class="oecd-row">
-                <span class="oecd-rank" title="1위" aria-label="1위">1</span>
-                <span class="oecd-country">콜롬비아</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 87.3333%"></span></span>
-                <strong>13.1</strong>
-              </li>
-              <li class="oecd-row oecd-korea">
-                <span class="oecd-rank" title="2위" aria-label="2위">2</span>
-                <span class="oecd-country">대한민국</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 46.6667%"></span></span>
-                <strong>7.0</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="3위" aria-label="3위">3</span>
-                <span class="oecd-country">칠레</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 28.6667%"></span></span>
-                <strong>4.3</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="4위" aria-label="4위">4</span>
-                <span class="oecd-country">이스라엘</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 26.6667%"></span></span>
-                <strong>4.0</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="5위" aria-label="5위">5</span>
-                <span class="oecd-country">아이슬란드</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 24.0000%"></span></span>
-                <strong>3.6</strong>
-              </li>
-            </ol>
-          </div>
-          <div class="oecd-gap"><span aria-hidden="true">⋯</span><span class="oecd-sr">중간 21개국 생략</span></div>
-          <div class="oecd-group">
-            <h4>하위 5개국</h4>
-            <ol class="oecd-bars" role="list" aria-label="하위 5개국">
-              <li class="oecd-row">
-                <span class="oecd-rank" title="공동 27위" aria-label="공동 27위">27</span>
-                <span class="oecd-country">덴마크</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 5.3333%"></span></span>
-                <strong>0.8</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="공동 27위" aria-label="공동 27위">27</span>
-                <span class="oecd-country">아일랜드</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 5.3333%"></span></span>
-                <strong>0.8</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="공동 29위" aria-label="공동 29위">29</span>
-                <span class="oecd-country">슬로베니아</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 4.6667%"></span></span>
-                <strong>0.7</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="공동 29위" aria-label="공동 29위">29</span>
-                <span class="oecd-country">스웨덴</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 4.6667%"></span></span>
-                <strong>0.7</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="31위" aria-label="31위">31</span>
-                <span class="oecd-country">노르웨이</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 2.6667%"></span></span>
-                <strong>0.4</strong>
-              </li>
-            </ol>
-          </div>
+          <ol class="oecd-bars" role="list" aria-label="상위 5개국">
+            <li class="oecd-row">
+              <span class="oecd-rank" title="1위" aria-label="1위">1</span>
+              <span class="oecd-country">콜롬비아</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 87.3333%"></span></span>
+              <strong>13.1</strong>
+            </li>
+            <li class="oecd-row oecd-korea">
+              <span class="oecd-rank" title="2위" aria-label="2위">2</span>
+              <span class="oecd-country">대한민국</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 46.6667%"></span></span>
+              <strong>7.0</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="3위" aria-label="3위">3</span>
+              <span class="oecd-country">칠레</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 28.6667%"></span></span>
+              <strong>4.3</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="4위" aria-label="4위">4</span>
+              <span class="oecd-country">이스라엘</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 26.6667%"></span></span>
+              <strong>4.0</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="5위" aria-label="5위">5</span>
+              <span class="oecd-country">아이슬란드</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 24.0000%"></span></span>
+              <strong>3.6</strong>
+            </li>
+          </ol>
+          <div class="oecd-gap"><span aria-hidden="true">⋮</span><span class="oecd-sr">중간 21개국 생략</span></div>
+          <ol class="oecd-bars" role="list" aria-label="하위 5개국">
+            <li class="oecd-row">
+              <span class="oecd-rank" title="공동 27위" aria-label="공동 27위">27</span>
+              <span class="oecd-country">덴마크</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 5.3333%"></span></span>
+              <strong>0.8</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="공동 27위" aria-label="공동 27위">27</span>
+              <span class="oecd-country">아일랜드</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 5.3333%"></span></span>
+              <strong>0.8</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="공동 29위" aria-label="공동 29위">29</span>
+              <span class="oecd-country">슬로베니아</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 4.6667%"></span></span>
+              <strong>0.7</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="공동 29위" aria-label="공동 29위">29</span>
+              <span class="oecd-country">스웨덴</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 4.6667%"></span></span>
+              <strong>0.7</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="31위" aria-label="31위">31</span>
+              <span class="oecd-country">노르웨이</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 2.6667%"></span></span>
+              <strong>0.4</strong>
+            </li>
+          </ol>
         </div>
       </article>
       <article class="oecd-chart" aria-labelledby="oecd-2022">
@@ -777,77 +764,71 @@ html { scroll-snap-type: y mandatory }
           <span>비교 32개국</span>
         </header>
         <div class="oecd-groups">
-          <div class="oecd-group">
-            <h4>상위 5개국</h4>
-            <ol class="oecd-bars" role="list" aria-label="상위 5개국">
-              <li class="oecd-row">
-                <span class="oecd-rank" title="1위" aria-label="1위">1</span>
-                <span class="oecd-country">콜롬비아</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 97.3333%"></span></span>
-                <strong>14.6</strong>
-              </li>
-              <li class="oecd-row oecd-korea">
-                <span class="oecd-rank" title="2위" aria-label="2위">2</span>
-                <span class="oecd-country">대한민국</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 41.3333%"></span></span>
-                <strong>6.2</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="3위" aria-label="3위">3</span>
-                <span class="oecd-country">칠레</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 39.3333%"></span></span>
-                <strong>5.9</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="4위" aria-label="4위">4</span>
-                <span class="oecd-country">이스라엘</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 24.0000%"></span></span>
-                <strong>3.6</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="5위" aria-label="5위">5</span>
-                <span class="oecd-country">아이슬란드</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 23.3333%"></span></span>
-                <strong>3.5</strong>
-              </li>
-            </ol>
-          </div>
-          <div class="oecd-gap"><span aria-hidden="true">⋯</span><span class="oecd-sr">중간 22개국 생략</span></div>
-          <div class="oecd-group">
-            <h4>하위 5개국</h4>
-            <ol class="oecd-bars" role="list" aria-label="하위 5개국">
-              <li class="oecd-row">
-                <span class="oecd-rank" title="공동 26위" aria-label="공동 26위">26</span>
-                <span class="oecd-country">벨기에</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 6.6667%"></span></span>
-                <strong>1.0</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="29위" aria-label="29위">29</span>
-                <span class="oecd-country">네덜란드</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 6.0000%"></span></span>
-                <strong>0.9</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="30위" aria-label="30위">30</span>
-                <span class="oecd-country">덴마크</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 4.6667%"></span></span>
-                <strong>0.7</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="31위" aria-label="31위">31</span>
-                <span class="oecd-country">스웨덴</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 4.0000%"></span></span>
-                <strong>0.6</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="32위" aria-label="32위">32</span>
-                <span class="oecd-country">노르웨이</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 3.3333%"></span></span>
-                <strong>0.5</strong>
-              </li>
-            </ol>
-          </div>
+          <ol class="oecd-bars" role="list" aria-label="상위 5개국">
+            <li class="oecd-row">
+              <span class="oecd-rank" title="1위" aria-label="1위">1</span>
+              <span class="oecd-country">콜롬비아</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 97.3333%"></span></span>
+              <strong>14.6</strong>
+            </li>
+            <li class="oecd-row oecd-korea">
+              <span class="oecd-rank" title="2위" aria-label="2위">2</span>
+              <span class="oecd-country">대한민국</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 41.3333%"></span></span>
+              <strong>6.2</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="3위" aria-label="3위">3</span>
+              <span class="oecd-country">칠레</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 39.3333%"></span></span>
+              <strong>5.9</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="4위" aria-label="4위">4</span>
+              <span class="oecd-country">이스라엘</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 24.0000%"></span></span>
+              <strong>3.6</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="5위" aria-label="5위">5</span>
+              <span class="oecd-country">아이슬란드</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 23.3333%"></span></span>
+              <strong>3.5</strong>
+            </li>
+          </ol>
+          <div class="oecd-gap"><span aria-hidden="true">⋮</span><span class="oecd-sr">중간 22개국 생략</span></div>
+          <ol class="oecd-bars" role="list" aria-label="하위 5개국">
+            <li class="oecd-row">
+              <span class="oecd-rank" title="공동 26위" aria-label="공동 26위">26</span>
+              <span class="oecd-country">벨기에</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 6.6667%"></span></span>
+              <strong>1.0</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="29위" aria-label="29위">29</span>
+              <span class="oecd-country">네덜란드</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 6.0000%"></span></span>
+              <strong>0.9</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="30위" aria-label="30위">30</span>
+              <span class="oecd-country">덴마크</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 4.6667%"></span></span>
+              <strong>0.7</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="31위" aria-label="31위">31</span>
+              <span class="oecd-country">스웨덴</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 4.0000%"></span></span>
+              <strong>0.6</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="32위" aria-label="32위">32</span>
+              <span class="oecd-country">노르웨이</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 3.3333%"></span></span>
+              <strong>0.5</strong>
+            </li>
+          </ol>
         </div>
       </article>
       <article class="oecd-chart" aria-labelledby="oecd-2023">
@@ -856,83 +837,77 @@ html { scroll-snap-type: y mandatory }
           <span>비교 32개국</span>
         </header>
         <div class="oecd-groups">
-          <div class="oecd-group">
-            <h4>상위 5개국</h4>
-            <ol class="oecd-bars" role="list" aria-label="상위 5개국">
-              <li class="oecd-row">
-                <span class="oecd-rank" title="1위" aria-label="1위">1</span>
-                <span class="oecd-country">콜롬비아</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 97.3333%"></span></span>
-                <strong>14.6</strong>
-              </li>
-              <li class="oecd-row oecd-korea">
-                <span class="oecd-rank" title="2위" aria-label="2위">2</span>
-                <span class="oecd-country">대한민국</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 38.6667%"></span></span>
-                <strong>5.8</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="3위" aria-label="3위">3</span>
-                <span class="oecd-country">칠레</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 28.6667%"></span></span>
-                <strong>4.3</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="4위" aria-label="4위">4</span>
-                <span class="oecd-country">슬로바키아</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 22.0000%"></span></span>
-                <strong>3.3</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="5위" aria-label="5위">5</span>
-                <span class="oecd-country">이스라엘</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 20.6667%"></span></span>
-                <strong>3.1</strong>
-              </li>
-            </ol>
-          </div>
-          <div class="oecd-gap"><span aria-hidden="true">⋯</span><span class="oecd-sr">중간 22개국 생략</span></div>
-          <div class="oecd-group">
-            <h4>하위 5개국</h4>
-            <ol class="oecd-bars" role="list" aria-label="하위 5개국">
-              <li class="oecd-row">
-                <span class="oecd-rank" title="28위" aria-label="28위">28</span>
-                <span class="oecd-country">뉴질랜드</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 6.0000%"></span></span>
-                <strong>0.9</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="공동 29위" aria-label="공동 29위">29</span>
-                <span class="oecd-country">핀란드</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 4.0000%"></span></span>
-                <strong>0.6</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="공동 29위" aria-label="공동 29위">29</span>
-                <span class="oecd-country">스웨덴</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 4.0000%"></span></span>
-                <strong>0.6</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="31위" aria-label="31위">31</span>
-                <span class="oecd-country">노르웨이</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 2.0000%"></span></span>
-                <strong>0.3</strong>
-              </li>
-              <li class="oecd-row">
-                <span class="oecd-rank" title="32위" aria-label="32위">32</span>
-                <span class="oecd-country">아이슬란드</span>
-                <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 0.0000%"></span></span>
-                <strong>0.0</strong>
-              </li>
-            </ol>
-          </div>
+          <ol class="oecd-bars" role="list" aria-label="상위 5개국">
+            <li class="oecd-row">
+              <span class="oecd-rank" title="1위" aria-label="1위">1</span>
+              <span class="oecd-country">콜롬비아</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 97.3333%"></span></span>
+              <strong>14.6</strong>
+            </li>
+            <li class="oecd-row oecd-korea">
+              <span class="oecd-rank" title="2위" aria-label="2위">2</span>
+              <span class="oecd-country">대한민국</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 38.6667%"></span></span>
+              <strong>5.8</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="3위" aria-label="3위">3</span>
+              <span class="oecd-country">칠레</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 28.6667%"></span></span>
+              <strong>4.3</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="4위" aria-label="4위">4</span>
+              <span class="oecd-country">슬로바키아</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 22.0000%"></span></span>
+              <strong>3.3</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="5위" aria-label="5위">5</span>
+              <span class="oecd-country">이스라엘</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 20.6667%"></span></span>
+              <strong>3.1</strong>
+            </li>
+          </ol>
+          <div class="oecd-gap"><span aria-hidden="true">⋮</span><span class="oecd-sr">중간 22개국 생략</span></div>
+          <ol class="oecd-bars" role="list" aria-label="하위 5개국">
+            <li class="oecd-row">
+              <span class="oecd-rank" title="28위" aria-label="28위">28</span>
+              <span class="oecd-country">뉴질랜드</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 6.0000%"></span></span>
+              <strong>0.9</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="공동 29위" aria-label="공동 29위">29</span>
+              <span class="oecd-country">핀란드</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 4.0000%"></span></span>
+              <strong>0.6</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="공동 29위" aria-label="공동 29위">29</span>
+              <span class="oecd-country">스웨덴</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 4.0000%"></span></span>
+              <strong>0.6</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="31위" aria-label="31위">31</span>
+              <span class="oecd-country">노르웨이</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 2.0000%"></span></span>
+              <strong>0.3</strong>
+            </li>
+            <li class="oecd-row">
+              <span class="oecd-rank" title="32위" aria-label="32위">32</span>
+              <span class="oecd-country">아이슬란드</span>
+              <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 0.0000%"></span></span>
+              <strong>0.0</strong>
+            </li>
+          </ol>
         </div>
       </article>
     </div>
     <div class="oecd-sources">
       <p>한국도로교통공단 《OECD 회원국 교통사고 비교》 2022~2025년판 표 II-13 · <a href="./data/13_OECD_%EA%B5%90%ED%86%B5%EC%82%AC%EA%B3%A0_2022~2025%EB%85%84%ED%8C%90(2020~2023).csv">마스터 CSV</a></p>
-      <p>⋯ 중간 순위 생략. 같은 수치는 공동 순위이며, 5개국 경계의 동률은 원문 표 순서로 표시. 일부 국가는 이전 연도 자료를 사용.</p>
+      <p>같은 수치는 공동 순위이며, 5개국 경계의 동률은 원문 표 순서로 표시. 일부 국가는 이전 연도 자료를 사용.</p>
     </div>
   </div>
 </section>
