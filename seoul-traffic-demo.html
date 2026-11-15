@@ -487,6 +487,122 @@ html { scroll-snap-type: y mandatory }
 @media (prefers-reduced-motion: no-preference) {
   html { scroll-behavior: smooth }
 }
+
+.national-screen {
+  display: grid;
+  align-content: center;
+  min-height: 100svh;
+  scroll-snap-align: start;
+  padding: clamp(16px, 3svh, 34px) clamp(14px, 4vw, 60px);
+  background: linear-gradient(145deg, #102337, #0b121d 75%);
+  border-top: 1px solid var(--line);
+}
+.national-period { margin: 16px 0 6px; color: var(--mint); font-size: 13px }
+.national-lead { margin: 9px 0 16px; color: var(--muted); font-size: clamp(13px, 1.5vw, 17px) }
+.national-lead strong { color: var(--mint) }
+.national-charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px }
+.national-card {
+  min-width: 0;
+  padding: clamp(12px, 2vw, 22px);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #111e2c;
+}
+.national-card h3 { font-size: clamp(17px, 2vw, 24px); letter-spacing: -.04em }
+.national-key, .national-note { margin: 9px 0 12px; color: var(--muted); font-size: 12px }
+.national-key { display: flex; flex-wrap: wrap; gap: 6px 14px }
+.national-key span::before {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
+  border-radius: 2px;
+  background: var(--mint);
+  content: "";
+}
+.national-key span + span::before { background: #5b82a8 }
+.national-axis-unit { padding-left: 2px; color: var(--muted); font-size: 11px }
+.national-plot { position: relative; height: clamp(210px, 33svh, 330px); margin: 9px 0 27px 39px }
+.national-axis { position: absolute; inset: 0; pointer-events: none }
+.national-tick { position: absolute; inset-inline: 0; bottom: var(--level); border-top: 1px solid var(--line) }
+.national-tick span {
+  position: absolute;
+  right: calc(100% + 6px);
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.national-years {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.national-year { position: relative; min-width: 0; font-variant-numeric: tabular-nums }
+.national-year-label, .national-year-total {
+  position: absolute;
+  inset-inline: 50% auto;
+  transform: translateX(-50%);
+  font-size: clamp(11px, 1.1vw, 15px);
+  white-space: nowrap;
+}
+.national-year-label { top: calc(100% + 7px) }
+.national-year-total { bottom: calc(100% + 4px); font-weight: 700 }
+.national-total {
+  position: absolute;
+  inset: auto 0 0;
+  width: clamp(47px, 76%, 84px);
+  height: var(--total);
+  margin-inline: auto;
+  border-radius: 4px 4px 0 0;
+  background: #5b82a8;
+}
+.national-older {
+  position: absolute;
+  inset: auto 0 0;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  height: var(--older);
+  background: var(--mint);
+  color: #102337;
+  text-align: center;
+  font-size: clamp(10px, 1.08vw, 15px);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.national-status-track span {
+  display: block;
+  width: var(--width);
+  height: 100%;
+  border-radius: 3px;
+}
+.national-status {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: clamp(12px, 1.12vw, 15px);
+  font-variant-numeric: tabular-nums;
+}
+.national-status th, .national-status td {
+  padding: clamp(6px, 1.15svh, 11px) 3px;
+  border-bottom: 1px solid var(--line);
+  text-align: right;
+}
+.national-status thead { color: var(--muted) }
+.national-status th:first-child { padding-left: 0; text-align: left }
+.national-status td { width: 15%; font-weight: 650 }
+.national-status tbody tr:first-child { color: var(--mint) }
+.national-status-track { display: block; height: 4px; margin-top: 4px; background: #26374a; border-radius: 3px }
+.national-status-track span { background: #83adde }
+.national-status tr:first-child .national-status-track span { background: var(--mint) }
+@media (max-width: 850px) {
+  .national-charts { grid-template-columns: minmax(0, 1fr) }
+  html { scroll-snap-type: y proximity }
+}
 </style>
 </head>
 <body>
@@ -501,7 +617,7 @@ html { scroll-snap-type: y mandatory }
     <span class="brand-icon" aria-hidden="true">↗</span>
     <div><div class="eyebrow">SEOUL TRAFFIC NEWSROOM</div><h1>서울 교통안전 라이브</h1></div>
   </div>
-  <div class="header-meta"><a class="traffic-jump" href="#oecd-rankings">OECD 순위 <span aria-hidden="true">↓</span></a><span class="demo">시연 데이터</span><time id="clock" class="clock"></time></div>
+  <div class="header-meta"><a class="traffic-jump" href="#national-fatalities">전국 사망자 추이 <span aria-hidden="true">↓</span></a><span class="demo">시연 데이터</span><time id="clock" class="clock"></time></div>
 </header>
 <main>
   <aside>
@@ -603,10 +719,96 @@ html { scroll-snap-type: y mandatory }
   </aside>
 </main>
 </div>
+<section class="national-screen" id="national-fatalities" aria-labelledby="national-title">
+  <div class="oecd-content">
+    <nav class="oecd-navigation" aria-label="전국 교통사고 화면 이동">
+      <a class="traffic-jump" href="#traffic-live"><span aria-hidden="true">↑</span> 서울 교통 현황</a>
+      <a class="traffic-jump" href="#oecd-rankings">OECD 순위 <span aria-hidden="true">↓</span></a>
+    </nav>
+    <p class="national-period">대한민국 · 2020~2023년</p>
+    <h2 class="oecd-title" id="national-title">줄어든 교통사고 사망자, 커진 고령자 비중</h2>
+    <p class="national-lead">전체 사망자 중 65세 이상 비중이 <strong>43.6%에서 48.6%</strong>로 높아졌습니다.</p>
+    <div class="national-charts">
+      <article class="national-card" aria-labelledby="national-trend">
+        <h3 id="national-trend">전체 사망자와 65세 이상 비중</h3>
+        <p class="national-key"><span>65세 이상</span><span>65세 미만·연령 불명</span></p>
+        <div class="national-axis-unit" aria-hidden="true">명</div>
+        <div class="national-plot">
+          <div class="national-axis" aria-hidden="true">
+            <div class="national-tick" style="--level: 85.714286%"><span>3,000</span></div>
+            <div class="national-tick" style="--level: 57.142857%"><span>2,000</span></div>
+            <div class="national-tick" style="--level: 28.571429%"><span>1,000</span></div>
+            <div class="national-tick" style="--level: 0.000000%"><span>0</span></div>
+          </div>
+          <ol class="national-years" role="list">
+            <li class="national-year" style="--total: 88.028571%; --older: 43.557287%">
+              <strong class="national-year-label">2020년</strong>
+              <div class="national-total">
+                <span class="national-year-total"><span class="oecd-sr">전체 </span>3,081명</span>
+                <div class="national-older">
+                  <span><span class="oecd-sr">65세 이상 </span>1,342명</span>
+                  <strong><span class="oecd-sr">비중 </span>43.6%</strong>
+                </div>
+              </div>
+            </li>
+            <li class="national-year" style="--total: 83.314286%; --older: 44.410151%">
+              <strong class="national-year-label">2021년</strong>
+              <div class="national-total">
+                <span class="national-year-total"><span class="oecd-sr">전체 </span>2,916명</span>
+                <div class="national-older">
+                  <span><span class="oecd-sr">65세 이상 </span>1,295명</span>
+                  <strong><span class="oecd-sr">비중 </span>44.4%</strong>
+                </div>
+              </div>
+            </li>
+            <li class="national-year" style="--total: 78.142857%; --older: 45.996344%">
+              <strong class="national-year-label">2022년</strong>
+              <div class="national-total">
+                <span class="national-year-total"><span class="oecd-sr">전체 </span>2,735명</span>
+                <div class="national-older">
+                  <span><span class="oecd-sr">65세 이상 </span>1,258명</span>
+                  <strong><span class="oecd-sr">비중 </span>46.0%</strong>
+                </div>
+              </div>
+            </li>
+            <li class="national-year" style="--total: 72.885714%; --older: 48.608389%">
+              <strong class="national-year-label">2023년</strong>
+              <div class="national-total">
+                <span class="national-year-total"><span class="oecd-sr">전체 </span>2,551명</span>
+                <div class="national-older">
+                  <span><span class="oecd-sr">65세 이상 </span>1,240명</span>
+                  <strong><span class="oecd-sr">비중 </span>48.6%</strong>
+                </div>
+              </div>
+            </li>
+          </ol>
+        </div>
+      </article>
+      <article class="national-card" aria-labelledby="national-status">
+        <h3 id="national-status">65세 이상 사망자의 사고 당시 상태</h3>
+        <p class="national-note" id="national-unit">단위 명 · 보행 중 사망이 4년 연속 가장 많았습니다.</p>
+        <table class="national-status" aria-labelledby="national-status" aria-describedby="national-unit">
+          <thead><tr><th scope="col">사고 당시 상태</th><th scope="col">2020</th><th scope="col">2021</th><th scope="col">2022</th><th scope="col">2023</th></tr></thead>
+          <tbody>
+              <tr><th scope="row">보행 중</th><td>628<span class="national-status-track" aria-hidden="true"><span style="--width: 96.615385%"></span></span></td><td>601<span class="national-status-track" aria-hidden="true"><span style="--width: 92.461538%"></span></span></td><td>558<span class="national-status-track" aria-hidden="true"><span style="--width: 85.846154%"></span></span></td><td>550<span class="national-status-track" aria-hidden="true"><span style="--width: 84.615385%"></span></span></td></tr>
+              <tr><th scope="row">이륜차 승차 중</th><td>274<span class="national-status-track" aria-hidden="true"><span style="--width: 42.153846%"></span></span></td><td>235<span class="national-status-track" aria-hidden="true"><span style="--width: 36.153846%"></span></span></td><td>230<span class="national-status-track" aria-hidden="true"><span style="--width: 35.384615%"></span></span></td><td>194<span class="national-status-track" aria-hidden="true"><span style="--width: 29.846154%"></span></span></td></tr>
+              <tr><th scope="row">승용차 승차 중</th><td>131<span class="national-status-track" aria-hidden="true"><span style="--width: 20.153846%"></span></span></td><td>130<span class="national-status-track" aria-hidden="true"><span style="--width: 20.000000%"></span></span></td><td>135<span class="national-status-track" aria-hidden="true"><span style="--width: 20.769231%"></span></span></td><td>172<span class="national-status-track" aria-hidden="true"><span style="--width: 26.461538%"></span></span></td></tr>
+              <tr><th scope="row">자전거 승차 중</th><td>122<span class="national-status-track" aria-hidden="true"><span style="--width: 18.769231%"></span></span></td><td>106<span class="national-status-track" aria-hidden="true"><span style="--width: 16.307692%"></span></span></td><td>129<span class="national-status-track" aria-hidden="true"><span style="--width: 19.846154%"></span></span></td><td>113<span class="national-status-track" aria-hidden="true"><span style="--width: 17.384615%"></span></span></td></tr>
+              <tr><th scope="row">그 외(차감)</th><td>187<span class="national-status-track" aria-hidden="true"><span style="--width: 28.769231%"></span></span></td><td>223<span class="national-status-track" aria-hidden="true"><span style="--width: 34.307692%"></span></span></td><td>206<span class="national-status-track" aria-hidden="true"><span style="--width: 31.692308%"></span></span></td><td>211<span class="national-status-track" aria-hidden="true"><span style="--width: 32.461538%"></span></span></td></tr>
+          </tbody>
+        </table>
+      </article>
+    </div>
+    <div class="oecd-sources">
+      <p>출처 한국도로교통공단 《OECD 회원국 교통사고 비교》 2022~2025년판 표 II-2, II-6, II-8, II-10, II-12</p>
+      <p>비중은 전체 사망자 중 65세 이상 사망자의 비율입니다. ‘그 외’는 65세 이상 전체에서 표에 표시된 네 가지 상태의 사망자 수를 뺀 값입니다.</p>
+    </div>
+  </div>
+</section>
 <section class="oecd-screen" id="oecd-rankings" aria-labelledby="oecd-title">
   <div class="oecd-content">
     <div class="oecd-navigation">
-      <a class="traffic-jump" href="#traffic-live"><span aria-hidden="true">↑</span> 서울 교통 현황</a>
+      <a class="traffic-jump" href="#national-fatalities"><span aria-hidden="true">↑</span> 전국 사망자 추이</a>
       <a class="traffic-jump" href="#audit-video">국정감사 영상 <span aria-hidden="true">↓</span></a>
     </div>
     <h2 class="oecd-title" id="oecd-title">OECD 고령 보행자 사망 순위</h2>
