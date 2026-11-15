@@ -388,7 +388,27 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   background: #0b121d url("./assets/traffic-header.jpg") center / cover no-repeat;
 }
 body { isolation: isolate }
-main > aside { background: rgb(8 20 33 / 50%) }
+#traffic-live {
+  --dashboard-inset: clamp(12px, 1.35vw, 24px);
+  padding-bottom: clamp(24px, 4svh, 48px);
+}
+#traffic-live > main {
+  min-height: 0;
+  margin-inline: var(--dashboard-inset);
+  padding: 8px;
+  border: 1px solid rgb(125 157 190 / 36%);
+  border-radius: 12px;
+  background: rgb(8 20 33 / 58%);
+  box-shadow: 0 12px 32px rgb(4 11 20 / 30%);
+}
+#traffic-live > main > aside {
+  padding-block: 16px 8px;
+  border: 0;
+  background: transparent;
+}
+@media (min-width: 1041px) {
+  #traffic-live .metric-pair { height: clamp(135px, 20svh, 205px) }
+}
 .traffic-background-video, .traffic-backdrop::after {
   position: absolute;
   inset: 0;
@@ -402,10 +422,8 @@ main > aside { background: rgb(8 20 33 / 50%) }
   background: linear-gradient(90deg, #081421de 0%, #0b1a297a 58%, #081421c9 100%);
 }
 .traffic-header .eyebrow { color: #d5e1ee }
-main { min-height: calc(100dvh - 118px) }
 @media (max-width: 760px) {
   .traffic-header { min-height: 90px }
-  main { min-height: calc(100dvh - 90px) }
 }
 
 html { scroll-snap-type: y mandatory }
