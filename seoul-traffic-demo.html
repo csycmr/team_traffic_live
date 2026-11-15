@@ -276,7 +276,6 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
 }
 
 .board.safety-board { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-top: 0 }
-.safety-board .hotspot-total { grid-column: 1 / -1 }
 .safety-board-note a { color: inherit }
 .compare-chart { margin: 0 }
 .metric-legend {
@@ -718,7 +717,7 @@ html { scroll-snap-type: y mandatory }
 .national-population .oecd-sources { margin-top: 1px }
 #national-fatalities .national-plot { height: clamp(170px, 26svh, 275px); margin-bottom: 52px }
 .citydata-area { margin: -5px 0 8px }
-.citydata-totals .board { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-block: 0 }
+.citydata-totals .board { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-block: 0 }
 .citydata-totals .stat strong { font-size: clamp(16px, 1.4vw, 22px) }
 #traffic-live #board { height: auto; grid-template-columns: repeat(3, minmax(0, 1fr)) }
 #traffic-live #board .stat { min-height: 80px }
@@ -883,7 +882,8 @@ html { scroll-snap-type: y mandatory }
   <aside class="zone-panel" aria-label="서울 교통사고와 보행사고">
     <section class="citydata-totals" aria-labelledby="annual-traffic">
       <div class="panel-title"><h2 id="annual-traffic">2025년 서울 전체 교통사고</h2></div>
-      <dl class="board" aria-label="2025년 서울 전체 교통사고 연간 집계">
+      <dl class="board" aria-label="2025년 서울 교통사고 연간 집계와 사고다발지역">
+        <div class="stat hotspot-total"><dt>사고다발지역</dt><dd><strong id="hotspot-total">—</strong><small>곳</small></dd></div>
         <div class="stat"><dt>교통사고</dt><dd><strong>34,309</strong><small>건</small></dd></div>
         <div class="stat"><dt>부상자</dt><dd><strong>45,446</strong><small>명</small></dd></div>
         <div class="stat"><dt>사망자</dt><dd><strong>212</strong><small>명</small></dd></div>
@@ -893,7 +893,6 @@ html { scroll-snap-type: y mandatory }
     <section class="feed" aria-labelledby="pedestrian-summary">
       <div class="panel-title"><h2 id="pedestrian-summary">2025년 노인·어린이 보행사고</h2></div>
       <div class="board safety-board">
-        <dl class="stat hotspot-total"><dt>사고다발지역</dt><dd><strong id="hotspot-total">—</strong><small>곳</small></dd></dl>
         <dl class="stat"><dt>노인 보행자 사고수</dt><dd><strong>2,060</strong><small>건</small></dd></dl>
         <dl class="stat"><dt>어린이 보행자 사고수</dt><dd><strong>339</strong><small>건</small></dd></dl>
         <dl class="stat"><dt>노인 보행사고 사망자수</dt><dd><strong>82</strong><small>명</small></dd></dl>
