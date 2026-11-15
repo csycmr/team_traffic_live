@@ -410,7 +410,6 @@ body { isolation: isolate }
 @media (min-width: 1041px) {
   #traffic-live > main { padding-top: 16px }
   #traffic-live > main > aside { padding-top: 8px }
-  #traffic-live .metric-pair { height: clamp(135px, 20svh, 205px) }
 }
 .traffic-background-video, .traffic-backdrop::after {
   position: absolute;
@@ -691,6 +690,37 @@ html { scroll-snap-type: y mandatory }
 .citydata-typewriter > .citydata-type-source { opacity: 0 }
 .panel-source a { color: inherit }
 
+.zone-panel .citydata-totals > .board { height: auto }
+#audit-video .oecd-navigation { margin-bottom: clamp(12px, 2.3svh, 24px) }
+.audit-comparison {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  align-items: stretch;
+  gap: clamp(14px, 2vw, 28px);
+}
+#audit-video .oecd-video, .audit-diagnosis {
+  min-width: 0;
+  margin: 0;
+  max-width: none;
+  padding: clamp(14px, 2vw, 24px);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #111e2c;
+}
+#audit-video .audit-heading, #audit-video .oecd-video h3 {
+  font-size: clamp(19px, 2.6vw, 27px);
+  margin-bottom: 12px;
+}
+.audit-chart-caption { margin-bottom: 14px; color: var(--muted); font-size: 13px }
+.audit-diagnosis .metric-groups { gap: clamp(12px, 2vw, 28px) }
+.audit-diagnosis .metric-pair { height: clamp(135px, 23svh, 225px) }
+.audit-diagnosis .metric-bar strong { font-size: clamp(10px, 1vw, 13px) }
+.audit-diagnosis figcaption a { color: #c1dcf5 }
+@media (max-width: 760px) {
+  .audit-comparison { grid-template-columns: minmax(0, 1fr) }
+  html:has(.audit-comparison) { scroll-snap-type: y proximity }
+}
+
 .oecd-vertical-scroll { container-type: inline-size; overflow-x: auto }
 .oecd-vertical-plot {
   --oecd-bar-height: clamp(100px, 16svh, 160px);
@@ -765,7 +795,7 @@ html { scroll-snap-type: y mandatory }
     <span class="brand-icon" aria-hidden="true">↗</span>
     <div><div class="eyebrow">SEOUL TRAFFIC NEWSROOM</div><h1>서울 교통안전 라이브</h1></div>
   </div>
-  <div class="header-meta"><a class="traffic-jump" href="#national-fatalities">전국 사망자 추이 <span aria-hidden="true">↓</span></a><span class="demo">광화문·덕수궁 실시간</span><time id="clock" class="clock"></time><button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button></div>
+  <div class="header-meta"><a class="traffic-jump" href="#audit-video">국정감사와 보호구역 <span aria-hidden="true">↓</span></a><span class="demo">광화문·덕수궁 실시간</span><time id="clock" class="clock"></time><button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button></div>
 </header>
 <main>
   <aside>
@@ -779,15 +809,6 @@ html { scroll-snap-type: y mandatory }
       </dl>
       <div class="refresh muted"><span id="refresh-label" role="status">불러오는 중</span><span id="updated"></span></div>
       <p class="muted panel-source">출처 · <a href="https://data.seoul.go.kr/dataList/OA-21285/F/1/datasetView.do">서울시 실시간 도시데이터</a></p>
-    </section>
-    <section class="feed citydata-totals" aria-labelledby="annual-traffic">
-      <div class="panel-title"><h2 id="annual-traffic">2025년 서울 전체 교통사고</h2></div>
-      <dl class="board" aria-label="2025년 서울 전체 교통사고 연간 집계">
-        <div class="stat"><dt>교통사고</dt><dd><strong>34,309</strong><small>건</small></dd></div>
-        <div class="stat"><dt>부상자</dt><dd><strong>45,446</strong><small>명</small></dd></div>
-        <div class="stat"><dt>사망자</dt><dd><strong>212</strong><small>명</small></dd></div>
-      </dl>
-      <p class="muted panel-source">2025년 연간 집계 · <a href="https://taas.koroad.or.kr/sta/acs/gus/selectSignguTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAG_SGT">한국도로교통공단 TAAS</a></p>
     </section>
     <section class="feed" aria-labelledby="situation">
       <div class="panel-title"><h2 id="situation">기상·교통 상황</h2></div>
@@ -820,8 +841,17 @@ html { scroll-snap-type: y mandatory }
       <span class="map-note">서울 모식도 · 지점과 교통 상태는 시연용</span>
     </div>
   </section>
-  <aside class="zone-panel" aria-label="보행사고와 보호구역">
-    <section aria-labelledby="pedestrian-summary">
+  <aside class="zone-panel" aria-label="서울 교통사고와 보행사고">
+    <section class="citydata-totals" aria-labelledby="annual-traffic">
+      <div class="panel-title"><h2 id="annual-traffic">2025년 서울 전체 교통사고</h2></div>
+      <dl class="board" aria-label="2025년 서울 전체 교통사고 연간 집계">
+        <div class="stat"><dt>교통사고</dt><dd><strong>34,309</strong><small>건</small></dd></div>
+        <div class="stat"><dt>부상자</dt><dd><strong>45,446</strong><small>명</small></dd></div>
+        <div class="stat"><dt>사망자</dt><dd><strong>212</strong><small>명</small></dd></div>
+      </dl>
+      <p class="muted panel-source">2025년 연간 집계 · <a href="https://taas.koroad.or.kr/sta/acs/gus/selectSignguTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAG_SGT">한국도로교통공단 TAAS</a></p>
+    </section>
+    <section class="feed" aria-labelledby="pedestrian-summary">
       <div class="panel-title"><h2 id="pedestrian-summary">2025년 노인·어린이 보행사고</h2></div>
       <div class="board safety-board">
         <dl class="stat hotspot-total"><dt>사고다발지역</dt><dd><strong id="hotspot-total">—</strong><small>곳</small></dd></dl>
@@ -832,43 +862,65 @@ html { scroll-snap-type: y mandatory }
       </div>
       <p class="muted safety-board-note">서울 · 노인 65세 이상 · 어린이 12세 이하 · <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/10_어린이보호구역_교통안전_요약.csv">집계 자료</a></p>
     </section>
-    <section class="feed" aria-labelledby="zone-summary">
-      <div class="panel-title"><h2 id="zone-summary">서울시 보호 구역 지정 현황</h2></div>
-      <figure class="compare-chart">
-        <div class="metric-groups" role="group" aria-label="인구와 보호구역별 어린이·노인 비교">
-          <div class="metric-group">
-            <h3 id="population-chart">인구</h3>
-            <div class="metric-pair" role="group" aria-labelledby="population-chart">
-              <div class="metric-legend">
-                <div class="metric-legend-items">
-                  <span class="children">어린이</span>
-                  <span class="older">노인</span>
-                </div>
-              </div>
-              <div class="metric-bar children" style="--bar-height:32.98%"><strong aria-label="어린이 648,419명">648,419명</strong></div>
-              <div class="metric-bar older" style="--bar-height:100%"><strong aria-label="노인 1,965,896명">1,965,896명</strong></div>
-            </div>
-            <div class="metric-labels"><small>어린이</small><small>노인</small></div>
-          </div>
-          <div class="metric-group">
-            <h3 id="zones-chart">보호구역</h3>
-            <div class="metric-pair" role="group" aria-labelledby="zones-chart">
-              <div class="metric-bar children" style="--bar-height:100%"><strong aria-label="어린이 1,630개">1,630개</strong></div>
-              <div class="metric-bar older" style="--bar-height:11.96%"><strong aria-label="노인 195개">195개</strong></div>
-            </div>
-            <div class="metric-labels"><small>어린이<br>2026년</small><small>노인<br>2025년</small></div>
-          </div>
-        </div>
-        <figcaption class="muted">막대 높이는 지표별 최댓값을 100%로 환산한 비율입니다. 인구는 2026년 9월 말 기준입니다. 어린이는 경찰청 2026년 6월 말 서울 지정 현황의 기재 항목 합계(조례시설 미기재), 노인은 2025년 명단 기준입니다. <a href="./data/12_경찰청_어린이보호구역_지정현황_20260630.csv">어린이보호구역 집계표</a> · <a href="./data/11_서울_연령별_주민등록인구_202609.csv">인구 집계표</a> · <a href="https://kosis.kr/statisticsList/mass/mass_list.jsp?org_id=101&amp;tbl_id=DT_1B04006" target="_blank" rel="noopener">KOSIS 원자료</a></figcaption>
-      </figure>
-          </section>
   </aside>
 </main>
 </div>
+<section class="oecd-video-screen" id="audit-video" aria-labelledby="oecd-video-title zone-summary">
+  <div class="oecd-content">
+    <nav class="oecd-navigation" aria-label="국정감사와 보호구역 현황 화면 이동">
+      <a class="traffic-jump" href="#traffic-live"><span aria-hidden="true">↑</span> 서울 교통 현황</a>
+      <div class="oecd-navigation-actions"><a class="traffic-jump" href="#national-fatalities">전국 사망자 추이 <span aria-hidden="true">↓</span></a><button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button></div>
+    </nav>
+    <div class="audit-comparison">
+      <section class="oecd-video" aria-labelledby="oecd-video-title">
+        <h3 id="oecd-video-title">2020 행정안전부 국정감사</h3>
+        <iframe
+          src="https://www.youtube-nocookie.com/embed/TuMeEs4PdJ8?start=34"
+          title="2020 행정안전부 국정감사"
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allow="encrypted-media; picture-in-picture; fullscreen"
+          allowfullscreen></iframe>
+        <a href="https://youtu.be/TuMeEs4PdJ8?t=34">YouTube에서 34초부터 보기</a>
+      </section>
+      <section class="audit-diagnosis" aria-labelledby="zone-summary">
+        <h2 class="audit-heading" id="zone-summary">그 뒤로 얼마나 달라졌나</h2>
+        <p class="audit-chart-caption">서울시 어린이·노인 인구와 보호구역 지정 현황</p>
+        <figure class="compare-chart">
+          <div class="metric-groups" role="group" aria-label="인구와 보호구역별 어린이·노인 비교">
+            <div class="metric-group">
+              <h3 id="population-chart">인구</h3>
+              <div class="metric-pair" role="group" aria-labelledby="population-chart">
+                <div class="metric-legend">
+                  <div class="metric-legend-items">
+                    <span class="children">어린이</span>
+                    <span class="older">노인</span>
+                  </div>
+                </div>
+                <div class="metric-bar children" style="--bar-height:32.98%"><strong aria-label="어린이 648,419명">648,419명</strong></div>
+                <div class="metric-bar older" style="--bar-height:100%"><strong aria-label="노인 1,965,896명">1,965,896명</strong></div>
+              </div>
+              <div class="metric-labels"><small>어린이</small><small>노인</small></div>
+            </div>
+            <div class="metric-group">
+              <h3 id="zones-chart">보호구역</h3>
+              <div class="metric-pair" role="group" aria-labelledby="zones-chart">
+                <div class="metric-bar children" style="--bar-height:100%"><strong aria-label="어린이 1,630개">1,630개</strong></div>
+                <div class="metric-bar older" style="--bar-height:11.96%"><strong aria-label="노인 195개">195개</strong></div>
+              </div>
+              <div class="metric-labels"><small>어린이<br>2026년</small><small>노인<br>2025년</small></div>
+            </div>
+          </div>
+          <figcaption class="muted">막대 높이는 지표별 최댓값을 100%로 환산한 비율입니다. 인구는 2026년 9월 말 기준입니다. 어린이는 경찰청 2026년 6월 말 서울 지정 현황의 기재 항목 합계(조례시설 미기재), 노인은 2025년 명단 기준입니다. <a href="./data/12_경찰청_어린이보호구역_지정현황_20260630.csv">어린이보호구역 집계표</a> · <a href="./data/11_서울_연령별_주민등록인구_202609.csv">인구 집계표</a> · <a href="https://kosis.kr/statisticsList/mass/mass_list.jsp?org_id=101&amp;tbl_id=DT_1B04006" target="_blank" rel="noopener">KOSIS 원자료</a></figcaption>
+        </figure>
+      </section>
+    </div>
+  </div>
+</section>
 <section class="national-screen" id="national-fatalities" aria-labelledby="national-title">
   <div class="oecd-content">
     <nav class="oecd-navigation" aria-label="전국 교통사고 화면 이동">
-      <a class="traffic-jump" href="#traffic-live"><span aria-hidden="true">↑</span> 서울 교통 현황</a>
+      <a class="traffic-jump" href="#audit-video"><span aria-hidden="true">↑</span> 국정감사와 보호구역</a>
       <div class="oecd-navigation-actions"><a class="traffic-jump" href="#oecd-rankings">OECD 순위 <span aria-hidden="true">↓</span></a><button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button></div>
     </nav>
     <p class="national-period">대한민국 · 2020~2023년</p>
@@ -1094,7 +1146,7 @@ html { scroll-snap-type: y mandatory }
   <div class="oecd-content">
     <div class="oecd-navigation">
       <a class="traffic-jump" href="#national-fatalities"><span aria-hidden="true">↑</span> 전국 사망자 추이</a>
-      <div class="oecd-navigation-actions"><a class="traffic-jump" href="#audit-video">국정감사 영상 <span aria-hidden="true">↓</span></a><button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button></div>
+      <div class="oecd-navigation-actions"><button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button></div>
     </div>
     <h2 class="oecd-title" id="oecd-title">OECD 고령 보행자 사망 순위</h2>
     <p class="oecd-unit">65세 이상 인구 10만 명당 보행 중 교통사고 사망자 수 · 공통 막대 눈금 0~15명</p>
@@ -1683,25 +1735,6 @@ html { scroll-snap-type: y mandatory }
     </div>
   </div>
 </section>
-<section class="oecd-video-screen" id="audit-video" aria-labelledby="oecd-video-title">
-  <div class="oecd-content">
-    <nav class="oecd-navigation" aria-label="국정감사 영상 화면 이동">
-      <a class="traffic-jump" href="#oecd-rankings"><span aria-hidden="true">↑</span> OECD 순위</a>
-      <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
-    </nav>
-    <section class="oecd-video" aria-labelledby="oecd-video-title">
-      <h3 id="oecd-video-title">2020 행정안전부 국정감사</h3>
-      <iframe
-        src="https://www.youtube-nocookie.com/embed/TuMeEs4PdJ8?start=34"
-        title="2020 행정안전부 국정감사"
-        loading="lazy"
-        referrerpolicy="strict-origin-when-cross-origin"
-        allow="encrypted-media; picture-in-picture; fullscreen"
-        allowfullscreen></iframe>
-      <a href="https://youtu.be/TuMeEs4PdJ8?t=34">YouTube에서 34초부터 보기</a>
-    </section>
-  </div>
-</section>
 <dialog id="detail" aria-labelledby="detail-title">
   <div class="panel-title"><h2 id="detail-title"></h2><form method="dialog"><button class="close">닫기</button></form></div>
   <p id="detail-text"></p>
@@ -2156,26 +2189,6 @@ canvas.addEventListener('pointermove', event => {
 canvas.addEventListener('lostpointercapture', () => { drag = null; });
 new ResizeObserver(draw).observe(map);
 
-const desktopMapLayout = window.matchMedia('(min-width: 1041px)');
-const zoneChart = document.querySelector('.zone-panel .compare-chart');
-const zoneChartCaption = zoneChart.querySelector('figcaption');
-
-function alignMapWithZoneCaption() {
-  if (!desktopMapLayout.matches) return;
-
-  const mapTop = map.getBoundingClientRect().top;
-  const captionBottom = zoneChartCaption.getBoundingClientRect().bottom;
-  if (captionBottom > mapTop) {
-    map.style.setProperty('--desktop-map-height', `${captionBottom - mapTop}px`);
-  }
-}
-
-const zoneChartObserver = new ResizeObserver(alignMapWithZoneCaption);
-zoneChartObserver.observe(zoneChart);
-zoneChartObserver.observe(zoneChartCaption);
-window.addEventListener('resize', alignMapWithZoneCaption);
-desktopMapLayout.addEventListener('change', alignMapWithZoneCaption);
-alignMapWithZoneCaption();
 byId('clock').textContent = timeNow() + ' KST';
 draw();
 </script>
