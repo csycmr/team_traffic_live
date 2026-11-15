@@ -581,6 +581,11 @@ html { scroll-snap-type: y mandatory }
   --slice-3: #ffcf77;
   --slice-4: #c9aafa;
   --slice-5: #a3b3c6;
+  --edge-1: #53d5b0;
+  --edge-2: #6a98cb;
+  --edge-3: #e3ad55;
+  --edge-4: #ac8be0;
+  --edge-5: #879bb2;
   --side-1: #258d79;
   --side-2: #416b98;
   --side-3: #9f6c25;
@@ -593,7 +598,7 @@ html { scroll-snap-type: y mandatory }
 .national-donut {
   min-width: 0;
   margin: 0;
-  padding: 7px 7px 2px;
+  padding: 7px 6px 12px;
   border: 1px solid var(--line);
   border-radius: 6px;
   background: #0f1b29;
@@ -601,22 +606,22 @@ html { scroll-snap-type: y mandatory }
 .national-donut figcaption { margin-left: 4px; font-size: 13px; font-weight: 700 }
 .national-donut-shape {
   display: block;
-  width: min(100%, 275px);
+  width: min(100%, 288px);
   height: auto;
   margin-inline: auto;
   overflow: visible;
 }
-.national-donut-surface { stroke: #102337; stroke-width: .75px }
+.national-donut-surface { stroke-width: .85px }
 .national-slice-label, .national-donut-total {
   text-anchor: middle;
   font-variant-numeric: tabular-nums;
   font-weight: 800;
 }
-.national-slice-label { fill: #102337; font-size: 10px }
+.national-slice-label { fill: #102337; font-size: var(--label-size) }
 .national-donut-total { fill: #f0f5fb; font-size: 18px }
 .national-donut-total tspan { font-size: 10px; fill: var(--muted) }
-@media (max-height: 740px) and (min-width: 851px) {
-  .national-donut-shape { width: min(100%, 29svh) }
+@media (max-height: 850px) and (min-width: 851px) {
+  .national-donut-shape { width: min(100%, 28svh) }
 }
 @media (max-width: 500px) {
   .national-donuts { grid-template-columns: minmax(0, 1fr) }
@@ -812,27 +817,27 @@ html { scroll-snap-type: y mandatory }
         <div class="national-donuts" aria-describedby="national-unit">
           <figure class="national-donut" aria-labelledby="national-donut-2020">
             <figcaption id="national-donut-2020">2020년</figcaption>
-            <svg class="national-donut-shape" viewBox="0 0 240 153" aria-hidden="true">
-                <path d="M 89.64 58.87 A 41 24 0 0 1 137.80 53.38 L 137.80 68.38 A 41 24 0 0 0 89.64 73.87 Z" fill="var(--side-2)"/>
-                <path d="M 137.80 53.38 A 41 24 0 0 1 155.82 63.32 L 155.82 78.32 A 41 24 0 0 0 137.80 68.38 Z" fill="var(--side-3)"/>
-                <path d="M 155.82 63.32 A 41 24 0 0 1 161.00 75.00 L 161.00 90.00 A 41 24 0 0 0 155.82 78.32 Z" fill="var(--side-4)"/>
-                <path d="M 211.00 75.00 A 91 57 0 0 1 210.82 78.58 L 210.82 93.58 A 91 57 0 0 0 211.00 90.00 Z" fill="var(--side-4)"/>
-                <path d="M 210.82 78.58 A 91 57 0 0 1 173.79 120.98 L 173.79 135.98 A 91 57 0 0 0 210.82 93.58 Z" fill="var(--side-5)"/>
-                <path d="M 52.62 36.69 A 91 57 0 0 1 159.51 23.65 L 137.80 53.38 A 41 24 0 0 0 89.64 58.87 Z" fill="var(--slice-2)" class="national-donut-surface"/>
-                <path d="M 159.51 23.65 A 91 57 0 0 1 199.49 47.26 L 155.82 63.32 A 41 24 0 0 0 137.80 53.38 Z" fill="var(--slice-3)" class="national-donut-surface"/>
-                <path d="M 199.49 47.26 A 91 57 0 0 1 210.82 78.58 L 160.92 76.51 A 41 24 0 0 0 155.82 63.32 Z" fill="var(--slice-4)" class="national-donut-surface"/>
-                <path d="M 210.82 78.58 A 91 57 0 0 1 173.79 120.98 L 144.23 94.36 A 41 24 0 0 0 160.92 76.51 Z" fill="var(--slice-5)" class="national-donut-surface"/>
-                <path d="M 67.00 73.00 A 41 24 0 0 1 77.64 56.87 L 77.64 80.87 A 41 24 0 0 0 67.00 97.00 Z" fill="var(--side-1)"/>
-                <path d="M 161.79 118.98 A 91 57 0 0 1 17.00 73.00 L 17.00 97.00 A 91 57 0 0 0 161.79 142.98 Z" fill="var(--side-1)"/>
-                <path d="M 161.79 118.98 L 132.23 92.36 L 132.23 116.36 L 161.79 142.98 Z" fill="var(--side-1)"/>
-                <path d="M 40.62 34.69 L 77.64 56.87 L 77.64 80.87 L 40.62 58.69 Z" fill="var(--side-1)"/>
-                <path d="M 161.79 118.98 A 91 57 0 0 1 40.62 34.69 L 77.64 56.87 A 41 24 0 0 0 132.23 92.36 Z" fill="var(--slice-1)" class="national-donut-surface"/>
-                <text class="national-slice-label" x="58.95" y="96.77"><tspan x="58.95">보행 중</tspan><tspan x="58.95" dy="11">628명</tspan></text>
-                <text class="national-slice-label" x="107.39" y="32.74"><tspan x="107.39">이륜차</tspan><tspan x="107.39" dy="11">274명</tspan></text>
-                <text class="national-slice-label" x="165.27" y="42.89"><tspan x="165.27">승용차</tspan><tspan x="165.27" dy="11">131명</tspan></text>
-                <text class="national-slice-label" x="184.37" y="63.17"><tspan x="184.37">자전거</tspan><tspan x="184.37" dy="11">122명</tspan></text>
-                <text class="national-slice-label" x="177.90" y="91.20"><tspan x="177.90">그 외</tspan><tspan x="177.90" dy="11">187명</tspan></text>
-                <text class="national-donut-total" x="120" y="79">1,342<tspan>명</tspan></text>
+            <svg class="national-donut-shape" viewBox="0 0 246 184" aria-hidden="true">
+                <path d="M 94.90 65.84 A 42 30 0 0 1 144.24 58.98 L 144.24 72.98 A 42 30 0 0 0 94.90 79.84 Z" fill="var(--side-2)"/>
+                <path d="M 144.24 58.98 A 42 30 0 0 1 162.69 71.40 L 162.69 85.40 A 42 30 0 0 0 144.24 72.98 Z" fill="var(--side-3)"/>
+                <path d="M 162.69 71.40 A 42 30 0 0 1 168.00 86.00 L 168.00 100.00 A 42 30 0 0 0 162.69 85.40 Z" fill="var(--side-4)"/>
+                <path d="M 230.00 86.00 A 104 73 0 0 1 229.79 90.59 L 229.79 104.59 A 104 73 0 0 0 230.00 100.00 Z" fill="var(--side-4)"/>
+                <path d="M 229.79 90.59 A 104 73 0 0 1 187.47 144.88 L 187.47 158.88 A 104 73 0 0 0 229.79 104.59 Z" fill="var(--side-5)"/>
+                <path d="M 49.00 36.93 A 104 73 0 0 1 171.16 20.24 L 144.24 58.98 A 42 30 0 0 0 94.90 65.84 Z" fill="var(--slice-2)" class="national-donut-surface" stroke="var(--edge-2)"/>
+                <path d="M 171.16 20.24 A 104 73 0 0 1 216.85 50.47 L 162.69 71.40 A 42 30 0 0 0 144.24 58.98 Z" fill="var(--slice-3)" class="national-donut-surface" stroke="var(--edge-3)"/>
+                <path d="M 216.85 50.47 A 104 73 0 0 1 229.79 90.59 L 167.92 87.89 A 42 30 0 0 0 162.69 71.40 Z" fill="var(--slice-4)" class="national-donut-surface" stroke="var(--edge-4)"/>
+                <path d="M 229.79 90.59 A 104 73 0 0 1 187.47 144.88 L 150.82 110.20 A 42 30 0 0 0 167.92 87.89 Z" fill="var(--slice-5)" class="national-donut-surface" stroke="var(--edge-5)"/>
+                <path d="M 73.00 84.00 A 42 30 0 0 1 83.90 63.84 L 83.90 84.84 A 42 30 0 0 0 73.00 105.00 Z" fill="var(--side-1)"/>
+                <path d="M 176.47 142.88 A 104 73 0 0 1 11.00 84.00 L 11.00 105.00 A 104 73 0 0 0 176.47 163.88 Z" fill="var(--side-1)"/>
+                <path d="M 176.47 142.88 L 139.82 108.20 L 139.82 129.20 L 176.47 163.88 Z" fill="var(--side-1)"/>
+                <path d="M 38.00 34.93 L 83.90 63.84 L 83.90 84.84 L 38.00 55.93 Z" fill="var(--side-1)"/>
+                <path d="M 176.47 142.88 A 104 73 0 0 1 38.00 34.93 L 83.90 63.84 A 42 30 0 0 0 139.82 108.20 Z" fill="var(--slice-1)" class="national-donut-surface" stroke="var(--edge-1)"/>
+                <text class="national-slice-label" x="118.23" y="133.05" style="--label-size: 11px"><tspan x="118.23">보행 중</tspan><tspan x="118.23" dy="11">628명</tspan></text>
+                <text class="national-slice-label" x="121.41" y="33.73" style="--label-size: 11px"><tspan x="121.41">이륜차</tspan><tspan x="121.41" dy="11">274명</tspan></text>
+                <text class="national-slice-label" x="180.21" y="43.63" style="--label-size: 10px"><tspan x="180.21">승용차</tspan><tspan x="180.21" dy="11">131명</tspan></text>
+                <text class="national-slice-label" x="204.72" y="73.68" style="--label-size: 11px"><tspan x="204.72">자전거</tspan><tspan x="204.72" dy="11">122명</tspan></text>
+                <text class="national-slice-label" x="190.40" y="106.22" style="--label-size: 11px"><tspan x="190.40">그 외</tspan><tspan x="190.40" dy="11">187명</tspan></text>
+                <text class="national-donut-total" x="126" y="90">1,342<tspan>명</tspan></text>
             </svg>
             <p class="oecd-sr">65세 이상 사망자 합계 1,342명</p>
             <ul class="oecd-sr" role="list">
@@ -845,27 +850,27 @@ html { scroll-snap-type: y mandatory }
           </figure>
           <figure class="national-donut" aria-labelledby="national-donut-2021">
             <figcaption id="national-donut-2021">2021년</figcaption>
-            <svg class="national-donut-shape" viewBox="0 0 240 153" aria-hidden="true">
-                <path d="M 89.31 59.09 A 41 24 0 0 1 131.89 52.03 L 131.89 67.03 A 41 24 0 0 0 89.31 74.09 Z" fill="var(--side-2)"/>
-                <path d="M 131.89 52.03 A 41 24 0 0 1 152.75 60.56 L 152.75 75.56 A 41 24 0 0 0 131.89 67.03 Z" fill="var(--side-3)"/>
-                <path d="M 152.75 60.56 A 41 24 0 0 1 160.65 71.86 L 160.65 86.86 A 41 24 0 0 0 152.75 75.56 Z" fill="var(--side-4)"/>
-                <path d="M 160.65 71.86 A 41 24 0 0 1 161.00 75.00 L 161.00 90.00 A 41 24 0 0 0 160.65 86.86 Z" fill="var(--side-5)"/>
-                <path d="M 211.00 75.00 A 91 57 0 0 1 172.89 121.38 L 172.89 136.38 A 91 57 0 0 0 211.00 90.00 Z" fill="var(--side-5)"/>
-                <path d="M 51.88 37.20 A 91 57 0 0 1 146.40 20.45 L 131.89 52.03 A 41 24 0 0 0 89.31 59.09 Z" fill="var(--slice-2)" class="national-donut-surface"/>
-                <path d="M 146.40 20.45 A 91 57 0 0 1 192.68 40.70 L 152.75 60.56 A 41 24 0 0 0 131.89 52.03 Z" fill="var(--slice-3)" class="national-donut-surface"/>
-                <path d="M 192.68 40.70 A 91 57 0 0 1 210.22 67.53 L 160.65 71.86 A 41 24 0 0 0 152.75 60.56 Z" fill="var(--slice-4)" class="national-donut-surface"/>
-                <path d="M 210.22 67.53 A 91 57 0 0 1 172.89 121.38 L 143.83 94.53 A 41 24 0 0 0 160.65 71.86 Z" fill="var(--slice-5)" class="national-donut-surface"/>
-                <path d="M 67.00 73.00 A 41 24 0 0 1 77.31 57.09 L 77.31 81.09 A 41 24 0 0 0 67.00 97.00 Z" fill="var(--side-1)"/>
-                <path d="M 160.89 119.38 A 91 57 0 0 1 17.00 73.00 L 17.00 97.00 A 91 57 0 0 0 160.89 143.38 Z" fill="var(--side-1)"/>
-                <path d="M 160.89 119.38 L 131.83 92.53 L 131.83 116.53 L 160.89 143.38 Z" fill="var(--side-1)"/>
-                <path d="M 39.88 35.20 L 77.31 57.09 L 77.31 81.09 L 39.88 59.20 Z" fill="var(--side-1)"/>
-                <path d="M 160.89 119.38 A 91 57 0 0 1 39.88 35.20 L 77.31 57.09 A 41 24 0 0 0 131.83 92.53 Z" fill="var(--slice-1)" class="national-donut-surface"/>
-                <text class="national-slice-label" x="58.95" y="96.77"><tspan x="58.95">보행 중</tspan><tspan x="58.95" dy="11">601명</tspan></text>
-                <text class="national-slice-label" x="102.03" y="33.51"><tspan x="102.03">이륜차</tspan><tspan x="102.03" dy="11">235명</tspan></text>
-                <text class="national-slice-label" x="157.79" y="39.21"><tspan x="157.79">승용차</tspan><tspan x="157.79" dy="11">130명</tspan></text>
-                <text class="national-slice-label" x="181.08" y="56.85"><tspan x="181.08">자전거</tspan><tspan x="181.08" dy="11">106명</tspan></text>
-                <text class="national-slice-label" x="180.54" y="87.93"><tspan x="180.54">그 외</tspan><tspan x="180.54" dy="11">223명</tspan></text>
-                <text class="national-donut-total" x="120" y="79">1,295<tspan>명</tspan></text>
+            <svg class="national-donut-shape" viewBox="0 0 246 184" aria-hidden="true">
+                <path d="M 94.56 66.11 A 42 30 0 0 1 138.18 57.29 L 138.18 71.29 A 42 30 0 0 0 94.56 80.11 Z" fill="var(--side-2)"/>
+                <path d="M 138.18 57.29 A 42 30 0 0 1 159.54 67.95 L 159.54 81.95 A 42 30 0 0 0 138.18 71.29 Z" fill="var(--side-3)"/>
+                <path d="M 159.54 67.95 A 42 30 0 0 1 167.64 82.07 L 167.64 96.07 A 42 30 0 0 0 159.54 81.95 Z" fill="var(--side-4)"/>
+                <path d="M 167.64 82.07 A 42 30 0 0 1 168.00 86.00 L 168.00 100.00 A 42 30 0 0 0 167.64 96.07 Z" fill="var(--side-5)"/>
+                <path d="M 230.00 86.00 A 104 73 0 0 1 186.45 145.40 L 186.45 159.40 A 104 73 0 0 0 230.00 100.00 Z" fill="var(--side-5)"/>
+                <path d="M 48.15 37.59 A 104 73 0 0 1 156.17 16.14 L 138.18 57.29 A 42 30 0 0 0 94.56 66.11 Z" fill="var(--slice-2)" class="national-donut-surface" stroke="var(--edge-2)"/>
+                <path d="M 156.17 16.14 A 104 73 0 0 1 209.06 42.07 L 159.54 67.95 A 42 30 0 0 0 138.18 57.29 Z" fill="var(--slice-3)" class="national-donut-surface" stroke="var(--edge-3)"/>
+                <path d="M 209.06 42.07 A 104 73 0 0 1 229.10 76.44 L 167.64 82.07 A 42 30 0 0 0 159.54 67.95 Z" fill="var(--slice-4)" class="national-donut-surface" stroke="var(--edge-4)"/>
+                <path d="M 229.10 76.44 A 104 73 0 0 1 186.45 145.40 L 150.41 110.41 A 42 30 0 0 0 167.64 82.07 Z" fill="var(--slice-5)" class="national-donut-surface" stroke="var(--edge-5)"/>
+                <path d="M 73.00 84.00 A 42 30 0 0 1 83.56 64.11 L 83.56 85.11 A 42 30 0 0 0 73.00 105.00 Z" fill="var(--side-1)"/>
+                <path d="M 175.45 143.40 A 104 73 0 0 1 11.00 84.00 L 11.00 105.00 A 104 73 0 0 0 175.45 164.40 Z" fill="var(--side-1)"/>
+                <path d="M 175.45 143.40 L 139.41 108.41 L 139.41 129.41 L 175.45 164.40 Z" fill="var(--side-1)"/>
+                <path d="M 37.15 35.59 L 83.56 64.11 L 83.56 85.11 L 37.15 56.59 Z" fill="var(--side-1)"/>
+                <path d="M 175.45 143.40 A 104 73 0 0 1 37.15 35.59 L 83.56 64.11 A 42 30 0 0 0 139.41 108.41 Z" fill="var(--slice-1)" class="national-donut-surface" stroke="var(--edge-1)"/>
+                <text class="national-slice-label" x="117.70" y="133.06" style="--label-size: 11px"><tspan x="117.70">보행 중</tspan><tspan x="117.70" dy="11">601명</tspan></text>
+                <text class="national-slice-label" x="113.10" y="34.45" style="--label-size: 11px"><tspan x="113.10">이륜차</tspan><tspan x="113.10" dy="11">235명</tspan></text>
+                <text class="national-slice-label" x="169.99" y="38.79" style="--label-size: 10.5px"><tspan x="169.99">승용차</tspan><tspan x="169.99" dy="11">130명</tspan></text>
+                <text class="national-slice-label" x="202.81" y="63.53" style="--label-size: 9.5px"><tspan x="202.81">자전거</tspan><tspan x="202.81" dy="11">106명</tspan></text>
+                <text class="national-slice-label" x="193.53" y="98.74" style="--label-size: 11px"><tspan x="193.53">그 외</tspan><tspan x="193.53" dy="11">223명</tspan></text>
+                <text class="national-donut-total" x="126" y="90">1,295<tspan>명</tspan></text>
             </svg>
             <p class="oecd-sr">65세 이상 사망자 합계 1,295명</p>
             <ul class="oecd-sr" role="list">
@@ -878,27 +883,27 @@ html { scroll-snap-type: y mandatory }
           </figure>
           <figure class="national-donut" aria-labelledby="national-donut-2022">
             <figcaption id="national-donut-2022">2022년</figcaption>
-            <svg class="national-donut-shape" viewBox="0 0 240 153" aria-hidden="true">
-                <path d="M 87.62 60.28 A 41 24 0 0 1 129.68 51.68 L 129.68 66.68 A 41 24 0 0 0 87.62 75.28 Z" fill="var(--side-2)"/>
-                <path d="M 129.68 51.68 A 41 24 0 0 1 152.44 60.32 L 152.44 75.32 A 41 24 0 0 0 129.68 66.68 Z" fill="var(--side-3)"/>
-                <path d="M 152.44 60.32 A 41 24 0 0 1 161.00 74.67 L 161.00 89.67 A 41 24 0 0 0 152.44 75.32 Z" fill="var(--side-4)"/>
-                <path d="M 161.00 74.67 A 41 24 0 0 1 161.00 75.00 L 161.00 90.00 A 41 24 0 0 0 161.00 89.67 Z" fill="var(--side-5)"/>
-                <path d="M 211.00 75.00 A 91 57 0 0 1 168.01 123.42 L 168.01 138.42 A 91 57 0 0 0 211.00 90.00 Z" fill="var(--side-5)"/>
-                <path d="M 48.14 40.03 A 91 57 0 0 1 141.49 19.61 L 129.68 51.68 A 41 24 0 0 0 87.62 60.28 Z" fill="var(--slice-2)" class="national-donut-surface"/>
-                <path d="M 141.49 19.61 A 91 57 0 0 1 191.99 40.14 L 152.44 60.32 A 41 24 0 0 0 129.68 51.68 Z" fill="var(--slice-3)" class="national-donut-surface"/>
-                <path d="M 191.99 40.14 A 91 57 0 0 1 210.99 74.21 L 161.00 74.67 A 41 24 0 0 0 152.44 60.32 Z" fill="var(--slice-4)" class="national-donut-surface"/>
-                <path d="M 210.99 74.21 A 91 57 0 0 1 168.01 123.42 L 141.63 95.39 A 41 24 0 0 0 161.00 74.67 Z" fill="var(--slice-5)" class="national-donut-surface"/>
-                <path d="M 67.00 73.00 A 41 24 0 0 1 75.62 58.28 L 75.62 82.28 A 41 24 0 0 0 67.00 97.00 Z" fill="var(--side-1)"/>
-                <path d="M 156.01 121.42 A 91 57 0 0 1 17.00 73.00 L 17.00 97.00 A 91 57 0 0 0 156.01 145.42 Z" fill="var(--side-1)"/>
-                <path d="M 156.01 121.42 L 129.63 93.39 L 129.63 117.39 L 156.01 145.42 Z" fill="var(--side-1)"/>
-                <path d="M 36.14 38.03 L 75.62 58.28 L 75.62 82.28 L 36.14 62.03 Z" fill="var(--side-1)"/>
-                <path d="M 156.01 121.42 A 91 57 0 0 1 36.14 38.03 L 75.62 58.28 A 41 24 0 0 0 129.63 93.39 Z" fill="var(--slice-1)" class="national-donut-surface"/>
-                <text class="national-slice-label" x="58.95" y="96.77"><tspan x="58.95">보행 중</tspan><tspan x="58.95" dy="11">558명</tspan></text>
-                <text class="national-slice-label" x="98.24" y="34.24"><tspan x="98.24">이륜차</tspan><tspan x="98.24" dy="11">230명</tspan></text>
-                <text class="national-slice-label" x="155.92" y="38.44"><tspan x="155.92">승용차</tspan><tspan x="155.92" dy="11">135명</tspan></text>
-                <text class="national-slice-label" x="182.31" y="58.81"><tspan x="182.31">자전거</tspan><tspan x="182.31" dy="11">129명</tspan></text>
-                <text class="national-slice-label" x="177.90" y="91.20"><tspan x="177.90">그 외</tspan><tspan x="177.90" dy="11">206명</tspan></text>
-                <text class="national-donut-total" x="120" y="79">1,258<tspan>명</tspan></text>
+            <svg class="national-donut-shape" viewBox="0 0 246 184" aria-hidden="true">
+                <path d="M 92.83 67.60 A 42 30 0 0 1 135.92 56.85 L 135.92 70.85 A 42 30 0 0 0 92.83 81.60 Z" fill="var(--side-2)"/>
+                <path d="M 135.92 56.85 A 42 30 0 0 1 159.23 67.65 L 159.23 81.65 A 42 30 0 0 0 135.92 70.85 Z" fill="var(--side-3)"/>
+                <path d="M 159.23 67.65 A 42 30 0 0 1 168.00 85.59 L 168.00 99.59 A 42 30 0 0 0 159.23 81.65 Z" fill="var(--side-4)"/>
+                <path d="M 168.00 85.59 A 42 30 0 0 1 168.00 86.00 L 168.00 100.00 A 42 30 0 0 0 168.00 99.59 Z" fill="var(--side-5)"/>
+                <path d="M 230.00 86.00 A 104 73 0 0 1 180.87 148.01 L 180.87 162.01 A 104 73 0 0 0 230.00 100.00 Z" fill="var(--side-5)"/>
+                <path d="M 43.87 41.22 A 104 73 0 0 1 150.56 15.06 L 135.92 56.85 A 42 30 0 0 0 92.83 67.60 Z" fill="var(--slice-2)" class="national-donut-surface" stroke="var(--edge-2)"/>
+                <path d="M 150.56 15.06 A 104 73 0 0 1 208.28 41.35 L 159.23 67.65 A 42 30 0 0 0 135.92 56.85 Z" fill="var(--slice-3)" class="national-donut-surface" stroke="var(--edge-3)"/>
+                <path d="M 208.28 41.35 A 104 73 0 0 1 229.99 84.99 L 168.00 85.59 A 42 30 0 0 0 159.23 67.65 Z" fill="var(--slice-4)" class="national-donut-surface" stroke="var(--edge-4)"/>
+                <path d="M 229.99 84.99 A 104 73 0 0 1 180.87 148.01 L 148.16 111.49 A 42 30 0 0 0 168.00 85.59 Z" fill="var(--slice-5)" class="national-donut-surface" stroke="var(--edge-5)"/>
+                <path d="M 73.00 84.00 A 42 30 0 0 1 81.83 65.60 L 81.83 86.60 A 42 30 0 0 0 73.00 105.00 Z" fill="var(--side-1)"/>
+                <path d="M 169.87 146.01 A 104 73 0 0 1 11.00 84.00 L 11.00 105.00 A 104 73 0 0 0 169.87 167.01 Z" fill="var(--side-1)"/>
+                <path d="M 169.87 146.01 L 137.16 109.49 L 137.16 130.49 L 169.87 167.01 Z" fill="var(--side-1)"/>
+                <path d="M 32.87 39.22 L 81.83 65.60 L 81.83 86.60 L 32.87 60.22 Z" fill="var(--side-1)"/>
+                <path d="M 169.87 146.01 A 104 73 0 0 1 32.87 39.22 L 81.83 65.60 A 42 30 0 0 0 137.16 109.49 Z" fill="var(--slice-1)" class="national-donut-surface" stroke="var(--edge-1)"/>
+                <text class="national-slice-label" x="111.50" y="133.04" style="--label-size: 11px"><tspan x="111.50">보행 중</tspan><tspan x="111.50" dy="11">558명</tspan></text>
+                <text class="national-slice-label" x="110.26" y="34.86" style="--label-size: 11px"><tspan x="110.26">이륜차</tspan><tspan x="110.26" dy="11">230명</tspan></text>
+                <text class="national-slice-label" x="167.16" y="38.36" style="--label-size: 11px"><tspan x="167.16">승용차</tspan><tspan x="167.16" dy="11">135명</tspan></text>
+                <text class="national-slice-label" x="199.91" y="68.95" style="--label-size: 11px"><tspan x="199.91">자전거</tspan><tspan x="199.91" dy="11">129명</tspan></text>
+                <text class="national-slice-label" x="192.63" y="102.71" style="--label-size: 11px"><tspan x="192.63">그 외</tspan><tspan x="192.63" dy="11">206명</tspan></text>
+                <text class="national-donut-total" x="126" y="90">1,258<tspan>명</tspan></text>
             </svg>
             <p class="oecd-sr">65세 이상 사망자 합계 1,258명</p>
             <ul class="oecd-sr" role="list">
@@ -911,27 +916,27 @@ html { scroll-snap-type: y mandatory }
           </figure>
           <figure class="national-donut" aria-labelledby="national-donut-2023">
             <figcaption id="national-donut-2023">2023년</figcaption>
-            <svg class="national-donut-shape" viewBox="0 0 240 153" aria-hidden="true">
-                <path d="M 87.62 60.28 A 41 24 0 0 1 122.98 51.06 L 122.98 66.06 A 41 24 0 0 0 87.62 75.28 Z" fill="var(--side-2)"/>
-                <path d="M 122.98 51.06 A 41 24 0 0 1 153.21 60.93 L 153.21 75.93 A 41 24 0 0 0 122.98 66.06 Z" fill="var(--side-3)"/>
-                <path d="M 153.21 60.93 A 41 24 0 0 1 160.94 73.70 L 160.94 88.70 A 41 24 0 0 0 153.21 75.93 Z" fill="var(--side-4)"/>
-                <path d="M 160.94 73.70 A 41 24 0 0 1 161.00 75.00 L 161.00 90.00 A 41 24 0 0 0 160.94 88.70 Z" fill="var(--side-5)"/>
-                <path d="M 211.00 75.00 A 91 57 0 0 1 168.01 123.42 L 168.01 138.42 A 91 57 0 0 0 211.00 90.00 Z" fill="var(--side-5)"/>
-                <path d="M 48.13 40.03 A 91 57 0 0 1 126.60 18.15 L 122.98 51.06 A 41 24 0 0 0 87.62 60.28 Z" fill="var(--slice-2)" class="national-donut-surface"/>
-                <path d="M 126.60 18.15 A 91 57 0 0 1 193.71 41.57 L 153.21 60.93 A 41 24 0 0 0 122.98 51.06 Z" fill="var(--slice-3)" class="national-donut-surface"/>
-                <path d="M 193.71 41.57 A 91 57 0 0 1 210.87 71.92 L 160.94 73.70 A 41 24 0 0 0 153.21 60.93 Z" fill="var(--slice-4)" class="national-donut-surface"/>
-                <path d="M 210.87 71.92 A 91 57 0 0 1 168.01 123.42 L 141.63 95.39 A 41 24 0 0 0 160.94 73.70 Z" fill="var(--slice-5)" class="national-donut-surface"/>
-                <path d="M 67.00 73.00 A 41 24 0 0 1 75.62 58.28 L 75.62 82.28 A 41 24 0 0 0 67.00 97.00 Z" fill="var(--side-1)"/>
-                <path d="M 156.01 121.42 A 91 57 0 0 1 17.00 73.00 L 17.00 97.00 A 91 57 0 0 0 156.01 145.42 Z" fill="var(--side-1)"/>
-                <path d="M 156.01 121.42 L 129.63 93.39 L 129.63 117.39 L 156.01 145.42 Z" fill="var(--side-1)"/>
-                <path d="M 36.13 38.03 L 75.62 58.28 L 75.62 82.28 L 36.13 62.03 Z" fill="var(--side-1)"/>
-                <path d="M 156.01 121.42 A 91 57 0 0 1 36.13 38.03 L 75.62 58.28 A 41 24 0 0 0 129.63 93.39 Z" fill="var(--slice-1)" class="national-donut-surface"/>
-                <text class="national-slice-label" x="58.95" y="96.77"><tspan x="58.95">보행 중</tspan><tspan x="58.95" dy="11">550명</tspan></text>
-                <text class="national-slice-label" x="93.16" y="35.46"><tspan x="93.16">이륜차</tspan><tspan x="93.16" dy="11">194명</tspan></text>
-                <text class="national-slice-label" x="152.13" y="37.06"><tspan x="152.13">승용차</tspan><tspan x="152.13" dy="11">172명</tspan></text>
-                <text class="national-slice-label" x="182.21" y="58.65"><tspan x="182.21">자전거</tspan><tspan x="182.21" dy="11">113명</tspan></text>
-                <text class="national-slice-label" x="178.53" y="90.49"><tspan x="178.53">그 외</tspan><tspan x="178.53" dy="11">211명</tspan></text>
-                <text class="national-donut-total" x="120" y="79">1,240<tspan>명</tspan></text>
+            <svg class="national-donut-shape" viewBox="0 0 246 184" aria-hidden="true">
+                <path d="M 92.83 67.60 A 42 30 0 0 1 129.05 56.08 L 129.05 70.08 A 42 30 0 0 0 92.83 81.60 Z" fill="var(--side-2)"/>
+                <path d="M 129.05 56.08 A 42 30 0 0 1 160.02 68.41 L 160.02 82.41 A 42 30 0 0 0 129.05 70.08 Z" fill="var(--side-3)"/>
+                <path d="M 160.02 68.41 A 42 30 0 0 1 167.94 84.38 L 167.94 98.38 A 42 30 0 0 0 160.02 82.41 Z" fill="var(--side-4)"/>
+                <path d="M 167.94 84.38 A 42 30 0 0 1 168.00 86.00 L 168.00 100.00 A 42 30 0 0 0 167.94 98.38 Z" fill="var(--side-5)"/>
+                <path d="M 230.00 86.00 A 104 73 0 0 1 180.86 148.02 L 180.86 162.02 A 104 73 0 0 0 230.00 100.00 Z" fill="var(--side-5)"/>
+                <path d="M 43.87 41.22 A 104 73 0 0 1 133.55 13.19 L 129.05 56.08 A 42 30 0 0 0 92.83 67.60 Z" fill="var(--slice-2)" class="national-donut-surface" stroke="var(--edge-2)"/>
+                <path d="M 133.55 13.19 A 104 73 0 0 1 210.24 43.19 L 160.02 68.41 A 42 30 0 0 0 129.05 56.08 Z" fill="var(--slice-3)" class="national-donut-surface" stroke="var(--edge-3)"/>
+                <path d="M 210.24 43.19 A 104 73 0 0 1 229.85 82.06 L 167.94 84.38 A 42 30 0 0 0 160.02 68.41 Z" fill="var(--slice-4)" class="national-donut-surface" stroke="var(--edge-4)"/>
+                <path d="M 229.85 82.06 A 104 73 0 0 1 180.86 148.02 L 148.16 111.49 A 42 30 0 0 0 167.94 84.38 Z" fill="var(--slice-5)" class="national-donut-surface" stroke="var(--edge-5)"/>
+                <path d="M 73.00 84.00 A 42 30 0 0 1 81.83 65.60 L 81.83 86.60 A 42 30 0 0 0 73.00 105.00 Z" fill="var(--side-1)"/>
+                <path d="M 169.86 146.02 A 104 73 0 0 1 11.00 84.00 L 11.00 105.00 A 104 73 0 0 0 169.86 167.02 Z" fill="var(--side-1)"/>
+                <path d="M 169.86 146.02 L 137.16 109.49 L 137.16 130.49 L 169.86 167.02 Z" fill="var(--side-1)"/>
+                <path d="M 32.87 39.22 L 81.83 65.60 L 81.83 86.60 L 32.87 60.22 Z" fill="var(--side-1)"/>
+                <path d="M 169.86 146.02 A 104 73 0 0 1 32.87 39.22 L 81.83 65.60 A 42 30 0 0 0 137.16 109.49 Z" fill="var(--slice-1)" class="national-donut-surface" stroke="var(--edge-1)"/>
+                <text class="national-slice-label" x="111.50" y="133.04" style="--label-size: 11px"><tspan x="111.50">보행 중</tspan><tspan x="111.50" dy="11">550명</tspan></text>
+                <text class="national-slice-label" x="102.27" y="36.46" style="--label-size: 11px"><tspan x="102.27">이륜차</tspan><tspan x="102.27" dy="11">194명</tspan></text>
+                <text class="national-slice-label" x="157.68" y="37.99" style="--label-size: 11px"><tspan x="157.68">승용차</tspan><tspan x="157.68" dy="11">172명</tspan></text>
+                <text class="national-slice-label" x="201.68" y="68.00" style="--label-size: 11px"><tspan x="201.68">자전거</tspan><tspan x="201.68" dy="11">113명</tspan></text>
+                <text class="national-slice-label" x="193.27" y="101.55" style="--label-size: 11px"><tspan x="193.27">그 외</tspan><tspan x="193.27" dy="11">211명</tspan></text>
+                <text class="national-donut-total" x="126" y="90">1,240<tspan>명</tspan></text>
             </svg>
             <p class="oecd-sr">65세 이상 사망자 합계 1,240명</p>
             <ul class="oecd-sr" role="list">
