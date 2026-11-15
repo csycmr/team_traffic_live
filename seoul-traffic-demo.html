@@ -1037,6 +1037,28 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 @media(max-width:850px) {
   #school-zone-fines > .policy-content { grid-template-columns: minmax(0, 1fr) }
 }
+
+.policy-jeju {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, .95fr);
+  gap: 18px;
+  align-items: stretch;
+}
+.policy-jeju-copy { display: flex; flex-direction: column; min-width: 0 }
+.policy-jeju-copy .policy-source { margin-top: auto; padding-top: 18px }
+.policy-jeju .policy-jeju-photo { margin: 0; min-width: 0; align-self: stretch }
+.policy-jeju-photo > a { display: block; height: 100% }
+.policy-jeju .policy-jeju-photo img {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  object-fit: contain;
+  object-position: top right;
+}
+@media(max-width:550px) {
+  .policy-jeju { grid-template-columns: minmax(0, 1fr) }
+  .policy-jeju .policy-jeju-photo img { height: auto }
+}
 </style>
 <link rel="stylesheet" href="./assets/oecd-rankings.css">
 <link rel="stylesheet" href="./assets/national-fatalities.css">
@@ -2345,12 +2367,14 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
       </section>
       <div class="policy-cases">
         <section class="audit-diagnosis policy-jeju" aria-labelledby="policy-jeju-case">
+          <div class="policy-jeju-copy">
           <h3 id="policy-jeju-case">제주, 형광녹색으로 노인보호구역 표시</h3>
           <p>제주경찰청과 제주자치경찰단은 2026년 8월 전국 첫 형광녹색 디자인 시범사업 추진을 발표했습니다. 첫 구간은 <strong>서귀포시 매일올레시장 일원</strong>입니다.</p>
           <p>전주·가로등 같은 시설물에 형광녹색 시트지를 붙이고, 보도가 없는 곳은 도로 표면을 같은 색으로 포장하는 계획입니다.</p>
+            <p class="muted policy-source">위: 기존 모습 · 아래: 형광녹색 적용 구상 · 제주도 자치경찰단 제공 이미지 · <a href="https://www.khan.co.kr/article/202608112059015">경향신문 · 2026년 8월 11일</a></p>
+          </div>
           <figure class="policy-jeju-photo">
             <a href="./assets/jeju-silver-zone-pilot.jpg" target="_blank" rel="noopener"><img src="./assets/jeju-silver-zone-pilot.jpg" width="848" height="1248" loading="lazy" alt="서귀포시 매일올레시장 일원 기존 모습과 형광녹색 적용 구상 비교"></a>
-            <figcaption class="muted policy-source">위: 기존 모습 · 아래: 형광녹색 적용 구상 · 제주도 자치경찰단 제공 이미지 · <a href="https://www.khan.co.kr/article/202608112059015">경향신문 · 2026년 8월 11일</a></figcaption>
           </figure>
         </section>
       </div>
