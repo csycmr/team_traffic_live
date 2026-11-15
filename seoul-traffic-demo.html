@@ -707,9 +707,9 @@ section.story-screen {
     <canvas id="basemap" aria-hidden="true"></canvas>
     <div id="kakao-map" aria-label="서울 카카오맵" style="position: absolute; inset: 0; z-index: 0;" hidden></div>
     <div class="map-marker-legend" role="group" aria-label="지도 핀 표시">
-      <button id="hotspot-control" class="hotspot-control" type="button" aria-pressed="true" hidden>사고다발지역</button>
-      <button id="protection-status" class="protection-status" type="button" aria-pressed="true" disabled hidden>노인보호구역 불러오는 중</button>
-      <button id="school-control" class="hotspot-control school-control" type="button" aria-pressed="true" hidden>어린이보호구역</button>
+      <button id="hotspot-control" class="hotspot-control" type="button" aria-pressed="false" hidden>사고다발지역</button>
+      <button id="protection-status" class="protection-status" type="button" aria-pressed="false" disabled hidden>노인보호구역 불러오는 중</button>
+      <button id="school-control" class="hotspot-control school-control" type="button" aria-pressed="false" hidden>어린이보호구역</button>
     </div>
     <div class="pins" id="pins"></div>
     <div class="map-head"><div class="layers" id="layers" aria-label="지도 표시 항목"></div></div>
@@ -1994,7 +1994,7 @@ const river = [[-30,371],[76,380],[154,417],[227,456],[278,452],[328,425],[391,4
 const map = byId('map');
 const canvas = byId('basemap');
 const ctx = canvas.getContext('2d');
-const enabled = new Set(Object.keys(group));
+const enabled = new Set();
 const detail = byId('detail');
 const camera = byId('camera-view');
 const cameraCtx = camera.getContext('2d');
@@ -2005,7 +2005,7 @@ let offset = [0, 0];
 Object.entries(group).forEach(([key, [label, color]]) => {
   const button = document.createElement('button');
   button.type = 'button';
-  button.setAttribute('aria-pressed', 'true');
+  button.setAttribute('aria-pressed', 'false');
   button.innerHTML = '<i class="dot" style="--dot:' + color + '"></i>' + label;
   button.addEventListener('click', () => {
     if (enabled.has(key)) enabled.delete(key);
@@ -2397,7 +2397,7 @@ async function showAccidentHotspots(kakaoMap) {
       dot.setAttribute("aria-label", location.name + " 사고다발지역");
       dot.className = "hotspot-symbol";
       const marker = new kakao.maps.CustomOverlay({
-        map: kakaoMap, position, content: dot, clickable: true, zIndex: 1
+        position, content: dot, clickable: true, zIndex: 1
       });
 
       dot.addEventListener("click", () => {
@@ -2457,7 +2457,6 @@ async function showSchoolZones(kakaoMap) {
         const detail = protectionPopup({ ...row, API시설명: row.시설명 });
         popup.open(detail, marker.getPosition(), 28);
       });
-      marker.setMap(kakaoMap);
       return marker;
     });
 
@@ -2532,7 +2531,6 @@ async function showProtectionZones(kakaoMap) {
         });
         popup.open(detail, marker.getPosition(), 28);
       });
-      marker.setMap(kakaoMap);
       markers.push(marker);
     };
 
@@ -2585,6 +2583,7 @@ if (window.kakao?.maps?.load) {
         level: initialLevel
       });
       kakaoMap.setMaxLevel(initialLevel + 1);
+      kakaoMap.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
       new ResizeObserver(() => kakaoMap.relayout()).observe(mapElement);
       showSeoulBoundaries(kakaoMap).catch(error => console.error("서울 경계 로드 실패", error));
       showProtectionZones(kakaoMap);
