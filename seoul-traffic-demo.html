@@ -772,11 +772,11 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
   white-space: nowrap;
 }
 #district-risk .zone-data-table thead th { padding-block: 5px }
-#district-risk .zone-data-table tbody tr { height: clamp(21px, 2.78svh, 29px) }
+#district-risk .zone-data-table tbody tr { height: clamp(19px, 2.45svh, 26px) }
 #district-risk .zone-data-table :is(th:first-child, th:last-child) { text-align: left }
 #district-risk .zone-data-table .district-rate { color: var(--mint); font-weight: 700 }
 #district-risk .district-bar-column { width: 49% }
-#district-risk .district-track { display: block; height: 13px }
+#district-risk .district-track { display: block; height: 13px; background: transparent }
 #policy-alternatives .policy-content { display: grid; gap: clamp(8px, 1.5svh, 16px) }
 .policy-evidence { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 14px; align-items: start }
 .policy-cases { display: grid; gap: 10px }
@@ -1668,7 +1668,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
   <div class="oecd-content">
     <section class="audit-diagnosis" aria-labelledby="district-chart-title">
       <h3 id="district-chart-title">자치구별 고령 보행자 사고율</h3>
-      <p class="audit-chart-caption">2025년 서울 25개 자치구 · 65세 이상 거주인구 1만 명당 고령 보행자 사고(건)</p>
+      <p class="audit-chart-caption">2025년 서울 25개 자치구</p>
       <div class="district-table-scroll" tabindex="0" role="region" aria-label="자치구별 원자료와 사고율 그래프">
         <table class="zone-data-table">
           <thead><tr>
