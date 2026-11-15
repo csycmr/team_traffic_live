@@ -851,11 +851,36 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 .parking-fine-bars > div:last-child dd span { background: var(--mint) }
 .policy-sanctions { margin-top: 9px; font-size: 12px }
 .policy-sanctions summary { cursor: pointer; color: #c1dcf5 }
-.child-precedent { display: grid; gap: 12px }
+.child-precedent {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) minmax(0, 3.3fr);
+  grid-template-areas: "timeline trends" "timeline examples";
+  gap: 12px;
+}
+.child-precedent > [aria-labelledby="child-timeline-title"] { grid-area: timeline }
+.child-precedent > [aria-labelledby="child-trends-title"] { grid-area: trends; min-width: 0 }
+.child-precedent > .child-examples { grid-area: examples; min-width: 0 }
 #school-zone-precedent .child-precedent > section,
 #school-zone-precedent .child-examples > section { padding: clamp(10px, 1.5svh, 16px) }
-.child-policy-timeline { list-style: none; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; padding: 0; margin: 10px 0 0 }
-.child-policy-timeline li { font-size: 13px; line-height: 1.5; border-top: 2px solid var(--line); padding-top: 7px }
+.child-policy-timeline {
+  list-style: none;
+  display: grid;
+  gap: clamp(18px, 4.5svh, 44px);
+  margin: 22px 0 0 5px;
+  padding: 0 0 0 17px;
+  border-left: 1px solid #38586b;
+}
+.child-policy-timeline li { position: relative; font-size: 14px; line-height: 1.55 }
+.child-policy-timeline li::before {
+  content: "";
+  position: absolute;
+  left: -22px;
+  top: .45em;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--mint);
+}
 .child-policy-timeline time { color: var(--mint); font-weight: 700; display: block }
 .child-policy-timeline strong { display: block; margin-block: 2px }
 .child-data-grid, .child-examples { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px }
@@ -871,8 +896,14 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 .child-precedent .audit-chart-caption { margin-bottom: 3px }
 #school-zone-fines .policy-fines { min-width: min(430px,100%) }
 #school-zone-fines .parking-fine-bars { margin-inline: auto; max-width: 850px }
-@media (max-width: 850px) {
-  .child-policy-timeline, .child-data-grid, .child-examples { grid-template-columns: minmax(0,1fr) }
+@media (max-width: 960px) {
+  .child-precedent {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "timeline" "trends" "examples";
+  }
+}
+@media (max-width: 650px) {
+  .child-data-grid, .child-examples { grid-template-columns: minmax(0, 1fr) }
 }
 </style>
 <link rel="stylesheet" href="./assets/oecd-rankings.css">
