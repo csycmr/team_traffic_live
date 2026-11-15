@@ -912,16 +912,15 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 .child-examples .school-study-bars { margin-top: 10px }
 .school-study-bars > div { grid-template-rows: 118px auto }
 .school-study-bars dd span { background: var(--mint) }
-.zone-ratio-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; text-align: center }
-.zone-ratio-ring { position: relative; width: min(100%, 126px); margin-inline: auto }
-.zone-ratio-ring svg { display: block; width: 100%; fill: none; stroke-width: 9 }
-.zone-ratio-base { stroke: #29445b }
-.zone-ratio-arc { stroke: var(--zone-color) }
-.zone-ratio-center { position: absolute; inset: 0; display: grid; align-content: center; justify-items: center; gap: 2px }
-.zone-ratio-center strong { font-size: clamp(13px, 1.4vw, 17px); color: var(--zone-color) }
-.zone-ratio-center small, .zone-ratio p { font-size: 11px }
-.zone-ratio p { line-height: 1.4 }
-.zone-ratio-share strong { color: var(--zone-color) }
+.zone-density { display: grid; grid-template-columns: minmax(0, 1fr) minmax(100px, auto); gap: 8px 12px; align-items: end; margin-block: 8px }
+.zone-density-heading, .zone-density-people { font-size: 12px; text-align: right }
+.zone-density-label { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 4px; font-size: 13px }
+.zone-density-value, .zone-density-people strong { color: var(--zone-color) }
+.zone-density-track { height: 12px; background: #29445b; border-radius: 3px }
+.zone-density-track span { display: block; height: 100%; width: var(--zone-width); background: var(--zone-color); border-radius: inherit }
+.zone-density-axis { display: flex; justify-content: space-between; color: var(--muted); font-size: 11px }
+.zone-density-people { align-self: end; line-height: 1 }
+.zone-density-people strong { font-size: 15px }
  .school-study-bars { grid-template-columns: repeat(2, minmax(0, 1fr)) }
 </style>
 <link rel="stylesheet" href="./assets/oecd-rankings.css">
@@ -1969,35 +1968,23 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
       <h2 class="audit-heading" id="zone-summary">서울 보호구역 현황</h2>
       <p class="audit-chart-caption">서울시 어린이·노인 인구와 보호구역 지정 현황</p>
       <figure class="compare-chart">
-        <div class="zone-ratio-grid">
-          <div class="zone-ratio" style="--zone-color:#ffd54f">
-            <h3>어린이</h3>
-            <div class="zone-ratio-ring">
-              <svg viewBox="0 0 120 120" aria-hidden="true">
-                <circle class="zone-ratio-base" cx="60" cy="60" r="50" />
-                <circle class="zone-ratio-arc" cx="60" cy="60" r="50" pathLength="100" stroke-dasharray="0.251381 100" transform="rotate(-90 60 60)" />
-              </svg>
-              <div class="zone-ratio-center"><strong>약 398명</strong><small>보호구역 1곳당</small></div>
-            </div>
-            <p>인구 <strong>648,419명</strong></p>
-            <p>보호구역 <strong>1,630곳</strong> <small>(2026년)</small></p>
-            <p class="zone-ratio-share">보호구역 수 ÷ 인구수 <strong>0.2514%</strong></p>
+        <div class="zone-density">
+          <div class="muted">인구 1만 명당 보호구역</div>
+          <div class="muted zone-density-heading">보호구역 1곳당 인구</div>
+          <div style="--zone-color:#ffd54f; --zone-width:83.7936%">
+            <div class="zone-density-label"><strong>어린이</strong><strong class="zone-density-value">25.14곳</strong></div>
+            <div class="zone-density-track" aria-hidden="true"><span></span></div>
           </div>
-          <div class="zone-ratio" style="--zone-color:#73adff">
-            <h3>노인</h3>
-            <div class="zone-ratio-ring">
-              <svg viewBox="0 0 120 120" aria-hidden="true">
-                <circle class="zone-ratio-base" cx="60" cy="60" r="50" />
-                <circle class="zone-ratio-arc" cx="60" cy="60" r="50" pathLength="100" stroke-dasharray="0.009919 100" transform="rotate(-90 60 60)" />
-              </svg>
-              <div class="zone-ratio-center"><strong>약 10,082명</strong><small>보호구역 1곳당</small></div>
-            </div>
-            <p>인구 <strong>1,965,896명</strong></p>
-            <p>보호구역 <strong>195곳</strong> <small>(2025년)</small></p>
-            <p class="zone-ratio-share">보호구역 수 ÷ 인구수 <strong>0.0099%</strong></p>
+          <div class="zone-density-people" style="--zone-color:#ffd54f"><strong>약 398명</strong></div>
+          <div style="--zone-color:#73adff; --zone-width:3.3064%">
+            <div class="zone-density-label"><strong>노인</strong><strong class="zone-density-value">0.99곳</strong></div>
+            <div class="zone-density-track" aria-hidden="true"><span></span></div>
           </div>
+          <div class="zone-density-people" style="--zone-color:#73adff"><strong>약 10,082명</strong></div>
+          <div class="zone-density-axis" aria-hidden="true"><span>0</span><span>10</span><span>20</span><span>30곳</span></div>
         </div>
-        <figcaption class="muted">전체 원은 연령별 인구 100%, 색 호는 보호구역 수를 인구수로 나눈 비율입니다. 1곳당 인구는 인구수를 지정 구역 수로 나눈 값입니다. 인구는 2026년 9월 말 기준입니다. 어린이는 경찰청 2026년 6월 말 서울 지정 현황의 기재 항목 합계(조례시설 미기재), 노인은 2025년 명단 기준입니다. <a href="./data/12_경찰청_어린이보호구역_지정현황_20260630.csv">어린이보호구역 집계표</a> · <a href="./data/11_서울_연령별_주민등록인구_202609.csv">인구 집계표</a> · <a href="https://kosis.kr/statisticsList/mass/mass_list.jsp?org_id=101&amp;tbl_id=DT_1B04006" target="_blank" rel="noopener">KOSIS 원자료</a></figcaption>
+        <p class="muted policy-source">어린이 648,419명 · 1,630곳(2026년) | 노인 1,965,896명 · 195곳(2025년)</p>
+        <figcaption class="muted">인구 1만 명당 보호구역은 지정 구역 수를 해당 연령 인구수로 나눈 뒤 10,000을 곱했습니다. 인구는 2026년 9월 말 기준입니다. 어린이는 경찰청 2026년 6월 말 서울 지정 현황의 기재 항목 합계(조례시설 미기재), 노인은 2025년 명단 기준입니다. <a href="./data/12_경찰청_어린이보호구역_지정현황_20260630.csv">어린이보호구역 집계표</a> · <a href="./data/11_서울_연령별_주민등록인구_202609.csv">인구 집계표</a> · <a href="https://kosis.kr/statisticsList/mass/mass_list.jsp?org_id=101&amp;tbl_id=DT_1B04006" target="_blank" rel="noopener">KOSIS 원자료</a></figcaption>
       </figure>
     </section>
     </div>
