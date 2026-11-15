@@ -2390,7 +2390,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
     <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="school-zone-title">어린이보호구역 선례</h2></div>
     <nav class="header-meta" aria-label="어린이보호구역 선례 화면 이동">
       <a class="traffic-jump" href="#zone-review"><span aria-hidden="true">↑</span> 현장 검토 자료</a>
-      <a class="traffic-jump" href="#school-zone-fines">과태료 비교 <span aria-hidden="true">↓</span></a>
+      <a class="traffic-jump" href="#zone-budget">예산 비교 <span aria-hidden="true">↓</span></a>
       <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
     </nav>
   </header>
@@ -2477,11 +2477,40 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
     </div>
   </div>
 </section>
+<section class="oecd-screen story-screen" id="zone-budget" aria-labelledby="zone-budget-title">
+  <header class="traffic-header story-header">
+    <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="zone-budget-title">서울시 보호구역 개선 예산</h2></div>
+    <nav class="header-meta" aria-label="보호구역 예산 화면 이동">
+      <a class="traffic-jump" href="#school-zone-precedent"><span aria-hidden="true">↑</span> 어린이보호구역 선례</a>
+      <a class="traffic-jump" href="#school-zone-fines">과태료 비교 <span aria-hidden="true">↓</span></a>
+      <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
+    </nav>
+  </header>
+  <div class="oecd-content policy-content" style="grid-template-columns: minmax(0, 1fr)">
+    <section class="audit-diagnosis" aria-labelledby="zone-budget-table-title">
+      <h3 class="audit-heading" id="zone-budget-table-title">2025–2026년 세부사업 편성액</h3>
+      <div class="review-table-wrap" tabindex="0" role="region" aria-labelledby="zone-budget-table-title">
+        <table class="policy-law-table">
+          <thead><tr><th scope="col">보호구역 개선사업</th><th scope="col">연도</th><th scope="col">서울시 예산</th><th scope="col">지정 구역 수</th><th scope="col">1곳당 환산액</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">어린이</th><td>2025</td><td>237.23억 원</td><td>1,680곳</td><td>약 1,412만 원</td></tr>
+            <tr><th scope="row">어린이</th><td>2026</td><td>182.71억 원</td><td>1,658곳</td><td>약 1,102만 원</td></tr>
+            <tr><th scope="row">노인·장애인</th><td>2025</td><td>18.64억 원</td><td>195곳 (노인)</td><td>노인 단독 산출 불가</td></tr>
+            <tr><th scope="row">노인·장애인</th><td>2026</td><td>10.63억 원</td><td>195곳 (노인)</td><td>노인 단독 산출 불가</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted">1곳당 환산액은 연간 예산을 전년도 12월 말 지정 구역 수로 나눈 평균입니다. 노인·장애인 사업은 합산 편성돼 노인 보호구역 몫을 따로 확인할 수 없습니다.</p>
+      <p class="muted">서울시 교통실의 두 개선 세부사업 기준입니다. 별도 보호구역 시설 개선 사업과 자치구 자체 예산은 제외했습니다.</p>
+      <p class="muted policy-source">출처 · <a href="https://news.seoul.go.kr/gov/archives/574426">서울시 2026년 예산서 교통실 610쪽</a> · <a href="https://data.seoul.go.kr/dataList/OA-2799/F/1/datasetView.do">어린이 보호구역 지정 현황</a> · 팀 노인 보호구역 명단</p>
+    </section>
+  </div>
+</section>
 <section class="oecd-screen story-screen" id="school-zone-fines" aria-labelledby="school-fines-title">
   <header class="traffic-header story-header">
     <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="school-fines-title">어린이·노인보호구역 과태료 비교</h2></div>
     <nav class="header-meta" aria-label="어린이·노인보호구역 과태료 비교 화면 이동">
-      <a class="traffic-jump" href="#school-zone-precedent"><span aria-hidden="true">↑</span> 어린이보호구역 선례</a>
+      <a class="traffic-jump" href="#zone-budget"><span aria-hidden="true">↑</span> 예산 비교</a>
       <a class="traffic-jump" href="#policy-alternatives">노인보호구역 개선안 <span aria-hidden="true">↓</span></a>
       <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
     </nav>
