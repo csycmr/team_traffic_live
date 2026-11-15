@@ -251,10 +251,9 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
   main { grid-template-columns: minmax(300px, 360px) minmax(0, 1fr) minmax(290px, 340px) }
 
   main > .map {
-    align-self: start;
+    align-self: stretch;
     min-height: 0;
-    height: var(--desktop-map-height, 650px);
-    margin-inline: 8px;
+    margin: 17px 8px;
   }
 
   main > aside > section:first-child > .panel-title {
@@ -418,7 +417,6 @@ body { isolation: isolate }
     padding-block: 16px;
   }
 
-  #traffic-live > main > .map { align-self: center }
   #traffic-live > main > aside { padding-top: 8px }
 }
 .traffic-background-video, .traffic-backdrop::after {
