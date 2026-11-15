@@ -460,6 +460,32 @@ html { scroll-snap-type: y mandatory }
 @media (prefers-reduced-motion: no-preference) {
   html { scroll-behavior: smooth }
 }
+
+.oecd-charts { align-items: start }
+.oecd-scope { color: var(--muted); font-size: 12px; margin-top: 5px; line-height: 1.55 }
+.oecd-gap {
+  padding: 5px 0;
+  border-block: 1px dashed var(--line);
+  color: var(--muted);
+  text-align: center;
+  font-size: 12px;
+}
+.oecd-row, .oecd-axis { grid-template-columns: minmax(8em, 10em) minmax(0, 1fr) 3.1em }
+.oecd-video { max-width: 720px; margin-top: clamp(24px, 4vw, 48px) }
+.oecd-video h3 { font-size: clamp(19px, 3vw, 27px); margin-bottom: 12px }
+.oecd-video iframe {
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  background: #070d16;
+}
+.oecd-video a { display: inline-block; margin-top: 8px; color: #c1dcf5; font-size: 12px }
+.oecd-video a:focus-visible { outline: 2px solid var(--mint); outline-offset: 3px }
+@media (max-width: 420px) {
+  .oecd-row, .oecd-axis { grid-template-columns: 8em minmax(0, 1fr) 2.6em; gap: 6px }
+}
 </style>
 </head>
 <body>
@@ -580,10 +606,11 @@ html { scroll-snap-type: y mandatory }
   <div class="oecd-content">
     <a class="traffic-jump" href="#traffic-live"><span aria-hidden="true">↑</span> 서울 교통 현황</a>
     <h2 class="oecd-title" id="oecd-title">OECD 고령 보행자 사망 순위</h2>
-    <p class="oecd-unit">65세 이상 인구 10만 명당 보행 중 교통사고 사망자 수 · 연도별 상위 3개국</p>
+    <p class="oecd-unit">65세 이상 인구 10만 명당 보행 중 교통사고 사망자 수</p>
     <div class="oecd-charts">
       <article class="oecd-chart" aria-labelledby="oecd-2020">
         <h3 id="oecd-2020">2020년</h3>
+        <p class="oecd-scope">검증된 상위 3개국 · 4~5위와 하위 5개국은 원자료 확인 필요</p>
         <ol class="oecd-bars" role="list">
           <li class="oecd-row oecd-korea">
             <span>1위 대한민국</span>
@@ -607,6 +634,7 @@ html { scroll-snap-type: y mandatory }
       </article>
       <article class="oecd-chart" aria-labelledby="oecd-2023">
         <h3 id="oecd-2023">2023년</h3>
+        <p class="oecd-scope">수치가 있는 32개국 중 상위 5개국과 하위 5개국</p>
         <ol class="oecd-bars" role="list">
           <li class="oecd-row">
             <span>1위 콜롬비아</span>
@@ -623,6 +651,42 @@ html { scroll-snap-type: y mandatory }
             <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 28.6667%"></span></span>
             <strong>4.3</strong>
           </li>
+          <li class="oecd-row">
+            <span>4위 슬로바키아</span>
+            <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 22.0000%"></span></span>
+            <strong>3.3</strong>
+          </li>
+          <li class="oecd-row">
+            <span>5위 이스라엘</span>
+            <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 20.6667%"></span></span>
+            <strong>3.1</strong>
+          </li>
+          <li class="oecd-gap">⋯ 중간 22개국 생략 ⋯</li>
+          <li class="oecd-row">
+            <span>28위 뉴질랜드</span>
+            <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 6.0000%"></span></span>
+            <strong>0.9</strong>
+          </li>
+          <li class="oecd-row">
+            <span>공동 29위 핀란드</span>
+            <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 4.0000%"></span></span>
+            <strong>0.6</strong>
+          </li>
+          <li class="oecd-row">
+            <span>공동 29위 스웨덴</span>
+            <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 4.0000%"></span></span>
+            <strong>0.6</strong>
+          </li>
+          <li class="oecd-row">
+            <span>31위 노르웨이</span>
+            <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 2.0000%"></span></span>
+            <strong>0.3</strong>
+          </li>
+          <li class="oecd-row">
+            <span>32위 아이슬란드</span>
+            <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 0.0000%"></span></span>
+            <strong>0.0</strong>
+          </li>
         </ol>
         <div class="oecd-axis" aria-hidden="true">
           <span class="oecd-ticks"><span>0</span><span>5</span><span>10</span><span>15</span></span>
@@ -633,6 +697,17 @@ html { scroll-snap-type: y mandatory }
       <p>2020년은 도로교통공단 발표를 인용한 <a href="https://www.yna.co.kr/view/AKR20230523111800004">연합뉴스</a>, 2023년은 한국도로교통공단 《OECD 회원국 교통사고 비교》 2025년판 표 II-13(57쪽). <a href="./data/13_OECD_%EA%B5%90%ED%86%B5%EC%82%AC%EA%B3%A0_2025.csv">2023년 집계 CSV</a></p>
       <p>2023년 순위는 수치가 있는 32개국 기준. 보고서는 일부 국가에 이전 연도 자료를 사용했습니다.</p>
     </div>
+    <section class="oecd-video" aria-labelledby="oecd-video-title">
+      <h3 id="oecd-video-title">2020 행정안전부 국정감사</h3>
+      <iframe
+        src="https://www.youtube-nocookie.com/embed/TuMeEs4PdJ8?start=34"
+        title="2020 행정안전부 국정감사"
+        loading="lazy"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allow="encrypted-media; picture-in-picture; fullscreen"
+        allowfullscreen></iframe>
+      <a href="https://youtu.be/TuMeEs4PdJ8?t=34">YouTube에서 34초부터 보기</a>
+    </section>
   </div>
 </section>
 <dialog id="detail" aria-labelledby="detail-title">
