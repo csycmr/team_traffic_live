@@ -2612,12 +2612,17 @@ if (window.kakao?.maps?.load) {
         level: initialLevel
       });
       kakaoMap.setMaxLevel(initialLevel + 1);
-      const trafficLayer = kakao.maps.MapTypeId.TRAFFIC;
-      kakaoMap.addOverlayMapTypeId(trafficLayer);
+      kakaoMap.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
       setInterval(() => {
         if (citydataPaused || citydataMotion.matches || document.hidden) return;
-        kakaoMap.removeOverlayMapTypeId(trafficLayer);
-        setTimeout(() => kakaoMap.addOverlayMapTypeId(trafficLayer), 180);
+        // Animate the traffic tiles rendered by the SDK without removing the layer.
+        const trafficTiles = mapElement.querySelectorAll('img[src*="/mapserver/file/realtimeroad/"]');
+        for (const tile of trafficTiles) {
+          tile.animate(
+            [{ opacity: 1 }, { opacity: 0.35, offset: 0.45 }, { opacity: 1 }],
+            { duration: 850, easing: 'ease-in-out' }
+          );
+        }
       }, citydataRefreshMs);
       citydataPlace.addEventListener('change', () => {
         kakaoMap.setLevel(citydataPlace.value === 'gwanghwamun' ? initialLevel : 5);
