@@ -1059,6 +1059,26 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
   .policy-jeju { grid-template-columns: minmax(0, 1fr) }
   .policy-jeju .policy-jeju-photo img { height: auto }
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  :is(.district-table-scroll, .zone-density) :is(.district-track > span, .zone-density-track > span) { transform-origin: left center }
+  :is(.district-table-scroll, .zone-density).chart-awaiting :is(.district-track > span, .zone-density-track > span) { transform: scaleX(0) }
+  :is(.district-table-scroll, .zone-density).chart-entered :is(.district-track > span, .zone-density-track > span) { animation: later-bar-width 950ms cubic-bezier(.22,.61,.36,1) both }
+  :is(.review-chart, .parking-fine-bars) :is(.review-stack, dd > span) { transform-origin: center bottom }
+  :is(.review-chart, .parking-fine-bars).chart-awaiting :is(.review-stack, dd > span) { transform: scaleY(0) }
+  :is(.review-chart, .parking-fine-bars).chart-entered :is(.review-stack, dd > span) { animation: audit-trend-rise 950ms cubic-bezier(.22,.61,.36,1) both }
+  .child-series:is(.chart-awaiting, .chart-entered) polyline { stroke-dasharray: 1 1 }
+  .child-series.chart-awaiting polyline { stroke-dashoffset: 1 }
+  .child-series.chart-entered polyline { animation: chart-line-draw 1100ms linear both }
+  .child-series.chart-awaiting :is(circle, .child-value) { opacity: 0 }
+  .child-series.chart-entered :is(circle, .child-value) { animation: reveal-metric-value 160ms ease-out var(--point-delay, 1100ms) both }
+  .parking-fine-bars.chart-awaiting dd > strong { opacity: 0 }
+  .parking-fine-bars.chart-entered dd > strong { animation: reveal-metric-value 180ms ease-out 950ms both }
+}
+@keyframes later-bar-width {
+  from { transform: scaleX(0) }
+  to { transform: scaleX(1) }
+}
 </style>
 <link rel="stylesheet" href="./assets/oecd-rankings.css">
 <link rel="stylesheet" href="./assets/national-fatalities.css">
@@ -3487,6 +3507,14 @@ function animateDonut(chart, startedAt) {
 }
 
 if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+  for (const series of document.querySelectorAll('.child-series')) {
+    series.querySelector('polyline')?.setAttribute('pathLength', '1');
+    for (const point of series.querySelectorAll('circle, .child-value')) {
+      const x = Number(point.getAttribute('cx') || point.getAttribute('x'));
+      point.style.setProperty('--point-delay', Math.max(0, (x - 37) / 468 * 1100) + 'ms');
+    }
+  }
+
   const chartObserver = new IntersectionObserver((entries, observer) => {
     const startedAt = performance.now();
     for (const entry of entries) {
@@ -3497,7 +3525,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
     }
   }, { threshold: 0.35 });
 
-  for (const chart of document.querySelectorAll('#national-fatalities .national-plot, #national-fatalities .national-population, #national-fatalities .national-donut, #audit-video .oecd-chart, #audit-video .audit-trend-plot')) {
+  for (const chart of document.querySelectorAll('#national-fatalities .national-plot, #national-fatalities .national-population, #national-fatalities .national-donut, #audit-video .oecd-chart, #audit-video .audit-trend-plot, #district-risk .district-table-scroll, #zone-review .review-chart, #school-zone-precedent .child-series, #school-zone-precedent .school-study-bars, #school-zone-precedent .zone-density, #school-zone-fines .parking-fine-bars')) {
     chart.classList.add('chart-awaiting');
     chartObserver.observe(chart);
   }
