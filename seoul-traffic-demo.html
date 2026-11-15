@@ -1079,6 +1079,34 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
   from { transform: scaleX(0) }
   to { transform: scaleX(1) }
 }
+
+.risk-change-scroll { overflow: auto }
+.risk-change-table { border-collapse: collapse; width: 100%; font-size: 13px; line-height: 1.3; font-variant-numeric: tabular-nums }
+.risk-change-table :is(th,td) { text-align: right; padding: clamp(3px,.5svh,5px) 9px; border-bottom: 1px solid #293b4d }
+.risk-change-table tr > :first-child { text-align: left }
+.risk-change-table thead { background: #203447 }
+.risk-change-table tbody tr:nth-child(even) { background: #ffffff04 }
+#district-change .risk-change-table td:nth-child(6) { color: #8cf0e8 }
+.risk-metric-controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 10px }
+.risk-metric-controls [aria-pressed="true"] { color: #8cf0e8; border-color: #8cf0e8; background: #1b393b }
+.risk-series-legend { display: flex; justify-content: flex-end; gap: 20px; font-size: 14px }
+.risk-comparison-plot { margin: 12px 0 16px }
+.risk-comparison-plot svg { display: block; width: 100%; height: clamp(250px,49svh,500px) }
+.risk-comparison-plot svg text { fill: #a9bfd3; text-anchor: middle; font-size: 14px }
+.risk-comparison-plot polyline { fill: none; stroke: var(--child-series-color); stroke-width: 3 }
+.risk-comparison-plot circle,.risk-comparison-plot .child-value { fill: var(--child-series-color) }
+.risk-comparison-data summary { cursor: pointer; font-size: 13px }
+.risk-comparison-data .risk-change-scroll { max-height: 220px; overscroll-behavior: contain }
+@media(prefers-reduced-motion:no-preference) {
+  .risk-comparison-plot:is(.chart-awaiting,.chart-entered) polyline { stroke-dasharray: 1 1 }
+  .risk-comparison-plot.chart-awaiting polyline { stroke-dashoffset: 1 }
+  .risk-comparison-plot.chart-entered polyline { animation: chart-line-draw 1100ms linear both }
+  .risk-comparison-plot.chart-awaiting :is(circle,.child-value) { opacity: 0 }
+  .risk-comparison-plot.chart-entered :is(circle,.child-value) { animation: reveal-metric-value 180ms ease-out 1100ms both }
+}
+@media(max-width:760px) {
+  .risk-change-table { min-width: 680px }
+}
 </style>
 <link rel="stylesheet" href="./assets/oecd-rankings.css">
 <link rel="stylesheet" href="./assets/national-fatalities.css">
@@ -1880,7 +1908,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
     </div>
     <nav class="header-meta" aria-label="어디가 위험한가? 화면 이동">
       <a class="traffic-jump" href="#national-fatalities"><span aria-hidden="true">↑</span> 전국 사망자 추이</a>
-      <a class="traffic-jump" href="#zone-overlap">보호구역 중첩 지도 <span aria-hidden="true">↓</span></a>
+      <a class="traffic-jump" href="#district-change">격차·순위 변화 <span aria-hidden="true">↓</span></a>
       <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
     </nav>
   </header>
@@ -2028,6 +2056,162 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
     </section>
   </div>
 </section>
+<section class="oecd-screen story-screen" id="district-change" aria-labelledby="district-change-title">
+  <header class="traffic-header story-header">
+    <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="district-change-title">서울 대비 격차와 전년 순위 변화</h2></div>
+    <nav class="header-meta" aria-label="서울 대비 격차와 전년 순위 변화 화면 이동">
+      <a class="traffic-jump" href="#district-risk"><span aria-hidden="true">↑</span> 자치구별 사고율</a>
+      <a class="traffic-jump" href="#district-comparison">동대문·도봉 비교 <span aria-hidden="true">↓</span></a>
+      <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
+    </nav>
+  </header>
+  <div class="oecd-content">
+    <section class="audit-diagnosis">
+      <h3 class="audit-heading">2025년 자치구별 사고율과 전년 변화</h3>
+      <p class="audit-chart-caption">서울 전체 고령인구 1만 명당 사고율 <strong>10.77건</strong> · 2024년 대비</p>
+      <div class="risk-change-scroll" tabindex="0" role="region" aria-label="서울 25개 자치구 사고율 및 순위 변화 표">
+        <table class="risk-change-table">
+          <thead><tr><th scope="col">자치구</th><th scope="col">순위</th><th scope="col">전년 순위</th><th scope="col">순위 변화<br>(상승 +)</th><th scope="col">사고율</th><th scope="col">서울 대비 격차</th><th scope="col">사고 증감(건)</th><th scope="col">사고 증감률(%)</th></tr></thead>
+          <tbody>
+          <tr><th scope="row">중구</th><td>1</td><td>1</td><td>0</td><td>22.08</td><td>+11.31</td><td>0</td><td>0.0</td></tr>
+          <tr><th scope="row">동대문구</th><td>2</td><td>3</td><td>+1</td><td>18.14</td><td>+7.37</td><td>+2</td><td>+1.5</td></tr>
+          <tr><th scope="row">종로구</th><td>3</td><td>2</td><td>-1</td><td>16.47</td><td>+5.70</td><td>-9</td><td>-15.0</td></tr>
+          <tr><th scope="row">금천구</th><td>4</td><td>10</td><td>+6</td><td>16.38</td><td>+5.61</td><td>+29</td><td>+53.7</td></tr>
+          <tr><th scope="row">영등포구</th><td>5</td><td>11</td><td>+6</td><td>14.43</td><td>+3.66</td><td>+27</td><td>+34.2</td></tr>
+          <tr><th scope="row">강북구</th><td>6</td><td>4</td><td>-2</td><td>14.11</td><td>+3.34</td><td>+11</td><td>+11.7</td></tr>
+          <tr><th scope="row">중랑구</th><td>7</td><td>15</td><td>+8</td><td>11.91</td><td>+1.14</td><td>+17</td><td>+19.3</td></tr>
+          <tr><th scope="row">강남구</th><td>8</td><td>6</td><td>-2</td><td>11.83</td><td>+1.06</td><td>+3</td><td>+2.7</td></tr>
+          <tr><th scope="row">강동구</th><td>9</td><td>13</td><td>+4</td><td>11.51</td><td>+0.74</td><td>+13</td><td>+13.0</td></tr>
+          <tr><th scope="row">은평구</th><td>10</td><td>9</td><td>-1</td><td>11.42</td><td>+0.65</td><td>+6</td><td>+5.4</td></tr>
+          <tr><th scope="row">서대문구</th><td>11</td><td>8</td><td>-3</td><td>11.36</td><td>+0.59</td><td>+2</td><td>+2.9</td></tr>
+          <tr><th scope="row">양천구</th><td>12</td><td>14</td><td>+2</td><td>11.00</td><td>+0.23</td><td>+6</td><td>+6.9</td></tr>
+          <tr><th scope="row">동작구</th><td>13</td><td>12</td><td>-1</td><td>10.92</td><td>+0.15</td><td>+1</td><td>+1.2</td></tr>
+          <tr><th scope="row">성북구</th><td>14</td><td>5</td><td>-9</td><td>10.05</td><td>-0.72</td><td>-15</td><td>-14.6</td></tr>
+          <tr><th scope="row">용산구</th><td>15</td><td>20</td><td>+5</td><td>9.64</td><td>-1.13</td><td>+6</td><td>+18.2</td></tr>
+          <tr><th scope="row">구로구</th><td>16</td><td>7</td><td>-9</td><td>9.53</td><td>-1.24</td><td>-13</td><td>-13.4</td></tr>
+          <tr><th scope="row">강서구</th><td>17</td><td>18</td><td>+1</td><td>9.27</td><td>-1.50</td><td>+13</td><td>+14.1</td></tr>
+          <tr><th scope="row">송파구</th><td>18</td><td>16</td><td>-2</td><td>9.22</td><td>-1.55</td><td>-6</td><td>-5.2</td></tr>
+          <tr><th scope="row">성동구</th><td>19</td><td>23</td><td>+4</td><td>9.17</td><td>-1.60</td><td>+12</td><td>+32.4</td></tr>
+          <tr><th scope="row">마포구</th><td>20</td><td>25</td><td>+5</td><td>8.69</td><td>-2.08</td><td>+16</td><td>+42.1</td></tr>
+          <tr><th scope="row">노원구</th><td>21</td><td>19</td><td>-2</td><td>8.11</td><td>-2.66</td><td>0</td><td>0.0</td></tr>
+          <tr><th scope="row">관악구</th><td>22</td><td>17</td><td>-5</td><td>8.07</td><td>-2.70</td><td>-7</td><td>-8.5</td></tr>
+          <tr><th scope="row">서초구</th><td>23</td><td>24</td><td>+1</td><td>7.47</td><td>-3.30</td><td>+7</td><td>+14.9</td></tr>
+          <tr><th scope="row">광진구</th><td>24</td><td>22</td><td>-2</td><td>7.33</td><td>-3.44</td><td>-1</td><td>-2.1</td></tr>
+          <tr><th scope="row">도봉구</th><td>25</td><td>21</td><td>-4</td><td>4.85</td><td>-5.92</td><td>-23</td><td>-37.7</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted policy-source">사고율·격차 단위는 고령인구 1만 명당 사고 건수입니다. 서울 전체 사고율은 전체 사고 건수 ÷ 전체 65세 이상 거주인구 × 10,000으로 계산했습니다. 거주인구는 실제 보행량과 차이가 있습니다.</p>
+      <p class="muted policy-source">출처 · <a href="https://github.com/csy04x2/elder_accident/blob/main/data/processed/01_%EC%9E%90%EC%B9%98%EA%B5%AC%EC%97%B0%EB%8F%84_%ED%8C%A8%EB%84%90.csv">팀 자치구·연도 패널 원자료</a> · TAAS 사고 통계 및 인구 집계</p>
+    </section>
+  </div>
+</section>
+<section class="oecd-screen story-screen" id="district-comparison" aria-labelledby="district-comparison-title">
+  <header class="traffic-header story-header">
+    <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="district-comparison-title">동대문구·도봉구는 서울 전체와 어떻게 다른가?</h2></div>
+    <nav class="header-meta" aria-label="동대문구·도봉구는 서울 전체와 어떻게 다른가? 화면 이동">
+      <a class="traffic-jump" href="#district-change"><span aria-hidden="true">↑</span> 격차·순위 변화</a>
+      <a class="traffic-jump" href="#zone-overlap">보호구역 중첩 지도 <span aria-hidden="true">↓</span></a>
+      <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
+    </nav>
+  </header>
+  <div class="oecd-content">
+    <section class="audit-diagnosis">
+      <h3 class="audit-heading">서울 전체와 두 자치구의 4년 추이</h3>
+      <p class="audit-chart-caption">2022~2025년 · 동대문구와 도봉구의 변화 비교</p>
+      <div class="risk-metric-controls" role="group" aria-label="비교 지표">
+        <button type="button" class="traffic-jump" data-risk-metric="rate" aria-pressed="true">고령인구 1만 명당 사고율</button>
+        <button type="button" class="traffic-jump" data-risk-metric="count" aria-pressed="false">사고 건수</button>
+      </div>
+      <div class="risk-series-legend"><span style="color:#8cf0e8">● 서울 전체</span> <span style="color:#ffaf73">● 동대문구</span> <span style="color:#73adff">● 도봉구</span></div>
+      <figure class="risk-comparison-plot" data-risk-plot="rate">
+        <figcaption class="muted">고령인구 1만 명당 사고(건)</figcaption>
+        <svg viewBox="0 0 1055 470" role="img" aria-label="2022~2025년 고령인구 1만 명당 사고율 비교">
+          <line x1="75" x2="1000" y1="420" y2="420" class="child-axis"/><text x="48" y="425">0</text>
+          <line x1="75" x2="1000" y1="348" y2="348" class="child-axis"/><text x="48" y="353">5</text>
+          <line x1="75" x2="1000" y1="276" y2="276" class="child-axis"/><text x="48" y="281">10</text>
+          <line x1="75" x2="1000" y1="204" y2="204" class="child-axis"/><text x="48" y="209">15</text>
+          <line x1="75" x2="1000" y1="132" y2="132" class="child-axis"/><text x="48" y="137">20</text>
+          <line x1="75" x2="1000" y1="60" y2="60" class="child-axis"/><text x="48" y="65">25</text>
+          <text x="100" y="450">2022년</text>
+          <text x="385" y="450">2023년</text>
+          <text x="670" y="450">2024년</text>
+          <text x="955" y="450">2025년</text>
+          <g style="--child-series-color:#8cf0e8"><polyline pathLength="1" points="100,260.57679840183374 385,257.06334131637624 670,265.1023209554522 955,264.91447135565477"/>
+            <circle cx="100" cy="260.57679840183374" r="4"/><text class="child-value" x="100" y="246.57679840183374">11.07</text>
+            <circle cx="385" cy="257.06334131637624" r="4"/><text class="child-value" x="385" y="243.06334131637624">11.32</text>
+            <circle cx="670" cy="265.1023209554522" r="4"/><text class="child-value" x="670" y="251.10232095545223">10.76</text>
+            <circle cx="955" cy="264.91447135565477" r="4"/><text class="child-value" x="955" y="250.91447135565477">10.77</text>
+          </g>
+          <g style="--child-series-color:#ffaf73"><polyline pathLength="1" points="100,111.69599999999997 385,87.072 670,151.00799999999998 955,158.784"/>
+            <circle cx="100" cy="111.69599999999997" r="4"/><text class="child-value" x="100" y="97.69599999999997">21.41</text>
+            <circle cx="385" cy="87.072" r="4"/><text class="child-value" x="385" y="73.072">23.12</text>
+            <circle cx="670" cy="151.00799999999998" r="4"/><text class="child-value" x="670" y="137.00799999999998">18.68</text>
+            <circle cx="955" cy="158.784" r="4"/><text class="child-value" x="955" y="144.784">18.14</text>
+          </g>
+          <g style="--child-series-color:#73adff"><polyline pathLength="1" points="100,314.736 385,295.296 670,301.632 955,350.16"/>
+            <circle cx="100" cy="314.736" r="4"/><text class="child-value" x="100" y="337.736">7.31</text>
+            <circle cx="385" cy="295.296" r="4"/><text class="child-value" x="385" y="318.296">8.66</text>
+            <circle cx="670" cy="301.632" r="4"/><text class="child-value" x="670" y="324.632">8.22</text>
+            <circle cx="955" cy="350.16" r="4"/><text class="child-value" x="955" y="373.16">4.85</text>
+          </g>
+        </svg>
+      </figure>
+      <figure class="risk-comparison-plot" data-risk-plot="count" hidden>
+        <figcaption class="muted">사고 건수(건)</figcaption>
+        <svg viewBox="0 0 1055 470" role="img" aria-label="2022~2025년 사고 건수 비교">
+          <line x1="75" x2="1000" y1="420" y2="420" class="child-axis"/><text x="48" y="425">0</text>
+          <line x1="75" x2="1000" y1="348" y2="348" class="child-axis"/><text x="48" y="353">500</text>
+          <line x1="75" x2="1000" y1="276" y2="276" class="child-axis"/><text x="48" y="281">1000</text>
+          <line x1="75" x2="1000" y1="204" y2="204" class="child-axis"/><text x="48" y="209">1500</text>
+          <line x1="75" x2="1000" y1="132" y2="132" class="child-axis"/><text x="48" y="137">2000</text>
+          <line x1="75" x2="1000" y1="60" y2="60" class="child-axis"/><text x="48" y="65">2500</text>
+          <text x="100" y="450">2022년</text>
+          <text x="385" y="450">2023년</text>
+          <text x="670" y="450">2024년</text>
+          <text x="955" y="450">2025년</text>
+          <g style="--child-series-color:#8cf0e8"><polyline pathLength="1" points="100,154.17600000000004 385,135.88799999999998 670,137.32799999999997 955,123.36000000000001"/>
+            <circle cx="100" cy="154.17600000000004" r="4"/><text class="child-value" x="100" y="140.17600000000004">1,846</text>
+            <circle cx="385" cy="135.88799999999998" r="4"/><text class="child-value" x="385" y="121.88799999999998">1,973</text>
+            <circle cx="670" cy="137.32799999999997" r="4"/><text class="child-value" x="670" y="123.32799999999997">1,963</text>
+            <circle cx="955" cy="123.36000000000001" r="4"/><text class="child-value" x="955" y="109.36000000000001">2,060</text>
+          </g>
+          <g style="--child-series-color:#ffaf73"><polyline pathLength="1" points="100,400.128 385,397.68 670,401.28 955,400.992"/>
+            <circle cx="100" cy="400.128" r="4"/><text class="child-value" x="100" y="386.128">138</text>
+            <circle cx="385" cy="397.68" r="4"/><text class="child-value" x="385" y="383.68">155</text>
+            <circle cx="670" cy="401.28" r="4"/><text class="child-value" x="670" y="387.28">130</text>
+            <circle cx="955" cy="400.992" r="4"/><text class="child-value" x="955" y="386.992">132</text>
+          </g>
+          <g style="--child-series-color:#73adff"><polyline pathLength="1" points="100,412.944 385,411.216 670,411.216 955,414.528"/>
+            <circle cx="100" cy="412.944" r="4"/><text class="child-value" x="100" y="435.944">49</text>
+            <circle cx="385" cy="411.216" r="4"/><text class="child-value" x="385" y="434.216">61</text>
+            <circle cx="670" cy="411.216" r="4"/><text class="child-value" x="670" y="434.216">61</text>
+            <circle cx="955" cy="414.528" r="4"/><text class="child-value" x="955" y="437.528">38</text>
+          </g>
+        </svg>
+      </figure>
+      <details class="risk-comparison-data">
+        <summary>자료 표 보기</summary>
+        <div class="risk-change-scroll"><table class="risk-change-table"><thead><tr><th>연도</th><th>지역</th><th>고령인구</th><th>사고 건수</th><th>1만 명당 사고율</th></tr></thead><tbody>
+<tr><th scope="row">2022</th><td>서울 전체</td><td>1,667,411</td><td>1,846</td><td>11.07</td></tr>
+<tr><th scope="row">2022</th><td>동대문구</td><td>64,468</td><td>138</td><td>21.41</td></tr>
+<tr><th scope="row">2022</th><td>도봉구</td><td>66,998</td><td>49</td><td>7.31</td></tr>
+<tr><th scope="row">2023</th><td>서울 전체</td><td>1,743,696</td><td>1,973</td><td>11.32</td></tr>
+<tr><th scope="row">2023</th><td>동대문구</td><td>67,030</td><td>155</td><td>23.12</td></tr>
+<tr><th scope="row">2023</th><td>도봉구</td><td>70,436</td><td>61</td><td>8.66</td></tr>
+<tr><th scope="row">2024</th><td>서울 전체</td><td>1,824,895</td><td>1,963</td><td>10.76</td></tr>
+<tr><th scope="row">2024</th><td>동대문구</td><td>69,582</td><td>130</td><td>18.68</td></tr>
+<tr><th scope="row">2024</th><td>도봉구</td><td>74,223</td><td>61</td><td>8.22</td></tr>
+<tr><th scope="row">2025</th><td>서울 전체</td><td>1,912,751</td><td>2,060</td><td>10.77</td></tr>
+<tr><th scope="row">2025</th><td>동대문구</td><td>72,779</td><td>132</td><td>18.14</td></tr>
+<tr><th scope="row">2025</th><td>도봉구</td><td>78,335</td><td>38</td><td>4.85</td></tr>
+        </tbody></table></div>
+      </details>
+      <p class="muted policy-source">두 지역은 탐색 사례입니다. 사고 건수는 인구 규모의 영향을 받으며, 사고율 비교에는 연령별 거주인구 차이가 반영됩니다. 서울 전체 사고율은 전체 사고 건수와 전체 고령인구로 계산했습니다.</p>
+      <p class="muted policy-source">출처 · <a href="https://github.com/csy04x2/elder_accident/blob/main/data/processed/01_%EC%9E%90%EC%B9%98%EA%B5%AC%EC%97%B0%EB%8F%84_%ED%8C%A8%EB%84%90.csv">팀 자치구·연도 패널 원자료</a></p>
+    </section>
+  </div>
+</section>
 <section class="oecd-screen story-screen" id="zone-overlap" aria-labelledby="zone-overlap-title">
   <header class="traffic-header story-header">
     <div class="brand">
@@ -2035,7 +2219,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
       <h2 class="oecd-title" id="zone-overlap-title">어디를 우선 검토해야 하는가?</h2>
     </div>
     <nav class="header-meta" aria-label="어디를 우선 검토해야 하는가? 화면 이동">
-      <a class="traffic-jump" href="#district-risk"><span aria-hidden="true">↑</span> 자치구별 사고율</a>
+      <a class="traffic-jump" href="#district-comparison"><span aria-hidden="true">↑</span> 동대문·도봉 비교</a>
       <a class="traffic-jump" href="#zone-review">현장 검토 자료 <span aria-hidden="true">↓</span></a>
       <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
     </nav>
@@ -3506,6 +3690,18 @@ function animateDonut(chart, startedAt) {
   drawFrame(startedAt);
 }
 
+
+for (const button of document.querySelectorAll('[data-risk-metric]')) {
+  button.addEventListener('click', () => {
+    for (const option of document.querySelectorAll('[data-risk-metric]')) {
+      option.setAttribute('aria-pressed', String(option === button));
+    }
+    for (const plot of document.querySelectorAll('[data-risk-plot]')) {
+      plot.hidden = plot.dataset.riskPlot !== button.dataset.riskMetric;
+    }
+  });
+}
+
 if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
   for (const series of document.querySelectorAll('.child-series')) {
     series.querySelector('polyline')?.setAttribute('pathLength', '1');
@@ -3525,7 +3721,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
     }
   }, { threshold: 0.35 });
 
-  for (const chart of document.querySelectorAll('#national-fatalities .national-plot, #national-fatalities .national-population, #national-fatalities .national-donut, #audit-video .oecd-chart, #audit-video .audit-trend-plot, #district-risk .district-table-scroll, #zone-review .review-chart, #school-zone-precedent .child-series, #school-zone-precedent .school-study-bars, #school-zone-precedent .zone-density, #school-zone-fines .parking-fine-bars')) {
+  for (const chart of document.querySelectorAll('#national-fatalities .national-plot, #national-fatalities .national-population, #national-fatalities .national-donut, #audit-video .oecd-chart, #audit-video .audit-trend-plot, #district-risk .district-table-scroll, #zone-review .review-chart, #school-zone-precedent .child-series, #school-zone-precedent .school-study-bars, #school-zone-precedent .zone-density, #school-zone-fines .parking-fine-bars, #district-comparison .risk-comparison-plot')) {
     chart.classList.add('chart-awaiting');
     chartObserver.observe(chart);
   }
