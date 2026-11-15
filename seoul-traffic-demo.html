@@ -2844,7 +2844,7 @@ function protectionPopup(record) {
 }
 
 
-async function showSeoulBoundaries(kakaoMap) {
+async function showSeoulBoundaries(kakaoMap, outsideColor = "#397ac9") {
   const response = await fetch("./data/08_서울_자치구_경계.geojson");
   if (!response.ok) throw new Error("경계 GeoJSON HTTP " + response.status);
 
@@ -2862,7 +2862,7 @@ async function showSeoulBoundaries(kakaoMap) {
     map: kakaoMap,
     path: [outsideRing, cityRing],
     strokeOpacity: 0,
-    fillColor: "#397ac9",
+    fillColor: outsideColor,
     fillOpacity: 0.27,
     zIndex: 1
   });
@@ -3186,6 +3186,10 @@ async function showZoneOverlapMap() {
       }),
     ]);
     const map = new kakao.maps.Map(container, { center: new kakao.maps.LatLng(37.555, 126.993), level: 8, scrollwheel: true });
+    map.setMaxLevel(8);
+    showSeoulBoundaries(map, "#193557").catch(error => {
+      console.error("서울 경계 로드 실패", error);
+    });
     map.addControl(new kakao.maps.ZoomControl(), kakao.maps.ControlPosition.RIGHT);
     const popup = createMapPopup(map);
     kakao.maps.event.addListener(map, 'click', () => popup.close());
