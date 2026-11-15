@@ -32,7 +32,7 @@ header {
 h1, h2, h3, p { margin: 0 }
 h1 { font-size: clamp(18px, 2.5vw, 26px); letter-spacing: -.06em }
 h2 { font-size: 17px; letter-spacing: -.04em }
-.demo { color: #ffe0a0; background: #352e23; border: 1px solid #624f30; padding: 5px 9px; border-radius: 6px; font-size: 11px; white-space: nowrap }
+.demo { color: #ffe0a0; background: #352e23; border: 1px solid #624f30; padding: 2px 5px; border-radius: 6px; font-size: 11px; white-space: nowrap }
 .clock { font: 14px ui-monospace, monospace; color: var(--mint); white-space: nowrap }
 main { display: grid; grid-template-columns: minmax(325px, 390px) minmax(0, 1fr); min-height: calc(100dvh - 85px) }
 aside { padding: 21px; border-right: 1px solid var(--line); background: #0e1723 }
@@ -467,251 +467,6 @@ section.story-screen {
 @media (max-width: 760px) {
   .traffic-header { min-height: 90px }
 }
-
-html { scroll-snap-type: y mandatory }
-.traffic-screen, .oecd-screen, .oecd-video-screen { scroll-snap-align: start; min-height: 100svh }
-.traffic-jump {
-  display: inline-flex;
-  align-items: center;
-  gap: .45em;
-  width: fit-content;
-  border: 1px solid #49627c;
-  border-radius: 6px;
-  padding: .45em .7em;
-  background: #111f30;
-  color: #f0f5fb;
-  font-size: 12px;
-  text-decoration: none;
-  white-space: nowrap;
-}
-.traffic-jump:hover { background: #22374d }
-.traffic-jump:focus-visible, .oecd-sources a:focus-visible, .oecd-video a:focus-visible {
-  outline: 2px solid var(--mint);
-  outline-offset: 3px;
-}
-.oecd-screen, .oecd-video-screen {
-  display: grid;
-  align-content: center;
-  padding: clamp(14px, 2.3svh, 28px) clamp(14px, 4vw, 60px);
-  background: linear-gradient(145deg, rgb(13 32 50 / 24%), rgb(11 18 29 / 48%) 70%);
-  border-top: 1px solid var(--line);
-}
-.oecd-content { width: min(100%, 1280px); margin-inline: auto }
-.oecd-navigation { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 8px }
-.oecd-title { font-size: clamp(24px, 4.5vh, 44px); line-height: 1.14 }
-.oecd-unit { margin: 5px 0 10px; color: var(--muted); font-size: 12px }
-.oecd-charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(7px, 1.35vh, 14px) }
-.oecd-chart { border: 1px solid var(--line); border-radius: 9px; background: #111e2c; padding: clamp(7px, 1.55vh, 15px) clamp(10px, 1.3vw, 18px) }
-.oecd-chart .oecd-chart-header {
-  display: flex;
-  justify-content: space-between;
-  min-height: 0;
-  padding: 0 0 5px;
-  margin-bottom: 5px;
-}
-.oecd-chart h3 { font-size: clamp(17px, 2.9vh, 26px); line-height: 1.1; letter-spacing: -.04em }
-.oecd-chart-header span { font-size: 11px; color: var(--muted) }
-.oecd-groups { display: grid }
-.oecd-bars { list-style: none; padding: 0; margin: 0 }
-.oecd-row {
-  display: grid;
-  grid-template-columns: 1.7em 5.8em minmax(0, 1fr) 3em;
-  gap: clamp(5px, .65vw, 10px);
-  min-height: clamp(17px, 2.55svh, 28px);
-  align-items: center;
-  font-size: clamp(11px, 1.65svh, 15px);
-  line-height: 1.25;
-}
-.oecd-rank { color: var(--muted); font-variant-numeric: tabular-nums }
-.oecd-country { white-space: nowrap }
-.oecd-row strong { text-align: right; font-variant-numeric: tabular-nums }
-.oecd-track { display: block; height: clamp(6px, 1.05svh, 11px); border-radius: 2px; background: #25374b }
-.oecd-track span { display: block; width: var(--bar-width); height: 100%; border-radius: 2px; background: #729bc5 }
-.oecd-korea, .oecd-korea .oecd-rank { color: var(--mint); font-weight: 700 }
-.oecd-korea .oecd-track span { background: var(--mint) }
-.oecd-gap { text-align: center; color: var(--muted); font-size: 18px; line-height: clamp(15px, 2.15svh, 22px) }
-.oecd-sr { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip-path: inset(50%); white-space: nowrap }
-.oecd-sources { margin-top: 8px; color: var(--muted); font-size: 11px; line-height: 1.45 }
-.oecd-sources a, .oecd-video a { color: #c1dcf5 }
-.oecd-video { max-width: 780px; margin: 18px auto 0 }
-.oecd-video h3 { font-size: clamp(19px, 3vw, 27px); margin-bottom: 12px }
-.oecd-video iframe { display: block; width: 100%; aspect-ratio: 16 / 9; border: 1px solid var(--line); border-radius: 10px; background: #070d16 }
-.oecd-video a { display: inline-block; margin-top: 8px; font-size: 12px }
-@media (max-width: 900px) {
-  .oecd-row { gap: 3px }
-}
-@media (max-width: 760px), (max-height: 600px) {
-  html { scroll-snap-type: y proximity }
-}
-@media (max-width: 680px) {
-  .oecd-charts { grid-template-columns: minmax(0, 1fr) }
-  .oecd-row { font-size: 12px }
-  .traffic-header .header-meta { flex-wrap: wrap; justify-content: flex-end }
-}
-@media (max-width: 380px) {
-  .oecd-row { font-size: 11px }
-}
-@media (prefers-reduced-motion: no-preference) {
-  html { scroll-behavior: smooth }
-}
-
-.national-screen {
-  display: grid;
-  align-content: center;
-  min-height: 100svh;
-  scroll-snap-align: start;
-  padding: clamp(16px, 3svh, 34px) clamp(14px, 4vw, 60px);
-  background: linear-gradient(145deg, rgb(16 35 55 / 24%), rgb(11 18 29 / 48%) 75%);
-  border-top: 1px solid var(--line);
-}
-.national-period { margin: 16px 0 6px; color: var(--mint); font-size: 13px }
-.national-lead { margin: 9px 0 16px; color: var(--muted); font-size: clamp(13px, 1.5vw, 17px) }
-.national-lead strong { color: var(--mint) }
-.national-charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px }
-.national-card {
-  min-width: 0;
-  padding: clamp(12px, 2vw, 22px);
-  border: 1px solid var(--line);
-  border-radius: 9px;
-  background: #111e2c;
-}
-.national-card h3 { font-size: clamp(17px, 2vw, 24px); letter-spacing: -.04em }
-.national-key, .national-note { margin: 9px 0 12px; color: var(--muted); font-size: 12px }
-.national-key { display: flex; flex-wrap: wrap; gap: 6px 14px }
-.national-key span::before {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
-  margin-right: 5px;
-  border-radius: 2px;
-  background: var(--mint);
-  content: "";
-}
-.national-key span + span::before { background: #5b82a8 }
-.national-axis-unit { padding-left: 2px; color: var(--muted); font-size: 11px }
-.national-plot { position: relative; height: clamp(210px, 33svh, 330px); margin: 9px 0 27px 39px }
-.national-axis { position: absolute; inset: 0; pointer-events: none }
-.national-tick { position: absolute; inset-inline: 0; bottom: var(--level); border-top: 1px solid var(--line) }
-.national-tick span {
-  position: absolute;
-  right: calc(100% + 6px);
-  transform: translateY(-50%);
-  color: var(--muted);
-  font-size: 11px;
-  font-variant-numeric: tabular-nums;
-}
-.national-years {
-  position: relative;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  height: 100%;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-.national-year { position: relative; min-width: 0; font-variant-numeric: tabular-nums }
-.national-year-label, .national-year-total {
-  position: absolute;
-  inset-inline: 50% auto;
-  transform: translateX(-50%);
-  font-size: clamp(11px, 1.1vw, 15px);
-  white-space: nowrap;
-}
-.national-year-label { top: calc(100% + 7px) }
-.national-year-total { bottom: calc(100% + 4px); font-weight: 700 }
-.national-total {
-  position: absolute;
-  inset: auto 0 0;
-  width: clamp(47px, 76%, 84px);
-  height: var(--total);
-  margin-inline: auto;
-  border-radius: 4px 4px 0 0;
-  background: #5b82a8;
-}
-.national-older {
-  position: absolute;
-  inset: auto 0 0;
-  display: grid;
-  align-content: center;
-  gap: 2px;
-  height: var(--older);
-  background: var(--mint);
-  color: #102337;
-  text-align: center;
-  font-size: clamp(10px, 1.08vw, 15px);
-  font-weight: 700;
-  white-space: nowrap;
-}
-.national-donuts {
-  --slice-1: #70edc8;
-  --slice-2: #83adde;
-  --slice-3: #ffcf77;
-  --slice-4: #c9aafa;
-  --slice-5: #a3b3c6;
-  --edge-1: #53d5b0;
-  --edge-2: #6a98cb;
-  --edge-3: #e3ad55;
-  --edge-4: #ac8be0;
-  --edge-5: #879bb2;
-  --side-1: #258d79;
-  --side-2: #416b98;
-  --side-3: #9f6c25;
-  --side-4: #7758a6;
-  --side-5: #586c83;
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
-}
-.national-donut {
-  min-width: 0;
-  margin: 0;
-  padding: 7px 6px 12px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: #0f1b29;
-}
-.national-donut figcaption { margin-left: 4px; font-size: 13px; font-weight: 700 }
-.national-donut-shape {
-  display: block;
-  width: min(100%, 288px);
-  height: auto;
-  margin-inline: auto;
-  overflow: visible;
-}
-.national-donut-surface { stroke-width: .85px }
-.national-slice-label, .national-donut-total {
-  text-anchor: middle;
-  font-variant-numeric: tabular-nums;
-  font-weight: 800;
-}
-.national-slice-label { fill: #102337; font-size: var(--label-size); font-weight: 500 }
-.national-slice-label-pedestrian { font-weight: 800 }
-.national-donut-total { fill: #f0f5fb; font-size: 18px }
-.national-donut-total tspan { font-size: 10px; fill: var(--muted) }
-@media (max-height: 850px) and (min-width: 851px) {
-  .national-donut-shape { width: min(100%, 28svh) }
-}
-@media (max-width: 500px) {
-  .national-donuts { grid-template-columns: minmax(0, 1fr) }
-}
-@media (max-width: 850px) {
-  .national-charts { grid-template-columns: minmax(0, 1fr) }
-  html { scroll-snap-type: y proximity }
-}
-
-.national-population { margin: 0; padding-top: 9px; border-top: 1px solid var(--line) }
-.national-population figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 3px 12px }
-.national-population figcaption h3 { font-size: 14px; letter-spacing: normal }
-.national-population figcaption span { color: var(--muted); font-size: 11px }
-.national-population svg { display: block; width: 100%; height: auto; margin-top: 3px }
-.national-population line { stroke: var(--line) }
-.national-population polyline { fill: none; stroke: var(--mint); stroke-width: 2.5 }
-.national-population circle { fill: var(--mint) }
-.national-population text { fill: var(--muted); font-size: 12px; text-anchor: middle }
-.national-population .population-tick { text-anchor: end }
-.national-population .population-value { fill: var(--mint); font-weight: 700 }
-.national-population .oecd-sources { margin-top: 1px }
-#national-fatalities .national-plot { height: clamp(170px, 26svh, 275px); margin-bottom: 52px }
 .citydata-live-status { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; margin: -5px 0 8px }
 .citydata-totals .board { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-block: 0 }
 .citydata-totals .stat strong { font-size: clamp(16px, 1.4vw, 22px) }
@@ -725,13 +480,32 @@ html { scroll-snap-type: y mandatory }
 .panel-source a { color: inherit }
 
 .zone-panel .citydata-totals > .board { height: auto }
+#pedestrian-summary-board .stat {
+  display: grid;
+  grid-row: span 2;
+  grid-template-rows: subgrid;
+  row-gap: 5px;
+}
+#pedestrian-summary-board .stat dd { margin: 0; padding: 0 }
+.zone-panel .board .stat .stat-change {
+  margin-top: 4px;
+  color: #c4daed;
+  font: 11px/1.3 system-ui, sans-serif;
+  white-space: normal;
+}
 .audit-comparison {
   display: grid;
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
   align-items: stretch;
   gap: clamp(14px, 2vw, 28px);
 }
-#audit-video .oecd-video, .audit-diagnosis {
+#audit-video .oecd-video {
+  min-width: 0;
+  margin: 0;
+  max-width: none;
+}
+#audit-video .oecd-video iframe { border: 0; border-radius: 0 }
+.audit-diagnosis {
   min-width: 0;
   margin: 0;
   max-width: none;
@@ -749,6 +523,48 @@ html { scroll-snap-type: y mandatory }
 .audit-diagnosis .metric-pair { height: clamp(135px, 23svh, 225px) }
 .audit-diagnosis .metric-bar strong { font-size: clamp(10px, 1vw, 13px) }
 .audit-diagnosis figcaption a { color: #c1dcf5 }
+
+#audit-video .oecd-content {
+  display: grid;
+  gap: clamp(12px, 2svh, 20px);
+}
+#audit-video .audit-heading { margin-bottom: 6px }
+#audit-video .audit-chart-caption { margin-bottom: 10px }
+.audit-rank-scroll { overflow-x: auto }
+.audit-rank-plot { position: relative; min-width: 880px; padding-left: 30px }
+.audit-rank-axis { position: absolute; inset: 0 0 auto 30px; height: var(--rank-height); pointer-events: none }
+.audit-ranking { --rank-height: clamp(112px, 16svh, 170px) }
+.audit-rank-tick { position: absolute; inset-inline: 0; bottom: var(--level); border-top: 1px solid var(--line) }
+.audit-rank-tick span { position: absolute; right: calc(100% + 7px); transform: translateY(-55%); font-size: 11px; color: var(--muted) }
+.audit-rank-list {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(29, minmax(0, 1fr));
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.audit-rank-list li { display: grid; justify-items: center; align-content: start; font-size: 11px; font-variant-numeric: tabular-nums }
+.audit-rank-measure { position: relative; width: 100%; height: var(--rank-height); color: #779fc8 }
+.audit-rank-bar { position: absolute; inset-inline: 18%; bottom: 0; height: var(--level); border-radius: 2px 2px 0 0; background: currentColor }
+.audit-rank-measure strong { position: absolute; bottom: calc(var(--level) + 3px); left: 50%; transform: translateX(-50%); color: #e1effb; white-space: nowrap }
+.audit-rank-list .audit-korea :is(.audit-rank-measure, strong, .audit-rank-name) { color: var(--mint) }
+.audit-rank-position { margin-top: 4px; color: var(--muted); font-size: 10px }
+.audit-rank-name { margin-top: 3px; writing-mode: vertical-rl; text-orientation: upright; white-space: nowrap; line-height: 1.1 }
+.audit-trend-heading { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 4px 12px }
+.audit-trend-legend { display: flex; flex-wrap: wrap; gap: 12px; font-size: 12px; color: var(--muted) }
+.audit-series-national { --series: #8cf0e8; color: var(--series) }
+.audit-series-seoul { --series: #ffd16d; color: var(--series) }
+.audit-trend { display: flex; flex-direction: column; justify-content: space-between; gap: 9px }
+.audit-trend-scroll { overflow-x: auto }
+.audit-trend-plot { display: block; width: 100%; min-width: 375px; height: auto }
+.audit-trend-plot text { fill: #d8e6f5; font-size: 13px; font-variant-numeric: tabular-nums }
+.audit-trend-plot > text { fill: var(--muted); font-size: 11px; font-weight: 400 }
+.audit-trend-plot g text { fill: var(--series); font-weight: 700 }
+.audit-trend-plot polyline { fill: none; stroke: var(--series); stroke-width: 2.5 }
+.audit-trend-plot circle { fill: var(--series) }
+.audit-gridline { stroke: var(--line) }
 @media (max-width: 760px) {
   .audit-comparison { grid-template-columns: minmax(0, 1fr) }
   html:has(.audit-comparison) { scroll-snap-type: y proximity }
@@ -791,28 +607,20 @@ html { scroll-snap-type: y mandatory }
   to { stroke-dashoffset: 0 }
 }
 
-.oecd-vertical-scroll { container-type: inline-size; overflow-x: auto }
 .oecd-vertical-plot {
-  --oecd-bar-height: clamp(100px, 16svh, 160px);
-  --oecd-plot-top: 36px;
-  --oecd-gap-width: 22px;
+  --oecd-bar-height: clamp(96px, 13svh, 142px);
+  --oecd-plot-top: 15px;
   --oecd-group-size: 10;
   display: grid;
   position: relative;
-  grid-template-columns: minmax(0, 1fr) var(--oecd-gap-width) minmax(0, 1fr);
-  min-width: 290px;
   padding-inline-start: 23px;
 }
 .oecd-vertical-axis { position: absolute; inset: var(--oecd-plot-top) 0 auto 23px; height: var(--oecd-bar-height); pointer-events: none }
 .oecd-vertical-tick { position: absolute; inset-inline: 0; bottom: var(--level); height: 1px;
-  background: linear-gradient(to right,
-    var(--line) calc(50% - var(--oecd-gap-width) / 2),
-    transparent calc(50% - var(--oecd-gap-width) / 2) calc(50% + var(--oecd-gap-width) / 2),
-    var(--line) calc(50% + var(--oecd-gap-width) / 2));
+  background: var(--line);
 }
 .oecd-vertical-tick span { position: absolute; right: calc(100% + 5px); transform: translateY(-50%); color: var(--muted); font-size: 10px }
 .oecd-vertical-group { min-width: 0; position: relative }
-.oecd-vertical-group > p { height: var(--oecd-plot-top); padding-top: 3px; text-align: center; color: var(--muted); font-size: 11px; font-weight: 700 }
 .oecd-vertical-group ol { display: grid; grid-template-columns: repeat(var(--oecd-group-size), minmax(0, 1fr)); gap: 2px; margin: 0; padding: 0; list-style: none }
 .oecd-column { min-width: 0; display: grid; justify-items: center; align-content: start; font-variant-numeric: tabular-nums }
 .oecd-column-measure { position: relative; width: 100%; height: var(--oecd-bar-height) }
@@ -822,36 +630,14 @@ html { scroll-snap-type: y mandatory }
 .oecd-column-country { writing-mode: vertical-rl; text-orientation: upright; font-size: clamp(9px, .85vw, 12px); white-space: nowrap; line-height: 1.1 }
 .oecd-column.oecd-korea .oecd-column-bar { background: var(--mint) }
 .oecd-column.oecd-korea .oecd-column-rank { color: var(--mint) }
-.oecd-vertical-gap {
-  align-self: start;
-  margin-top: var(--oecd-plot-top);
-  height: var(--oecd-bar-height);
-  display: grid;
-  place-items: center;
-  color: var(--muted);
-  font-size: 17px;
-  line-height: 1;
-}
-.oecd-count-8, .oecd-count-6 { display: none }
-@container (width < 450px) {
-  .oecd-vertical-plot { --oecd-group-size: 8 }
-  .oecd-count-10,
-  .oecd-vertical-gap + .oecd-vertical-group li:nth-child(-n + 2),
-  .oecd-vertical-axis + .oecd-vertical-group li:nth-child(n + 9) { display: none }
-  .oecd-count-8 { display: inline }
-}
-@container (width < 370px) {
-  .oecd-vertical-plot { --oecd-group-size: 6 }
-  .oecd-count-8,
-  .oecd-vertical-gap + .oecd-vertical-group li:nth-child(-n + 4),
-  .oecd-vertical-axis + .oecd-vertical-group li:nth-child(n + 7) { display: none }
-  .oecd-count-6 { display: inline }
-}
-@media (max-width: 1060px) {
-  .oecd-charts.oecd-vertical-charts { grid-template-columns: minmax(0, 1fr) }
-  html:has(.oecd-vertical-charts) { scroll-snap-type: y proximity }
-}
+.audit-pedestrian { min-width: 0 }
+.oecd-top-scroll { overflow-x: auto }
+#audit-video .oecd-top-charts { grid-template-columns: repeat(4, minmax(215px, 1fr)); align-items: stretch }
+.oecd-top-charts .oecd-chart { min-width: 0 }
+.oecd-top-charts .oecd-column-measure strong { font-size: 10px }
 </style>
+<link rel="stylesheet" href="./assets/oecd-rankings.css">
+<link rel="stylesheet" href="./assets/national-fatalities.css">
 </head>
 <body>
   <div class="traffic-backdrop" aria-hidden="true">
@@ -865,7 +651,7 @@ html { scroll-snap-type: y mandatory }
     <span class="brand-icon" aria-hidden="true">↗</span>
     <div><div class="eyebrow">SEOUL TRAFFIC NEWSROOM</div><h1>서울 교통안전 라이브</h1></div>
   </div>
-  <div class="header-meta"><a class="traffic-jump" href="#audit-video">국정감사와 보호구역 <span aria-hidden="true">↓</span></a><button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button></div>
+  <div class="header-meta"><a class="traffic-jump" href="#audit-video">국정감사와 교통사고 <span aria-hidden="true">↓</span></a><button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button></div>
 </header>
 <main>
   <aside>
@@ -915,22 +701,48 @@ html { scroll-snap-type: y mandatory }
     <section class="citydata-totals" aria-labelledby="annual-traffic">
       <div class="panel-title"><h2 id="annual-traffic">2025년 서울 전체 교통사고</h2></div>
       <dl class="board" aria-label="2025년 서울 교통사고 연간 집계와 사고다발지역">
-        <div class="stat hotspot-total"><dt>사고다발지역</dt><dd><strong id="hotspot-total">—</strong><small>곳</small></dd></div>
         <div class="stat"><dt>교통사고</dt><dd><strong>34,309</strong><small>건</small></dd></div>
+        <div class="stat hotspot-total"><dt>사고다발지역</dt><dd><strong id="hotspot-total">—</strong><small>곳</small></dd></div>
         <div class="stat"><dt>부상자</dt><dd><strong>45,446</strong><small>명</small></dd></div>
         <div class="stat"><dt>사망자</dt><dd><strong>212</strong><small>명</small></dd></div>
       </dl>
       <p class="muted panel-source">2025년 연간 집계 · <a href="https://taas.koroad.or.kr/sta/acs/gus/selectSignguTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAG_SGT">한국도로교통공단 TAAS</a></p>
     </section>
     <section class="feed" aria-labelledby="pedestrian-summary">
-      <div class="panel-title"><h2 id="pedestrian-summary">2025년 노인·어린이 보행사고</h2></div>
-      <div class="board safety-board">
-        <dl class="stat"><dt>노인 보행자 사고수</dt><dd><strong>2,060</strong><small>건</small></dd></dl>
+      <div class="panel-title"><h2 id="pedestrian-summary">2025년 서울 노인·어린이 보행사고</h2></div>
+      <div class="board safety-board" id="pedestrian-summary-board">
+        <dl class="stat">
+          <dt>고령 보행자 사고수</dt>
+          <dd>
+            <strong>2,060</strong><small>건</small>
+            <div class="stat-change">전년 대비 +97건</div>
+          </dd>
+        </dl>
         <dl class="stat"><dt>어린이 보행자 사고수</dt><dd><strong>339</strong><small>건</small></dd></dl>
-        <dl class="stat"><dt>노인 보행사고 사망자수</dt><dd><strong>82</strong><small>명</small></dd></dl>
+        <dl class="stat">
+          <dt>고령 보행사고 사망자수</dt>
+          <dd>
+            <strong>82</strong><small>명</small>
+            <div class="stat-change">전년 대비 +14명</div>
+          </dd>
+        </dl>
         <dl class="stat"><dt>어린이 보행사고 사망자수</dt><dd><strong>1</strong><small>명</small></dd></dl>
       </div>
-      <p class="muted safety-board-note">서울 · 노인 65세 이상 · 어린이 12세 이하 · <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/10_어린이보호구역_교통안전_요약.csv">집계 자료</a></p>
+      <p class="muted safety-board-note">서울 · 고령층 65세 이상 · 어린이 12세 이하 · <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/10_어린이보호구역_교통안전_요약.csv">집계 자료</a></p>
+    </section>
+    <section class="feed" aria-labelledby="senior-accident-rates">
+      <div class="panel-title"><h2 id="senior-accident-rates">2025년 노인 사고율</h2></div>
+      <div class="board safety-board">
+        <dl class="stat">
+          <dt>고령인구 1만 명당 사고</dt>
+          <dd><strong>10.77</strong><small>건</small></dd>
+        </dl>
+        <dl class="stat">
+          <dt>전체 보행 사망자 중 고령층</dt>
+          <dd><strong>67.2</strong><small>%</small></dd>
+        </dl>
+      </div>
+      <p class="muted panel-source">서울 · 65세 이상 · <a href="https://github.com/csy04x2/elder_accident/blob/main/data/processed/01_자치구연도_패널.csv">집계 자료</a></p>
     </section>
   </aside>
 </main>
@@ -939,9 +751,9 @@ html { scroll-snap-type: y mandatory }
   <header class="traffic-header story-header">
     <div class="brand">
       <span class="brand-icon" aria-hidden="true">↗</span>
-      <div><h2 class="oecd-title" id="audit-title">국정감사와 보호구역</h2></div>
+      <div><h2 class="oecd-title" id="audit-title">국정감사와 교통사고</h2></div>
     </div>
-    <nav class="header-meta" aria-label="국정감사와 보호구역 화면 이동">
+    <nav class="header-meta" aria-label="국정감사와 교통사고 화면 이동">
       <a class="traffic-jump" href="#traffic-live"><span aria-hidden="true">↑</span> 서울 교통 현황</a>
       <a class="traffic-jump" href="#national-fatalities">전국 사망자 추이 <span aria-hidden="true">↓</span></a>
       <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
@@ -958,40 +770,397 @@ html { scroll-snap-type: y mandatory }
           referrerpolicy="strict-origin-when-cross-origin"
           allow="encrypted-media; picture-in-picture; fullscreen"
           allowfullscreen></iframe>
-        <a href="https://youtu.be/TuMeEs4PdJ8?t=34">YouTube에서 34초부터 보기</a>
       </section>
-      <section class="audit-diagnosis" aria-labelledby="zone-summary">
-        <h2 class="audit-heading" id="zone-summary">그 뒤로 얼마나 달라졌나</h2>
-        <p class="audit-chart-caption">서울시 어린이·노인 인구와 보호구역 지정 현황</p>
-        <figure class="compare-chart">
-          <div class="metric-groups" role="group" aria-label="인구와 보호구역별 어린이·노인 비교">
-            <div class="metric-group">
-              <h3 id="population-chart">인구</h3>
-              <div class="metric-pair" role="group" aria-labelledby="population-chart">
-                <div class="metric-legend">
-                  <div class="metric-legend-items">
-                    <span class="children">어린이</span>
-                    <span class="older">노인</span>
-                  </div>
-                </div>
-                <div class="metric-bar children" style="--bar-height:32.98%"><strong aria-label="어린이 648,419명">648,419명</strong></div>
-                <div class="metric-bar older" style="--bar-height:100%"><strong aria-label="노인 1,965,896명">1,965,896명</strong></div>
-              </div>
-              <div class="metric-labels"><small>어린이</small><small>노인</small></div>
-            </div>
-            <div class="metric-group">
-              <h3 id="zones-chart">보호구역</h3>
-              <div class="metric-pair" role="group" aria-labelledby="zones-chart">
-                <div class="metric-bar children" style="--bar-height:100%"><strong aria-label="어린이 1,630개">1,630개</strong></div>
-                <div class="metric-bar older" style="--bar-height:11.96%"><strong aria-label="노인 195개">195개</strong></div>
-              </div>
-              <div class="metric-labels"><small>어린이<br>2026년</small><small>노인<br>2025년</small></div>
-            </div>
-          </div>
-          <figcaption class="muted">막대 높이는 지표별 최댓값을 100%로 환산한 비율입니다. 인구는 2026년 9월 말 기준입니다. 어린이는 경찰청 2026년 6월 말 서울 지정 현황의 기재 항목 합계(조례시설 미기재), 노인은 2025년 명단 기준입니다. <a href="./data/12_경찰청_어린이보호구역_지정현황_20260630.csv">어린이보호구역 집계표</a> · <a href="./data/11_서울_연령별_주민등록인구_202609.csv">인구 집계표</a> · <a href="https://kosis.kr/statisticsList/mass/mass_list.jsp?org_id=101&amp;tbl_id=DT_1B04006" target="_blank" rel="noopener">KOSIS 원자료</a></figcaption>
-        </figure>
+      <section class="audit-diagnosis audit-trend" aria-labelledby="audit-trend-title">
+        <div class="audit-trend-heading">
+          <h2 class="audit-heading" id="audit-trend-title">전국·서울 교통사고 발생 추이</h2>
+          <p class="audit-trend-legend"><span class="audit-series-national">전국</span><span class="audit-series-seoul">서울</span><span>2020~2025년 · 건</span></p>
+        </div>
+        <div class="audit-trend-scroll" tabindex="0" role="region" aria-label="교통사고 추이 그래프">
+          <svg class="audit-trend-plot" viewBox="0 0 520 180" aria-hidden="true">
+            <line x1="49" x2="494" y1="148.0" y2="148.0" class="audit-gridline" />
+            <text x="38" y="152.0" text-anchor="end">0</text>
+            <line x1="49" x2="494" y1="119.6" y2="119.6" class="audit-gridline" />
+            <text x="38" y="123.6" text-anchor="end">5만</text>
+            <line x1="49" x2="494" y1="91.2" y2="91.2" class="audit-gridline" />
+            <text x="38" y="95.2" text-anchor="end">10만</text>
+            <line x1="49" x2="494" y1="62.8" y2="62.8" class="audit-gridline" />
+            <text x="38" y="66.8" text-anchor="end">15만</text>
+            <line x1="49" x2="494" y1="34.4" y2="34.4" class="audit-gridline" />
+            <text x="38" y="38.4" text-anchor="end">20만</text>
+            <text x="77" y="174" text-anchor="middle">2020</text>
+            <text x="158" y="174" text-anchor="middle">2021</text>
+            <text x="239" y="174" text-anchor="middle">2022</text>
+            <text x="320" y="174" text-anchor="middle">2023</text>
+            <text x="401" y="174" text-anchor="middle">2024</text>
+            <text x="482" y="174" text-anchor="middle">2025</text>
+            <g class="audit-series-national">
+              <polyline points="77,28.9 158,32.6 239,36.2 320,35.3 401,36.4 482,37.8" />
+              <circle cx="77" cy="28.9" r="3.5" />
+              <text x="77" y="19.9" text-anchor="middle">209,654</text>
+              <circle cx="158" cy="32.6" r="3.5" />
+              <text x="158" y="23.6" text-anchor="middle">203,130</text>
+              <circle cx="239" cy="36.2" r="3.5" />
+              <text x="239" y="27.2" text-anchor="middle">196,836</text>
+              <circle cx="320" cy="35.3" r="3.5" />
+              <text x="320" y="26.3" text-anchor="middle">198,296</text>
+              <circle cx="401" cy="36.4" r="3.5" />
+              <text x="401" y="27.4" text-anchor="middle">196,349</text>
+              <circle cx="482" cy="37.8" r="3.5" />
+              <text x="482" y="28.8" text-anchor="middle">193,889</text>
+            </g>
+            <g class="audit-series-seoul">
+              <polyline points="77,128.0 158,128.7 239,128.9 320,128.8 401,129.0 482,128.5" />
+              <circle cx="77" cy="128.0" r="3.5" />
+              <text x="77" y="119.0" text-anchor="middle">35,227</text>
+              <circle cx="158" cy="128.7" r="3.5" />
+              <text x="158" y="119.7" text-anchor="middle">33,913</text>
+              <circle cx="239" cy="128.9" r="3.5" />
+              <text x="239" y="119.9" text-anchor="middle">33,698</text>
+              <circle cx="320" cy="128.8" r="3.5" />
+              <text x="320" y="119.8" text-anchor="middle">33,811</text>
+              <circle cx="401" cy="129.0" r="3.5" />
+              <text x="401" y="120.0" text-anchor="middle">33,465</text>
+              <circle cx="482" cy="128.5" r="3.5" />
+              <text x="482" y="119.5" text-anchor="middle">34,309</text>
+            </g>
+          </svg>
+        </div>
+        <table class="oecd-sr">
+          <caption>연도별 교통사고 발생 건수</caption>
+          <thead><tr><th scope="col">연도</th><th scope="col">전국</th><th scope="col">서울</th></tr></thead>
+          <tbody>
+          <tr><th scope="row">2020</th><td>209,654</td><td>35,227</td></tr>
+          <tr><th scope="row">2021</th><td>203,130</td><td>33,913</td></tr>
+          <tr><th scope="row">2022</th><td>196,836</td><td>33,698</td></tr>
+          <tr><th scope="row">2023</th><td>198,296</td><td>33,811</td></tr>
+          <tr><th scope="row">2024</th><td>196,349</td><td>33,465</td></tr>
+          <tr><th scope="row">2025</th><td>193,889</td><td>34,309</td></tr>
+          </tbody>
+        </table>
+        <p class="oecd-sources">경찰 접수 교통사고 · 최신 연간 집계 2025년 · <a href="https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdTrend.do?dbClCode=01&amp;menuId=WEB_KMP_OVT_TAC_TCO">TAAS 전국</a> · <a href="https://news.seoul.go.kr/traffic/archives/335">서울시 2020~2024</a> · <a href="https://taas.koroad.or.kr/sta/acs/gus/selectSignguTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAG_SGT">TAAS 서울 2025</a></p>
       </section>
     </div>
+    <section class="audit-pedestrian" aria-labelledby="oecd-pedestrian-title">
+      <h2 class="audit-heading" id="oecd-pedestrian-title">OECD 고령 보행자 사망 순위</h2>
+      <p class="oecd-unit">65세 이상 인구 10만 명당 보행 중 교통사고 사망자 수 · 연도별 10위까지 · 공통 눈금 0~15명</p>
+      <div class="oecd-top-scroll" tabindex="0" role="region" aria-labelledby="oecd-pedestrian-title">
+        <div class="oecd-charts oecd-top-charts">
+        <article class="oecd-chart" aria-labelledby="oecd-2020">
+          <header class="oecd-chart-header"><h3 id="oecd-2020">2020년</h3><span>비교 29개국</span></header>
+          <div class="oecd-vertical-scroll">
+            <div class="oecd-vertical-plot">
+              <div class="oecd-vertical-axis" aria-hidden="true">
+                <div class="oecd-vertical-tick" style="--level: 0.000000%"><span>0</span></div>
+                <div class="oecd-vertical-tick" style="--level: 33.333333%"><span>5</span></div>
+                <div class="oecd-vertical-tick" style="--level: 66.666667%"><span>10</span></div>
+                <div class="oecd-vertical-tick" style="--level: 100.000000%"><span>15</span></div>
+              </div>
+              <div class="oecd-vertical-group">
+                <ol role="list" aria-label="상위 국가">
+                  <li class="oecd-column oecd-korea" title="대한민국 · 1위 · 7.7명">
+                    <span class="oecd-sr">대한민국 · 1위 · 7.7명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 51.333333%"><span class="oecd-column-bar"></span><strong>7.7</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">1</span>
+                    <span class="oecd-column-country" aria-hidden="true">대한민국</span>
+                  </li>
+                  <li class="oecd-column" title="리투아니아 · 2위 · 4.2명">
+                    <span class="oecd-sr">리투아니아 · 2위 · 4.2명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 28.000000%"><span class="oecd-column-bar"></span><strong>4.2</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">2</span>
+                    <span class="oecd-column-country" aria-hidden="true">리투아니아</span>
+                  </li>
+                  <li class="oecd-column" title="칠레 · 3위 · 3.8명">
+                    <span class="oecd-sr">칠레 · 3위 · 3.8명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 25.333333%"><span class="oecd-column-bar"></span><strong>3.8</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">3</span>
+                    <span class="oecd-column-country" aria-hidden="true">칠레</span>
+                  </li>
+                  <li class="oecd-column" title="이스라엘 · 4위 · 3.7명">
+                    <span class="oecd-sr">이스라엘 · 4위 · 3.7명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 24.666667%"><span class="oecd-column-bar"></span><strong>3.7</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">4</span>
+                    <span class="oecd-column-country" aria-hidden="true">이스라엘</span>
+                  </li>
+                  <li class="oecd-column" title="폴란드 · 5위 · 3.2명">
+                    <span class="oecd-sr">폴란드 · 5위 · 3.2명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 21.333333%"><span class="oecd-column-bar"></span><strong>3.2</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">5</span>
+                    <span class="oecd-column-country" aria-hidden="true">폴란드</span>
+                  </li>
+                  <li class="oecd-column" title="일본 · 6위 · 2.4명">
+                    <span class="oecd-sr">일본 · 6위 · 2.4명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.000000%"><span class="oecd-column-bar"></span><strong>2.4</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">6</span>
+                    <span class="oecd-column-country" aria-hidden="true">일본</span>
+                  </li>
+                  <li class="oecd-column" title="헝가리 · 공동 7위 · 2.2명">
+                    <span class="oecd-sr">헝가리 · 공동 7위 · 2.2명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 14.666667%"><span class="oecd-column-bar"></span><strong>2.2</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">7</span>
+                    <span class="oecd-column-country" aria-hidden="true">헝가리</span>
+                  </li>
+                  <li class="oecd-column" title="미국 · 공동 7위 · 2.2명">
+                    <span class="oecd-sr">미국 · 공동 7위 · 2.2명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 14.666667%"><span class="oecd-column-bar"></span><strong>2.2</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">7</span>
+                    <span class="oecd-column-country" aria-hidden="true">미국</span>
+                  </li>
+                  <li class="oecd-column" title="체코 · 9위 · 2.0명">
+                    <span class="oecd-sr">체코 · 9위 · 2.0명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 13.333333%"><span class="oecd-column-bar"></span><strong>2.0</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">9</span>
+                    <span class="oecd-column-country" aria-hidden="true">체코</span>
+                  </li>
+                  <li class="oecd-column" title="이탈리아 · 10위 · 1.8명">
+                    <span class="oecd-sr">이탈리아 · 10위 · 1.8명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 12.000000%"><span class="oecd-column-bar"></span><strong>1.8</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">10</span>
+                    <span class="oecd-column-country" aria-hidden="true">이탈리아</span>
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="oecd-chart" aria-labelledby="oecd-2021">
+          <header class="oecd-chart-header"><h3 id="oecd-2021">2021년</h3><span>비교 31개국</span></header>
+          <div class="oecd-vertical-scroll">
+            <div class="oecd-vertical-plot">
+              <div class="oecd-vertical-axis" aria-hidden="true">
+                <div class="oecd-vertical-tick" style="--level: 0.000000%"><span>0</span></div>
+                <div class="oecd-vertical-tick" style="--level: 33.333333%"><span>5</span></div>
+                <div class="oecd-vertical-tick" style="--level: 66.666667%"><span>10</span></div>
+                <div class="oecd-vertical-tick" style="--level: 100.000000%"><span>15</span></div>
+              </div>
+              <div class="oecd-vertical-group">
+                <ol role="list" aria-label="상위 국가">
+                  <li class="oecd-column" title="콜롬비아 · 1위 · 13.1명">
+                    <span class="oecd-sr">콜롬비아 · 1위 · 13.1명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 87.333333%"><span class="oecd-column-bar"></span><strong>13.1</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">1</span>
+                    <span class="oecd-column-country" aria-hidden="true">콜롬비아</span>
+                  </li>
+                  <li class="oecd-column oecd-korea" title="대한민국 · 2위 · 7.0명">
+                    <span class="oecd-sr">대한민국 · 2위 · 7.0명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 46.666667%"><span class="oecd-column-bar"></span><strong>7.0</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">2</span>
+                    <span class="oecd-column-country" aria-hidden="true">대한민국</span>
+                  </li>
+                  <li class="oecd-column" title="칠레 · 3위 · 4.3명">
+                    <span class="oecd-sr">칠레 · 3위 · 4.3명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 28.666667%"><span class="oecd-column-bar"></span><strong>4.3</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">3</span>
+                    <span class="oecd-column-country" aria-hidden="true">칠레</span>
+                  </li>
+                  <li class="oecd-column" title="이스라엘 · 4위 · 4.0명">
+                    <span class="oecd-sr">이스라엘 · 4위 · 4.0명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 26.666667%"><span class="oecd-column-bar"></span><strong>4.0</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">4</span>
+                    <span class="oecd-column-country" aria-hidden="true">이스라엘</span>
+                  </li>
+                  <li class="oecd-column" title="아이슬란드 · 5위 · 3.6명">
+                    <span class="oecd-sr">아이슬란드 · 5위 · 3.6명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 24.000000%"><span class="oecd-column-bar"></span><strong>3.6</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">5</span>
+                    <span class="oecd-column-country" aria-hidden="true">아이슬란드</span>
+                  </li>
+                  <li class="oecd-column" title="폴란드 · 공동 6위 · 2.5명">
+                    <span class="oecd-sr">폴란드 · 공동 6위 · 2.5명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.666667%"><span class="oecd-column-bar"></span><strong>2.5</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">6</span>
+                    <span class="oecd-column-country" aria-hidden="true">폴란드</span>
+                  </li>
+                  <li class="oecd-column" title="미국 · 공동 6위 · 2.5명">
+                    <span class="oecd-sr">미국 · 공동 6위 · 2.5명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.666667%"><span class="oecd-column-bar"></span><strong>2.5</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">6</span>
+                    <span class="oecd-column-country" aria-hidden="true">미국</span>
+                  </li>
+                  <li class="oecd-column" title="일본 · 8위 · 2.4명">
+                    <span class="oecd-sr">일본 · 8위 · 2.4명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.000000%"><span class="oecd-column-bar"></span><strong>2.4</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">8</span>
+                    <span class="oecd-column-country" aria-hidden="true">일본</span>
+                  </li>
+                  <li class="oecd-column" title="포르투갈 · 9위 · 2.2명">
+                    <span class="oecd-sr">포르투갈 · 9위 · 2.2명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 14.666667%"><span class="oecd-column-bar"></span><strong>2.2</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">9</span>
+                    <span class="oecd-column-country" aria-hidden="true">포르투갈</span>
+                  </li>
+                  <li class="oecd-column" title="체코 · 공동 10위 · 2.0명">
+                    <span class="oecd-sr">체코 · 공동 10위 · 2.0명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 13.333333%"><span class="oecd-column-bar"></span><strong>2.0</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">10</span>
+                    <span class="oecd-column-country" aria-hidden="true">체코</span>
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="oecd-chart" aria-labelledby="oecd-2022">
+          <header class="oecd-chart-header"><h3 id="oecd-2022">2022년</h3><span>비교 32개국</span></header>
+          <div class="oecd-vertical-scroll">
+            <div class="oecd-vertical-plot">
+              <div class="oecd-vertical-axis" aria-hidden="true">
+                <div class="oecd-vertical-tick" style="--level: 0.000000%"><span>0</span></div>
+                <div class="oecd-vertical-tick" style="--level: 33.333333%"><span>5</span></div>
+                <div class="oecd-vertical-tick" style="--level: 66.666667%"><span>10</span></div>
+                <div class="oecd-vertical-tick" style="--level: 100.000000%"><span>15</span></div>
+              </div>
+              <div class="oecd-vertical-group">
+                <ol role="list" aria-label="상위 국가">
+                  <li class="oecd-column" title="콜롬비아 · 1위 · 14.6명">
+                    <span class="oecd-sr">콜롬비아 · 1위 · 14.6명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 97.333333%"><span class="oecd-column-bar"></span><strong>14.6</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">1</span>
+                    <span class="oecd-column-country" aria-hidden="true">콜롬비아</span>
+                  </li>
+                  <li class="oecd-column oecd-korea" title="대한민국 · 2위 · 6.2명">
+                    <span class="oecd-sr">대한민국 · 2위 · 6.2명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 41.333333%"><span class="oecd-column-bar"></span><strong>6.2</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">2</span>
+                    <span class="oecd-column-country" aria-hidden="true">대한민국</span>
+                  </li>
+                  <li class="oecd-column" title="칠레 · 3위 · 5.9명">
+                    <span class="oecd-sr">칠레 · 3위 · 5.9명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 39.333333%"><span class="oecd-column-bar"></span><strong>5.9</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">3</span>
+                    <span class="oecd-column-country" aria-hidden="true">칠레</span>
+                  </li>
+                  <li class="oecd-column" title="이스라엘 · 4위 · 3.6명">
+                    <span class="oecd-sr">이스라엘 · 4위 · 3.6명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 24.000000%"><span class="oecd-column-bar"></span><strong>3.6</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">4</span>
+                    <span class="oecd-column-country" aria-hidden="true">이스라엘</span>
+                  </li>
+                  <li class="oecd-column" title="아이슬란드 · 5위 · 3.5명">
+                    <span class="oecd-sr">아이슬란드 · 5위 · 3.5명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 23.333333%"><span class="oecd-column-bar"></span><strong>3.5</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">5</span>
+                    <span class="oecd-column-country" aria-hidden="true">아이슬란드</span>
+                  </li>
+                  <li class="oecd-column" title="그리스 · 공동 6위 · 2.9명">
+                    <span class="oecd-sr">그리스 · 공동 6위 · 2.9명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 19.333333%"><span class="oecd-column-bar"></span><strong>2.9</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">6</span>
+                    <span class="oecd-column-country" aria-hidden="true">그리스</span>
+                  </li>
+                  <li class="oecd-column" title="헝가리 · 공동 6위 · 2.9명">
+                    <span class="oecd-sr">헝가리 · 공동 6위 · 2.9명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 19.333333%"><span class="oecd-column-bar"></span><strong>2.9</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">6</span>
+                    <span class="oecd-column-country" aria-hidden="true">헝가리</span>
+                  </li>
+                  <li class="oecd-column" title="아일랜드 · 공동 6위 · 2.9명">
+                    <span class="oecd-sr">아일랜드 · 공동 6위 · 2.9명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 19.333333%"><span class="oecd-column-bar"></span><strong>2.9</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">6</span>
+                    <span class="oecd-column-country" aria-hidden="true">아일랜드</span>
+                  </li>
+                  <li class="oecd-column" title="미국 · 9위 · 2.6명">
+                    <span class="oecd-sr">미국 · 9위 · 2.6명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 17.333333%"><span class="oecd-column-bar"></span><strong>2.6</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">9</span>
+                    <span class="oecd-column-country" aria-hidden="true">미국</span>
+                  </li>
+                  <li class="oecd-column" title="일본 · 공동 10위 · 2.4명">
+                    <span class="oecd-sr">일본 · 공동 10위 · 2.4명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.000000%"><span class="oecd-column-bar"></span><strong>2.4</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">10</span>
+                    <span class="oecd-column-country" aria-hidden="true">일본</span>
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="oecd-chart" aria-labelledby="oecd-2023">
+          <header class="oecd-chart-header"><h3 id="oecd-2023">2023년</h3><span>비교 32개국</span></header>
+          <div class="oecd-vertical-scroll">
+            <div class="oecd-vertical-plot">
+              <div class="oecd-vertical-axis" aria-hidden="true">
+                <div class="oecd-vertical-tick" style="--level: 0.000000%"><span>0</span></div>
+                <div class="oecd-vertical-tick" style="--level: 33.333333%"><span>5</span></div>
+                <div class="oecd-vertical-tick" style="--level: 66.666667%"><span>10</span></div>
+                <div class="oecd-vertical-tick" style="--level: 100.000000%"><span>15</span></div>
+              </div>
+              <div class="oecd-vertical-group">
+                <ol role="list" aria-label="상위 국가">
+                  <li class="oecd-column" title="콜롬비아 · 1위 · 14.6명">
+                    <span class="oecd-sr">콜롬비아 · 1위 · 14.6명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 97.333333%"><span class="oecd-column-bar"></span><strong>14.6</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">1</span>
+                    <span class="oecd-column-country" aria-hidden="true">콜롬비아</span>
+                  </li>
+                  <li class="oecd-column oecd-korea" title="대한민국 · 2위 · 5.8명">
+                    <span class="oecd-sr">대한민국 · 2위 · 5.8명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 38.666667%"><span class="oecd-column-bar"></span><strong>5.8</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">2</span>
+                    <span class="oecd-column-country" aria-hidden="true">대한민국</span>
+                  </li>
+                  <li class="oecd-column" title="칠레 · 3위 · 4.3명">
+                    <span class="oecd-sr">칠레 · 3위 · 4.3명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 28.666667%"><span class="oecd-column-bar"></span><strong>4.3</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">3</span>
+                    <span class="oecd-column-country" aria-hidden="true">칠레</span>
+                  </li>
+                  <li class="oecd-column" title="슬로바키아 · 4위 · 3.3명">
+                    <span class="oecd-sr">슬로바키아 · 4위 · 3.3명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 22.000000%"><span class="oecd-column-bar"></span><strong>3.3</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">4</span>
+                    <span class="oecd-column-country" aria-hidden="true">슬로바키아</span>
+                  </li>
+                  <li class="oecd-column" title="이스라엘 · 5위 · 3.1명">
+                    <span class="oecd-sr">이스라엘 · 5위 · 3.1명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 20.666667%"><span class="oecd-column-bar"></span><strong>3.1</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">5</span>
+                    <span class="oecd-column-country" aria-hidden="true">이스라엘</span>
+                  </li>
+                  <li class="oecd-column" title="에스토니아 · 6위 · 2.8명">
+                    <span class="oecd-sr">에스토니아 · 6위 · 2.8명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 18.666667%"><span class="oecd-column-bar"></span><strong>2.8</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">6</span>
+                    <span class="oecd-column-country" aria-hidden="true">에스토니아</span>
+                  </li>
+                  <li class="oecd-column" title="폴란드 · 공동 7위 · 2.6명">
+                    <span class="oecd-sr">폴란드 · 공동 7위 · 2.6명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 17.333333%"><span class="oecd-column-bar"></span><strong>2.6</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">7</span>
+                    <span class="oecd-column-country" aria-hidden="true">폴란드</span>
+                  </li>
+                  <li class="oecd-column" title="미국 · 공동 7위 · 2.6명">
+                    <span class="oecd-sr">미국 · 공동 7위 · 2.6명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 17.333333%"><span class="oecd-column-bar"></span><strong>2.6</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">7</span>
+                    <span class="oecd-column-country" aria-hidden="true">미국</span>
+                  </li>
+                  <li class="oecd-column" title="포르투갈 · 9위 · 2.5명">
+                    <span class="oecd-sr">포르투갈 · 9위 · 2.5명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.666667%"><span class="oecd-column-bar"></span><strong>2.5</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">9</span>
+                    <span class="oecd-column-country" aria-hidden="true">포르투갈</span>
+                  </li>
+                  <li class="oecd-column" title="헝가리 · 공동 10위 · 2.4명">
+                    <span class="oecd-sr">헝가리 · 공동 10위 · 2.4명</span>
+                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.000000%"><span class="oecd-column-bar"></span><strong>2.4</strong></div>
+                    <span class="oecd-column-rank" aria-hidden="true">10</span>
+                    <span class="oecd-column-country" aria-hidden="true">헝가리</span>
+                  </li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+      </div>
+      <div class="oecd-sources">
+        <p>한국도로교통공단 《OECD 회원국 교통사고 비교》 2022~2025년판 표 II-13 · <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/13_OECD_%EA%B5%90%ED%86%B5%EC%82%AC%EA%B3%A0_2022~2025%EB%85%84%ED%8C%90(2020~2023).csv">마스터 CSV</a></p>
+        <p>같은 수치는 공동 순위이며, 일부 국가는 이전 연도 자료를 사용. 콜롬비아는 <strong>2020년 4월 28일</strong>에 OECD 공식 회원국이 되었습니다. · 출처 <a href="https://www.oecd.org/en/about/legal/oecd-accession-process.html">OECD 가입 절차 및 가입일</a></p>
+      </div>
+    </section>
   </div>
 </section>
 <section class="national-screen story-screen" id="national-fatalities" aria-labelledby="national-title">
@@ -1001,7 +1170,7 @@ html { scroll-snap-type: y mandatory }
       <div><p class="national-period">대한민국 · 2020~2023년</p><h2 class="oecd-title" id="national-title">줄어든 교통사고 사망자, 커진 고령자 비중</h2></div>
     </div>
     <nav class="header-meta" aria-label="전국 교통사고 화면 이동">
-      <a class="traffic-jump" href="#audit-video"><span aria-hidden="true">↑</span> 국정감사와 보호구역</a>
+      <a class="traffic-jump" href="#audit-video"><span aria-hidden="true">↑</span> 국정감사와 교통사고</a>
       <a class="traffic-jump" href="#oecd-rankings">OECD 순위 <span aria-hidden="true">↓</span></a>
       <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
     </nav>
@@ -1228,598 +1397,311 @@ html { scroll-snap-type: y mandatory }
   <header class="traffic-header story-header">
     <div class="brand">
       <span class="brand-icon" aria-hidden="true">↗</span>
-      <div><h2 class="oecd-title" id="oecd-title">OECD 고령 보행자 사망 순위</h2></div>
+      <div><h2 class="oecd-title" id="oecd-title">OECD 고령자 교통사고 사망 순위</h2></div>
     </div>
     <nav class="header-meta" aria-label="OECD 순위 화면 이동">
       <a class="traffic-jump" href="#national-fatalities"><span aria-hidden="true">↑</span> 전국 사망자 추이</a>
+      <a class="traffic-jump" href="#protection-zones">보호구역 현황 <span aria-hidden="true">↓</span></a>
       <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
     </nav>
   </header>
   <div class="oecd-content">
-    <p class="oecd-unit">65세 이상 인구 10만 명당 보행 중 교통사고 사망자 수 · 공통 막대 눈금 0~15명</p>
-    <div class="oecd-charts oecd-vertical-charts">
-      <article class="oecd-chart" aria-labelledby="oecd-2020">
-        <header class="oecd-chart-header"><h3 id="oecd-2020">2020년</h3><span>비교 29개국</span></header>
-        <div class="oecd-vertical-scroll">
-          <div class="oecd-vertical-plot">
-            <div class="oecd-vertical-axis" aria-hidden="true">
-              <div class="oecd-vertical-tick" style="--level: 0.000000%"><span>0</span></div>
-              <div class="oecd-vertical-tick" style="--level: 33.333333%"><span>5</span></div>
-              <div class="oecd-vertical-tick" style="--level: 66.666667%"><span>10</span></div>
-              <div class="oecd-vertical-tick" style="--level: 100.000000%"><span>15</span></div>
-            </div>
-            <div class="oecd-vertical-group">
-              <p>상위 <span class="oecd-count-10">10</span><span class="oecd-count-8">8</span><span class="oecd-count-6">6</span>개국</p>
-              <ol role="list" aria-label="상위 국가">
-                <li class="oecd-column oecd-korea" title="대한민국 · 1위 · 7.7명">
-                  <span class="oecd-sr">대한민국 · 1위 · 7.7명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 51.333333%"><span class="oecd-column-bar"></span><strong>7.7</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">1</span>
-                  <span class="oecd-column-country" aria-hidden="true">대한민국</span>
-                </li>
-                <li class="oecd-column" title="리투아니아 · 2위 · 4.2명">
-                  <span class="oecd-sr">리투아니아 · 2위 · 4.2명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 28.000000%"><span class="oecd-column-bar"></span><strong>4.2</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">2</span>
-                  <span class="oecd-column-country" aria-hidden="true">리투아니아</span>
-                </li>
-                <li class="oecd-column" title="칠레 · 3위 · 3.8명">
-                  <span class="oecd-sr">칠레 · 3위 · 3.8명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 25.333333%"><span class="oecd-column-bar"></span><strong>3.8</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">3</span>
-                  <span class="oecd-column-country" aria-hidden="true">칠레</span>
-                </li>
-                <li class="oecd-column" title="이스라엘 · 4위 · 3.7명">
-                  <span class="oecd-sr">이스라엘 · 4위 · 3.7명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 24.666667%"><span class="oecd-column-bar"></span><strong>3.7</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">4</span>
-                  <span class="oecd-column-country" aria-hidden="true">이스라엘</span>
-                </li>
-                <li class="oecd-column" title="폴란드 · 5위 · 3.2명">
-                  <span class="oecd-sr">폴란드 · 5위 · 3.2명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 21.333333%"><span class="oecd-column-bar"></span><strong>3.2</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">5</span>
-                  <span class="oecd-column-country" aria-hidden="true">폴란드</span>
-                </li>
-                <li class="oecd-column" title="일본 · 6위 · 2.4명">
-                  <span class="oecd-sr">일본 · 6위 · 2.4명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.000000%"><span class="oecd-column-bar"></span><strong>2.4</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">6</span>
-                  <span class="oecd-column-country" aria-hidden="true">일본</span>
-                </li>
-                <li class="oecd-column" title="헝가리 · 공동 7위 · 2.2명">
-                  <span class="oecd-sr">헝가리 · 공동 7위 · 2.2명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 14.666667%"><span class="oecd-column-bar"></span><strong>2.2</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">7</span>
-                  <span class="oecd-column-country" aria-hidden="true">헝가리</span>
-                </li>
-                <li class="oecd-column" title="미국 · 공동 7위 · 2.2명">
-                  <span class="oecd-sr">미국 · 공동 7위 · 2.2명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 14.666667%"><span class="oecd-column-bar"></span><strong>2.2</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">7</span>
-                  <span class="oecd-column-country" aria-hidden="true">미국</span>
-                </li>
-                <li class="oecd-column" title="체코 · 9위 · 2.0명">
-                  <span class="oecd-sr">체코 · 9위 · 2.0명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 13.333333%"><span class="oecd-column-bar"></span><strong>2.0</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">9</span>
-                  <span class="oecd-column-country" aria-hidden="true">체코</span>
-                </li>
-                <li class="oecd-column" title="이탈리아 · 10위 · 1.8명">
-                  <span class="oecd-sr">이탈리아 · 10위 · 1.8명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 12.000000%"><span class="oecd-column-bar"></span><strong>1.8</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">10</span>
-                  <span class="oecd-column-country" aria-hidden="true">이탈리아</span>
-                </li>
-              </ol>
-            </div>
-            <div class="oecd-vertical-gap" role="img" title="중간 순위 생략" aria-label="중간 순위 생략">…</div>
-            <div class="oecd-vertical-group">
-              <p>하위 <span class="oecd-count-10">10</span><span class="oecd-count-8">8</span><span class="oecd-count-6">6</span>개국</p>
-              <ol role="list" aria-label="하위 국가">
-                <li class="oecd-column" title="덴마크 · 공동 19위 · 1.1명">
-                  <span class="oecd-sr">덴마크 · 공동 19위 · 1.1명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 7.333333%"><span class="oecd-column-bar"></span><strong>1.1</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">19</span>
-                  <span class="oecd-column-country" aria-hidden="true">덴마크</span>
-                </li>
-                <li class="oecd-column" title="독일 · 공동 19위 · 1.1명">
-                  <span class="oecd-sr">독일 · 공동 19위 · 1.1명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 7.333333%"><span class="oecd-column-bar"></span><strong>1.1</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">19</span>
-                  <span class="oecd-column-country" aria-hidden="true">독일</span>
-                </li>
-                <li class="oecd-column" title="아일랜드 · 공동 19위 · 1.1명">
-                  <span class="oecd-sr">아일랜드 · 공동 19위 · 1.1명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 7.333333%"><span class="oecd-column-bar"></span><strong>1.1</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">19</span>
-                  <span class="oecd-column-country" aria-hidden="true">아일랜드</span>
-                </li>
-                <li class="oecd-column" title="핀란드 · 공동 23위 · 1.0명">
-                  <span class="oecd-sr">핀란드 · 공동 23위 · 1.0명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 6.666667%"><span class="oecd-column-bar"></span><strong>1.0</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">23</span>
-                  <span class="oecd-column-country" aria-hidden="true">핀란드</span>
-                </li>
-                <li class="oecd-column" title="영국 · 공동 23위 · 1.0명">
-                  <span class="oecd-sr">영국 · 공동 23위 · 1.0명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 6.666667%"><span class="oecd-column-bar"></span><strong>1.0</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">23</span>
-                  <span class="oecd-column-country" aria-hidden="true">영국</span>
-                </li>
-                <li class="oecd-column" title="슬로베니아 · 25위 · 0.9명">
-                  <span class="oecd-sr">슬로베니아 · 25위 · 0.9명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 6.000000%"><span class="oecd-column-bar"></span><strong>0.9</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">25</span>
-                  <span class="oecd-column-country" aria-hidden="true">슬로베니아</span>
-                </li>
-                <li class="oecd-column" title="스웨덴 · 26위 · 0.8명">
-                  <span class="oecd-sr">스웨덴 · 26위 · 0.8명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 5.333333%"><span class="oecd-column-bar"></span><strong>0.8</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">26</span>
-                  <span class="oecd-column-country" aria-hidden="true">스웨덴</span>
-                </li>
-                <li class="oecd-column" title="호주 · 27위 · 0.7명">
-                  <span class="oecd-sr">호주 · 27위 · 0.7명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 4.666667%"><span class="oecd-column-bar"></span><strong>0.7</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">27</span>
-                  <span class="oecd-column-country" aria-hidden="true">호주</span>
-                </li>
-                <li class="oecd-column" title="노르웨이 · 28위 · 0.4명">
-                  <span class="oecd-sr">노르웨이 · 28위 · 0.4명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 2.666667%"><span class="oecd-column-bar"></span><strong>0.4</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">28</span>
-                  <span class="oecd-column-country" aria-hidden="true">노르웨이</span>
-                </li>
-                <li class="oecd-column" title="아이슬란드 · 29위 · 0.0명">
-                  <span class="oecd-sr">아이슬란드 · 29위 · 0.0명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 0.000000%"><span class="oecd-column-bar"></span><strong>0.0</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">29</span>
-                  <span class="oecd-column-country" aria-hidden="true">아이슬란드</span>
-                </li>
-              </ol>
-            </div>
+    <section class="audit-diagnosis audit-ranking" aria-labelledby="audit-ranking-title">
+      <h2 class="audit-heading" id="audit-ranking-title">2020년 OECD 고령인구 10만 명당 교통사고 사망자 순위</h2>
+      <p class="audit-chart-caption">65세 이상 · 비교 29개국 · 단위 명</p>
+      <div class="audit-rank-scroll" tabindex="0" role="region" aria-labelledby="audit-ranking-title">
+        <div class="audit-rank-plot">
+          <div class="audit-rank-axis" aria-hidden="true">
+            <div class="audit-rank-tick" style="--level: 0%"><span>0</span></div>
+            <div class="audit-rank-tick" style="--level: 25%"><span>5</span></div>
+            <div class="audit-rank-tick" style="--level: 50%"><span>10</span></div>
+            <div class="audit-rank-tick" style="--level: 75%"><span>15</span></div>
+            <div class="audit-rank-tick" style="--level: 100%"><span>20</span></div>
           </div>
+          <ol class="audit-rank-list" role="list">
+            <li class="audit-korea" title="1위 대한민국 · 16.5명">
+              <span class="oecd-sr">1위 대한민국, 16.5명</span>
+              <div class="audit-rank-measure" style="--level: 82.50%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>16.5</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">1</span>
+              <span class="audit-rank-name" aria-hidden="true">대한민국</span>
+            </li>
+            <li title="2위 미국 · 12.0명">
+              <span class="oecd-sr">2위 미국, 12.0명</span>
+              <div class="audit-rank-measure" style="--level: 60.00%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>12.0</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">2</span>
+              <span class="audit-rank-name" aria-hidden="true">미국</span>
+            </li>
+            <li title="3위 칠레 · 8.9명">
+              <span class="oecd-sr">3위 칠레, 8.9명</span>
+              <div class="audit-rank-measure" style="--level: 44.50%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>8.9</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">3</span>
+              <span class="audit-rank-name" aria-hidden="true">칠레</span>
+            </li>
+            <li title="4위 리투아니아 · 7.8명">
+              <span class="oecd-sr">4위 리투아니아, 7.8명</span>
+              <div class="audit-rank-measure" style="--level: 39.00%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>7.8</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">4</span>
+              <span class="audit-rank-name" aria-hidden="true">리투아니아</span>
+            </li>
+            <li title="5위 뉴질랜드 · 7.7명">
+              <span class="oecd-sr">5위 뉴질랜드, 7.7명</span>
+              <div class="audit-rank-measure" style="--level: 38.50%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>7.7</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">5</span>
+              <span class="audit-rank-name" aria-hidden="true">뉴질랜드</span>
+            </li>
+            <li title="5위 폴란드 · 7.7명">
+              <span class="oecd-sr">5위 폴란드, 7.7명</span>
+              <div class="audit-rank-measure" style="--level: 38.50%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>7.7</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">5</span>
+              <span class="audit-rank-name" aria-hidden="true">폴란드</span>
+            </li>
+            <li title="7위 이스라엘 · 6.8명">
+              <span class="oecd-sr">7위 이스라엘, 6.8명</span>
+              <div class="audit-rank-measure" style="--level: 34.00%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>6.8</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">7</span>
+              <span class="audit-rank-name" aria-hidden="true">이스라엘</span>
+            </li>
+            <li title="8위 체코 · 6.3명">
+              <span class="oecd-sr">8위 체코, 6.3명</span>
+              <div class="audit-rank-measure" style="--level: 31.50%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>6.3</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">8</span>
+              <span class="audit-rank-name" aria-hidden="true">체코</span>
+            </li>
+            <li title="9위 오스트리아 · 6.2명">
+              <span class="oecd-sr">9위 오스트리아, 6.2명</span>
+              <div class="audit-rank-measure" style="--level: 31.00%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>6.2</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">9</span>
+              <span class="audit-rank-name" aria-hidden="true">오스트리아</span>
+            </li>
+            <li title="10위 그리스 · 6.0명">
+              <span class="oecd-sr">10위 그리스, 6.0명</span>
+              <div class="audit-rank-measure" style="--level: 30.00%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>6.0</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">10</span>
+              <span class="audit-rank-name" aria-hidden="true">그리스</span>
+            </li>
+            <li title="10위 스위스 · 6.0명">
+              <span class="oecd-sr">10위 스위스, 6.0명</span>
+              <div class="audit-rank-measure" style="--level: 30.00%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>6.0</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">10</span>
+              <span class="audit-rank-name" aria-hidden="true">스위스</span>
+            </li>
+            <li title="12위 헝가리 · 5.7명">
+              <span class="oecd-sr">12위 헝가리, 5.7명</span>
+              <div class="audit-rank-measure" style="--level: 28.50%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>5.7</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">12</span>
+              <span class="audit-rank-name" aria-hidden="true">헝가리</span>
+            </li>
+            <li title="13위 캐나다 · 5.5명">
+              <span class="oecd-sr">13위 캐나다, 5.5명</span>
+              <div class="audit-rank-measure" style="--level: 27.50%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>5.5</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">13</span>
+              <span class="audit-rank-name" aria-hidden="true">캐나다</span>
+            </li>
+            <li title="13위 핀란드 · 5.5명">
+              <span class="oecd-sr">13위 핀란드, 5.5명</span>
+              <div class="audit-rank-measure" style="--level: 27.50%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>5.5</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">13</span>
+              <span class="audit-rank-name" aria-hidden="true">핀란드</span>
+            </li>
+            <li title="15위 이탈리아 · 5.4명">
+              <span class="oecd-sr">15위 이탈리아, 5.4명</span>
+              <div class="audit-rank-measure" style="--level: 27.00%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>5.4</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">15</span>
+              <span class="audit-rank-name" aria-hidden="true">이탈리아</span>
+            </li>
+            <li title="15위 룩셈부르크 · 5.4명">
+              <span class="oecd-sr">15위 룩셈부르크, 5.4명</span>
+              <div class="audit-rank-measure" style="--level: 27.00%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>5.4</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">15</span>
+              <span class="audit-rank-name" aria-hidden="true">룩셈부르크</span>
+            </li>
+            <li title="17위 벨기에 · 5.3명">
+              <span class="oecd-sr">17위 벨기에, 5.3명</span>
+              <div class="audit-rank-measure" style="--level: 26.50%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>5.3</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">17</span>
+              <span class="audit-rank-name" aria-hidden="true">벨기에</span>
+            </li>
+            <li title="17위 일본 · 5.3명">
+              <span class="oecd-sr">17위 일본, 5.3명</span>
+              <div class="audit-rank-measure" style="--level: 26.50%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>5.3</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">17</span>
+              <span class="audit-rank-name" aria-hidden="true">일본</span>
+            </li>
+            <li title="19위 호주 · 5.0명">
+              <span class="oecd-sr">19위 호주, 5.0명</span>
+              <div class="audit-rank-measure" style="--level: 25.00%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>5.0</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">19</span>
+              <span class="audit-rank-name" aria-hidden="true">호주</span>
+            </li>
+            <li title="20위 덴마크 · 4.9명">
+              <span class="oecd-sr">20위 덴마크, 4.9명</span>
+              <div class="audit-rank-measure" style="--level: 24.50%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>4.9</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">20</span>
+              <span class="audit-rank-name" aria-hidden="true">덴마크</span>
+            </li>
+            <li title="20위 독일 · 4.9명">
+              <span class="oecd-sr">20위 독일, 4.9명</span>
+              <div class="audit-rank-measure" style="--level: 24.50%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>4.9</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">20</span>
+              <span class="audit-rank-name" aria-hidden="true">독일</span>
+            </li>
+            <li title="22위 프랑스 · 4.7명">
+              <span class="oecd-sr">22위 프랑스, 4.7명</span>
+              <div class="audit-rank-measure" style="--level: 23.50%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>4.7</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">22</span>
+              <span class="audit-rank-name" aria-hidden="true">프랑스</span>
+            </li>
+            <li title="23위 아일랜드 · 4.4명">
+              <span class="oecd-sr">23위 아일랜드, 4.4명</span>
+              <div class="audit-rank-measure" style="--level: 22.00%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>4.4</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">23</span>
+              <span class="audit-rank-name" aria-hidden="true">아일랜드</span>
+            </li>
+            <li title="24위 스페인 · 3.9명">
+              <span class="oecd-sr">24위 스페인, 3.9명</span>
+              <div class="audit-rank-measure" style="--level: 19.50%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>3.9</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">24</span>
+              <span class="audit-rank-name" aria-hidden="true">스페인</span>
+            </li>
+            <li title="25위 슬로베니아 · 3.8명">
+              <span class="oecd-sr">25위 슬로베니아, 3.8명</span>
+              <div class="audit-rank-measure" style="--level: 19.00%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>3.8</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">25</span>
+              <span class="audit-rank-name" aria-hidden="true">슬로베니아</span>
+            </li>
+            <li title="26위 스웨덴 · 3.3명">
+              <span class="oecd-sr">26위 스웨덴, 3.3명</span>
+              <div class="audit-rank-measure" style="--level: 16.50%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>3.3</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">26</span>
+              <span class="audit-rank-name" aria-hidden="true">스웨덴</span>
+            </li>
+            <li title="27위 영국 · 2.9명">
+              <span class="oecd-sr">27위 영국, 2.9명</span>
+              <div class="audit-rank-measure" style="--level: 14.50%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>2.9</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">27</span>
+              <span class="audit-rank-name" aria-hidden="true">영국</span>
+            </li>
+            <li title="28위 노르웨이 · 2.2명">
+              <span class="oecd-sr">28위 노르웨이, 2.2명</span>
+              <div class="audit-rank-measure" style="--level: 11.00%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>2.2</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">28</span>
+              <span class="audit-rank-name" aria-hidden="true">노르웨이</span>
+            </li>
+            <li title="29위 아이슬란드 · 1.9명">
+              <span class="oecd-sr">29위 아이슬란드, 1.9명</span>
+              <div class="audit-rank-measure" style="--level: 9.50%" aria-hidden="true">
+                <span class="audit-rank-bar"></span><strong>1.9</strong>
+              </div>
+              <span class="audit-rank-position" aria-hidden="true">29</span>
+              <span class="audit-rank-name" aria-hidden="true">아이슬란드</span>
+            </li>
+          </ol>
         </div>
-      </article>
-      <article class="oecd-chart" aria-labelledby="oecd-2021">
-        <header class="oecd-chart-header"><h3 id="oecd-2021">2021년</h3><span>비교 31개국</span></header>
-        <div class="oecd-vertical-scroll">
-          <div class="oecd-vertical-plot">
-            <div class="oecd-vertical-axis" aria-hidden="true">
-              <div class="oecd-vertical-tick" style="--level: 0.000000%"><span>0</span></div>
-              <div class="oecd-vertical-tick" style="--level: 33.333333%"><span>5</span></div>
-              <div class="oecd-vertical-tick" style="--level: 66.666667%"><span>10</span></div>
-              <div class="oecd-vertical-tick" style="--level: 100.000000%"><span>15</span></div>
-            </div>
-            <div class="oecd-vertical-group">
-              <p>상위 <span class="oecd-count-10">10</span><span class="oecd-count-8">8</span><span class="oecd-count-6">6</span>개국</p>
-              <ol role="list" aria-label="상위 국가">
-                <li class="oecd-column" title="콜롬비아 · 1위 · 13.1명">
-                  <span class="oecd-sr">콜롬비아 · 1위 · 13.1명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 87.333333%"><span class="oecd-column-bar"></span><strong>13.1</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">1</span>
-                  <span class="oecd-column-country" aria-hidden="true">콜롬비아</span>
-                </li>
-                <li class="oecd-column oecd-korea" title="대한민국 · 2위 · 7.0명">
-                  <span class="oecd-sr">대한민국 · 2위 · 7.0명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 46.666667%"><span class="oecd-column-bar"></span><strong>7.0</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">2</span>
-                  <span class="oecd-column-country" aria-hidden="true">대한민국</span>
-                </li>
-                <li class="oecd-column" title="칠레 · 3위 · 4.3명">
-                  <span class="oecd-sr">칠레 · 3위 · 4.3명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 28.666667%"><span class="oecd-column-bar"></span><strong>4.3</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">3</span>
-                  <span class="oecd-column-country" aria-hidden="true">칠레</span>
-                </li>
-                <li class="oecd-column" title="이스라엘 · 4위 · 4.0명">
-                  <span class="oecd-sr">이스라엘 · 4위 · 4.0명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 26.666667%"><span class="oecd-column-bar"></span><strong>4.0</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">4</span>
-                  <span class="oecd-column-country" aria-hidden="true">이스라엘</span>
-                </li>
-                <li class="oecd-column" title="아이슬란드 · 5위 · 3.6명">
-                  <span class="oecd-sr">아이슬란드 · 5위 · 3.6명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 24.000000%"><span class="oecd-column-bar"></span><strong>3.6</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">5</span>
-                  <span class="oecd-column-country" aria-hidden="true">아이슬란드</span>
-                </li>
-                <li class="oecd-column" title="폴란드 · 공동 6위 · 2.5명">
-                  <span class="oecd-sr">폴란드 · 공동 6위 · 2.5명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.666667%"><span class="oecd-column-bar"></span><strong>2.5</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">6</span>
-                  <span class="oecd-column-country" aria-hidden="true">폴란드</span>
-                </li>
-                <li class="oecd-column" title="미국 · 공동 6위 · 2.5명">
-                  <span class="oecd-sr">미국 · 공동 6위 · 2.5명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.666667%"><span class="oecd-column-bar"></span><strong>2.5</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">6</span>
-                  <span class="oecd-column-country" aria-hidden="true">미국</span>
-                </li>
-                <li class="oecd-column" title="일본 · 8위 · 2.4명">
-                  <span class="oecd-sr">일본 · 8위 · 2.4명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.000000%"><span class="oecd-column-bar"></span><strong>2.4</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">8</span>
-                  <span class="oecd-column-country" aria-hidden="true">일본</span>
-                </li>
-                <li class="oecd-column" title="포르투갈 · 9위 · 2.2명">
-                  <span class="oecd-sr">포르투갈 · 9위 · 2.2명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 14.666667%"><span class="oecd-column-bar"></span><strong>2.2</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">9</span>
-                  <span class="oecd-column-country" aria-hidden="true">포르투갈</span>
-                </li>
-                <li class="oecd-column" title="체코 · 공동 10위 · 2.0명">
-                  <span class="oecd-sr">체코 · 공동 10위 · 2.0명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 13.333333%"><span class="oecd-column-bar"></span><strong>2.0</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">10</span>
-                  <span class="oecd-column-country" aria-hidden="true">체코</span>
-                </li>
-              </ol>
-            </div>
-            <div class="oecd-vertical-gap" role="img" title="중간 순위 생략" aria-label="중간 순위 생략">…</div>
-            <div class="oecd-vertical-group">
-              <p>하위 <span class="oecd-count-10">10</span><span class="oecd-count-8">8</span><span class="oecd-count-6">6</span>개국</p>
-              <ol role="list" aria-label="하위 국가">
-                <li class="oecd-column" title="독일 · 공동 22위 · 1.1명">
-                  <span class="oecd-sr">독일 · 공동 22위 · 1.1명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 7.333333%"><span class="oecd-column-bar"></span><strong>1.1</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">22</span>
-                  <span class="oecd-column-country" aria-hidden="true">독일</span>
-                </li>
-                <li class="oecd-column" title="룩셈부르크 · 공동 22위 · 1.1명">
-                  <span class="oecd-sr">룩셈부르크 · 공동 22위 · 1.1명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 7.333333%"><span class="oecd-column-bar"></span><strong>1.1</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">22</span>
-                  <span class="oecd-column-country" aria-hidden="true">룩셈부르크</span>
-                </li>
-                <li class="oecd-column" title="뉴질랜드 · 24위 · 1.0명">
-                  <span class="oecd-sr">뉴질랜드 · 24위 · 1.0명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 6.666667%"><span class="oecd-column-bar"></span><strong>1.0</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">24</span>
-                  <span class="oecd-column-country" aria-hidden="true">뉴질랜드</span>
-                </li>
-                <li class="oecd-column" title="핀란드 · 공동 25위 · 0.9명">
-                  <span class="oecd-sr">핀란드 · 공동 25위 · 0.9명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 6.000000%"><span class="oecd-column-bar"></span><strong>0.9</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">25</span>
-                  <span class="oecd-column-country" aria-hidden="true">핀란드</span>
-                </li>
-                <li class="oecd-column" title="영국 · 공동 25위 · 0.9명">
-                  <span class="oecd-sr">영국 · 공동 25위 · 0.9명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 6.000000%"><span class="oecd-column-bar"></span><strong>0.9</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">25</span>
-                  <span class="oecd-column-country" aria-hidden="true">영국</span>
-                </li>
-                <li class="oecd-column" title="덴마크 · 공동 27위 · 0.8명">
-                  <span class="oecd-sr">덴마크 · 공동 27위 · 0.8명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 5.333333%"><span class="oecd-column-bar"></span><strong>0.8</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">27</span>
-                  <span class="oecd-column-country" aria-hidden="true">덴마크</span>
-                </li>
-                <li class="oecd-column" title="아일랜드 · 공동 27위 · 0.8명">
-                  <span class="oecd-sr">아일랜드 · 공동 27위 · 0.8명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 5.333333%"><span class="oecd-column-bar"></span><strong>0.8</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">27</span>
-                  <span class="oecd-column-country" aria-hidden="true">아일랜드</span>
-                </li>
-                <li class="oecd-column" title="슬로베니아 · 공동 29위 · 0.7명">
-                  <span class="oecd-sr">슬로베니아 · 공동 29위 · 0.7명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 4.666667%"><span class="oecd-column-bar"></span><strong>0.7</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">29</span>
-                  <span class="oecd-column-country" aria-hidden="true">슬로베니아</span>
-                </li>
-                <li class="oecd-column" title="스웨덴 · 공동 29위 · 0.7명">
-                  <span class="oecd-sr">스웨덴 · 공동 29위 · 0.7명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 4.666667%"><span class="oecd-column-bar"></span><strong>0.7</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">29</span>
-                  <span class="oecd-column-country" aria-hidden="true">스웨덴</span>
-                </li>
-                <li class="oecd-column" title="노르웨이 · 31위 · 0.4명">
-                  <span class="oecd-sr">노르웨이 · 31위 · 0.4명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 2.666667%"><span class="oecd-column-bar"></span><strong>0.4</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">31</span>
-                  <span class="oecd-column-country" aria-hidden="true">노르웨이</span>
-                </li>
-              </ol>
-            </div>
-          </div>
-        </div>
-        <p class="oecd-sources">콜롬비아는 <strong>2020년 4월 28일</strong>에 OECD 공식 회원국이 되었습니다. · 출처 <a href="https://www.oecd.org/en/about/legal/oecd-accession-process.html">OECD 가입 절차 및 가입일</a></p>
-      </article>
-      <article class="oecd-chart" aria-labelledby="oecd-2022">
-        <header class="oecd-chart-header"><h3 id="oecd-2022">2022년</h3><span>비교 32개국</span></header>
-        <div class="oecd-vertical-scroll">
-          <div class="oecd-vertical-plot">
-            <div class="oecd-vertical-axis" aria-hidden="true">
-              <div class="oecd-vertical-tick" style="--level: 0.000000%"><span>0</span></div>
-              <div class="oecd-vertical-tick" style="--level: 33.333333%"><span>5</span></div>
-              <div class="oecd-vertical-tick" style="--level: 66.666667%"><span>10</span></div>
-              <div class="oecd-vertical-tick" style="--level: 100.000000%"><span>15</span></div>
-            </div>
-            <div class="oecd-vertical-group">
-              <p>상위 <span class="oecd-count-10">10</span><span class="oecd-count-8">8</span><span class="oecd-count-6">6</span>개국</p>
-              <ol role="list" aria-label="상위 국가">
-                <li class="oecd-column" title="콜롬비아 · 1위 · 14.6명">
-                  <span class="oecd-sr">콜롬비아 · 1위 · 14.6명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 97.333333%"><span class="oecd-column-bar"></span><strong>14.6</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">1</span>
-                  <span class="oecd-column-country" aria-hidden="true">콜롬비아</span>
-                </li>
-                <li class="oecd-column oecd-korea" title="대한민국 · 2위 · 6.2명">
-                  <span class="oecd-sr">대한민국 · 2위 · 6.2명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 41.333333%"><span class="oecd-column-bar"></span><strong>6.2</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">2</span>
-                  <span class="oecd-column-country" aria-hidden="true">대한민국</span>
-                </li>
-                <li class="oecd-column" title="칠레 · 3위 · 5.9명">
-                  <span class="oecd-sr">칠레 · 3위 · 5.9명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 39.333333%"><span class="oecd-column-bar"></span><strong>5.9</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">3</span>
-                  <span class="oecd-column-country" aria-hidden="true">칠레</span>
-                </li>
-                <li class="oecd-column" title="이스라엘 · 4위 · 3.6명">
-                  <span class="oecd-sr">이스라엘 · 4위 · 3.6명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 24.000000%"><span class="oecd-column-bar"></span><strong>3.6</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">4</span>
-                  <span class="oecd-column-country" aria-hidden="true">이스라엘</span>
-                </li>
-                <li class="oecd-column" title="아이슬란드 · 5위 · 3.5명">
-                  <span class="oecd-sr">아이슬란드 · 5위 · 3.5명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 23.333333%"><span class="oecd-column-bar"></span><strong>3.5</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">5</span>
-                  <span class="oecd-column-country" aria-hidden="true">아이슬란드</span>
-                </li>
-                <li class="oecd-column" title="그리스 · 공동 6위 · 2.9명">
-                  <span class="oecd-sr">그리스 · 공동 6위 · 2.9명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 19.333333%"><span class="oecd-column-bar"></span><strong>2.9</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">6</span>
-                  <span class="oecd-column-country" aria-hidden="true">그리스</span>
-                </li>
-                <li class="oecd-column" title="헝가리 · 공동 6위 · 2.9명">
-                  <span class="oecd-sr">헝가리 · 공동 6위 · 2.9명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 19.333333%"><span class="oecd-column-bar"></span><strong>2.9</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">6</span>
-                  <span class="oecd-column-country" aria-hidden="true">헝가리</span>
-                </li>
-                <li class="oecd-column" title="아일랜드 · 공동 6위 · 2.9명">
-                  <span class="oecd-sr">아일랜드 · 공동 6위 · 2.9명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 19.333333%"><span class="oecd-column-bar"></span><strong>2.9</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">6</span>
-                  <span class="oecd-column-country" aria-hidden="true">아일랜드</span>
-                </li>
-                <li class="oecd-column" title="미국 · 9위 · 2.6명">
-                  <span class="oecd-sr">미국 · 9위 · 2.6명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 17.333333%"><span class="oecd-column-bar"></span><strong>2.6</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">9</span>
-                  <span class="oecd-column-country" aria-hidden="true">미국</span>
-                </li>
-                <li class="oecd-column" title="일본 · 공동 10위 · 2.4명">
-                  <span class="oecd-sr">일본 · 공동 10위 · 2.4명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.000000%"><span class="oecd-column-bar"></span><strong>2.4</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">10</span>
-                  <span class="oecd-column-country" aria-hidden="true">일본</span>
-                </li>
-              </ol>
-            </div>
-            <div class="oecd-vertical-gap" role="img" title="중간 순위 생략" aria-label="중간 순위 생략">…</div>
-            <div class="oecd-vertical-group">
-              <p>하위 <span class="oecd-count-10">10</span><span class="oecd-count-8">8</span><span class="oecd-count-6">6</span>개국</p>
-              <ol role="list" aria-label="하위 국가">
-                <li class="oecd-column" title="핀란드 · 공동 22위 · 1.2명">
-                  <span class="oecd-sr">핀란드 · 공동 22위 · 1.2명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 8.000000%"><span class="oecd-column-bar"></span><strong>1.2</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">22</span>
-                  <span class="oecd-column-country" aria-hidden="true">핀란드</span>
-                </li>
-                <li class="oecd-column" title="독일 · 공동 24위 · 1.1명">
-                  <span class="oecd-sr">독일 · 공동 24위 · 1.1명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 7.333333%"><span class="oecd-column-bar"></span><strong>1.1</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">24</span>
-                  <span class="oecd-column-country" aria-hidden="true">독일</span>
-                </li>
-                <li class="oecd-column" title="스위스 · 공동 24위 · 1.1명">
-                  <span class="oecd-sr">스위스 · 공동 24위 · 1.1명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 7.333333%"><span class="oecd-column-bar"></span><strong>1.1</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">24</span>
-                  <span class="oecd-column-country" aria-hidden="true">스위스</span>
-                </li>
-                <li class="oecd-column" title="벨기에 · 공동 26위 · 1.0명">
-                  <span class="oecd-sr">벨기에 · 공동 26위 · 1.0명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 6.666667%"><span class="oecd-column-bar"></span><strong>1.0</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">26</span>
-                  <span class="oecd-column-country" aria-hidden="true">벨기에</span>
-                </li>
-                <li class="oecd-column" title="룩셈부르크 · 공동 26위 · 1.0명">
-                  <span class="oecd-sr">룩셈부르크 · 공동 26위 · 1.0명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 6.666667%"><span class="oecd-column-bar"></span><strong>1.0</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">26</span>
-                  <span class="oecd-column-country" aria-hidden="true">룩셈부르크</span>
-                </li>
-                <li class="oecd-column" title="뉴질랜드 · 공동 26위 · 1.0명">
-                  <span class="oecd-sr">뉴질랜드 · 공동 26위 · 1.0명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 6.666667%"><span class="oecd-column-bar"></span><strong>1.0</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">26</span>
-                  <span class="oecd-column-country" aria-hidden="true">뉴질랜드</span>
-                </li>
-                <li class="oecd-column" title="네덜란드 · 29위 · 0.9명">
-                  <span class="oecd-sr">네덜란드 · 29위 · 0.9명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 6.000000%"><span class="oecd-column-bar"></span><strong>0.9</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">29</span>
-                  <span class="oecd-column-country" aria-hidden="true">네덜란드</span>
-                </li>
-                <li class="oecd-column" title="덴마크 · 30위 · 0.7명">
-                  <span class="oecd-sr">덴마크 · 30위 · 0.7명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 4.666667%"><span class="oecd-column-bar"></span><strong>0.7</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">30</span>
-                  <span class="oecd-column-country" aria-hidden="true">덴마크</span>
-                </li>
-                <li class="oecd-column" title="스웨덴 · 31위 · 0.6명">
-                  <span class="oecd-sr">스웨덴 · 31위 · 0.6명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 4.000000%"><span class="oecd-column-bar"></span><strong>0.6</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">31</span>
-                  <span class="oecd-column-country" aria-hidden="true">스웨덴</span>
-                </li>
-                <li class="oecd-column" title="노르웨이 · 32위 · 0.5명">
-                  <span class="oecd-sr">노르웨이 · 32위 · 0.5명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 3.333333%"><span class="oecd-column-bar"></span><strong>0.5</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">32</span>
-                  <span class="oecd-column-country" aria-hidden="true">노르웨이</span>
-                </li>
-              </ol>
-            </div>
-          </div>
-        </div>
-      </article>
-      <article class="oecd-chart" aria-labelledby="oecd-2023">
-        <header class="oecd-chart-header"><h3 id="oecd-2023">2023년</h3><span>비교 32개국</span></header>
-        <div class="oecd-vertical-scroll">
-          <div class="oecd-vertical-plot">
-            <div class="oecd-vertical-axis" aria-hidden="true">
-              <div class="oecd-vertical-tick" style="--level: 0.000000%"><span>0</span></div>
-              <div class="oecd-vertical-tick" style="--level: 33.333333%"><span>5</span></div>
-              <div class="oecd-vertical-tick" style="--level: 66.666667%"><span>10</span></div>
-              <div class="oecd-vertical-tick" style="--level: 100.000000%"><span>15</span></div>
-            </div>
-            <div class="oecd-vertical-group">
-              <p>상위 <span class="oecd-count-10">10</span><span class="oecd-count-8">8</span><span class="oecd-count-6">6</span>개국</p>
-              <ol role="list" aria-label="상위 국가">
-                <li class="oecd-column" title="콜롬비아 · 1위 · 14.6명">
-                  <span class="oecd-sr">콜롬비아 · 1위 · 14.6명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 97.333333%"><span class="oecd-column-bar"></span><strong>14.6</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">1</span>
-                  <span class="oecd-column-country" aria-hidden="true">콜롬비아</span>
-                </li>
-                <li class="oecd-column oecd-korea" title="대한민국 · 2위 · 5.8명">
-                  <span class="oecd-sr">대한민국 · 2위 · 5.8명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 38.666667%"><span class="oecd-column-bar"></span><strong>5.8</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">2</span>
-                  <span class="oecd-column-country" aria-hidden="true">대한민국</span>
-                </li>
-                <li class="oecd-column" title="칠레 · 3위 · 4.3명">
-                  <span class="oecd-sr">칠레 · 3위 · 4.3명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 28.666667%"><span class="oecd-column-bar"></span><strong>4.3</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">3</span>
-                  <span class="oecd-column-country" aria-hidden="true">칠레</span>
-                </li>
-                <li class="oecd-column" title="슬로바키아 · 4위 · 3.3명">
-                  <span class="oecd-sr">슬로바키아 · 4위 · 3.3명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 22.000000%"><span class="oecd-column-bar"></span><strong>3.3</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">4</span>
-                  <span class="oecd-column-country" aria-hidden="true">슬로바키아</span>
-                </li>
-                <li class="oecd-column" title="이스라엘 · 5위 · 3.1명">
-                  <span class="oecd-sr">이스라엘 · 5위 · 3.1명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 20.666667%"><span class="oecd-column-bar"></span><strong>3.1</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">5</span>
-                  <span class="oecd-column-country" aria-hidden="true">이스라엘</span>
-                </li>
-                <li class="oecd-column" title="에스토니아 · 6위 · 2.8명">
-                  <span class="oecd-sr">에스토니아 · 6위 · 2.8명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 18.666667%"><span class="oecd-column-bar"></span><strong>2.8</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">6</span>
-                  <span class="oecd-column-country" aria-hidden="true">에스토니아</span>
-                </li>
-                <li class="oecd-column" title="폴란드 · 공동 7위 · 2.6명">
-                  <span class="oecd-sr">폴란드 · 공동 7위 · 2.6명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 17.333333%"><span class="oecd-column-bar"></span><strong>2.6</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">7</span>
-                  <span class="oecd-column-country" aria-hidden="true">폴란드</span>
-                </li>
-                <li class="oecd-column" title="미국 · 공동 7위 · 2.6명">
-                  <span class="oecd-sr">미국 · 공동 7위 · 2.6명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 17.333333%"><span class="oecd-column-bar"></span><strong>2.6</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">7</span>
-                  <span class="oecd-column-country" aria-hidden="true">미국</span>
-                </li>
-                <li class="oecd-column" title="포르투갈 · 9위 · 2.5명">
-                  <span class="oecd-sr">포르투갈 · 9위 · 2.5명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.666667%"><span class="oecd-column-bar"></span><strong>2.5</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">9</span>
-                  <span class="oecd-column-country" aria-hidden="true">포르투갈</span>
-                </li>
-                <li class="oecd-column" title="헝가리 · 공동 10위 · 2.4명">
-                  <span class="oecd-sr">헝가리 · 공동 10위 · 2.4명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.000000%"><span class="oecd-column-bar"></span><strong>2.4</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">10</span>
-                  <span class="oecd-column-country" aria-hidden="true">헝가리</span>
-                </li>
-              </ol>
-            </div>
-            <div class="oecd-vertical-gap" role="img" title="중간 순위 생략" aria-label="중간 순위 생략">…</div>
-            <div class="oecd-vertical-group">
-              <p>하위 <span class="oecd-count-10">10</span><span class="oecd-count-8">8</span><span class="oecd-count-6">6</span>개국</p>
-              <ol role="list" aria-label="하위 국가">
-                <li class="oecd-column" title="벨기에 · 공동 22위 · 1.3명">
-                  <span class="oecd-sr">벨기에 · 공동 22위 · 1.3명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 8.666667%"><span class="oecd-column-bar"></span><strong>1.3</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">22</span>
-                  <span class="oecd-column-country" aria-hidden="true">벨기에</span>
-                </li>
-                <li class="oecd-column" title="영국 · 24위 · 1.2명">
-                  <span class="oecd-sr">영국 · 24위 · 1.2명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 8.000000%"><span class="oecd-column-bar"></span><strong>1.2</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">24</span>
-                  <span class="oecd-column-country" aria-hidden="true">영국</span>
-                </li>
-                <li class="oecd-column" title="네덜란드 · 공동 25위 · 1.1명">
-                  <span class="oecd-sr">네덜란드 · 공동 25위 · 1.1명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 7.333333%"><span class="oecd-column-bar"></span><strong>1.1</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">25</span>
-                  <span class="oecd-column-country" aria-hidden="true">네덜란드</span>
-                </li>
-                <li class="oecd-column" title="슬로베니아 · 공동 25위 · 1.1명">
-                  <span class="oecd-sr">슬로베니아 · 공동 25위 · 1.1명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 7.333333%"><span class="oecd-column-bar"></span><strong>1.1</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">25</span>
-                  <span class="oecd-column-country" aria-hidden="true">슬로베니아</span>
-                </li>
-                <li class="oecd-column" title="룩셈부르크 · 27위 · 1.0명">
-                  <span class="oecd-sr">룩셈부르크 · 27위 · 1.0명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 6.666667%"><span class="oecd-column-bar"></span><strong>1.0</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">27</span>
-                  <span class="oecd-column-country" aria-hidden="true">룩셈부르크</span>
-                </li>
-                <li class="oecd-column" title="뉴질랜드 · 28위 · 0.9명">
-                  <span class="oecd-sr">뉴질랜드 · 28위 · 0.9명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 6.000000%"><span class="oecd-column-bar"></span><strong>0.9</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">28</span>
-                  <span class="oecd-column-country" aria-hidden="true">뉴질랜드</span>
-                </li>
-                <li class="oecd-column" title="핀란드 · 공동 29위 · 0.6명">
-                  <span class="oecd-sr">핀란드 · 공동 29위 · 0.6명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 4.000000%"><span class="oecd-column-bar"></span><strong>0.6</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">29</span>
-                  <span class="oecd-column-country" aria-hidden="true">핀란드</span>
-                </li>
-                <li class="oecd-column" title="스웨덴 · 공동 29위 · 0.6명">
-                  <span class="oecd-sr">스웨덴 · 공동 29위 · 0.6명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 4.000000%"><span class="oecd-column-bar"></span><strong>0.6</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">29</span>
-                  <span class="oecd-column-country" aria-hidden="true">스웨덴</span>
-                </li>
-                <li class="oecd-column" title="노르웨이 · 31위 · 0.3명">
-                  <span class="oecd-sr">노르웨이 · 31위 · 0.3명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 2.000000%"><span class="oecd-column-bar"></span><strong>0.3</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">31</span>
-                  <span class="oecd-column-country" aria-hidden="true">노르웨이</span>
-                </li>
-                <li class="oecd-column" title="아이슬란드 · 32위 · 0.0명">
-                  <span class="oecd-sr">아이슬란드 · 32위 · 0.0명</span>
-                  <div class="oecd-column-measure" aria-hidden="true" style="--level: 0.000000%"><span class="oecd-column-bar"></span><strong>0.0</strong></div>
-                  <span class="oecd-column-rank" aria-hidden="true">32</span>
-                  <span class="oecd-column-country" aria-hidden="true">아이슬란드</span>
-                </li>
-              </ol>
-            </div>
-          </div>
-        </div>
-      </article>
+      </div>
+      <p class="oecd-sources">영상은 2020년 국정감사, 그래프는 2020년 연간 사망률. <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/13_OECD_%EA%B5%90%ED%86%B5%EC%82%AC%EA%B3%A0_2022~2025%EB%85%84%ED%8C%90(2020~2023).csv">OECD 회원국 교통사고 비교 2022년판 표 II-3 · 팀 CSV</a></p>
+    </section>
+  </div>
+</section>
+<section class="oecd-screen story-screen" id="protection-zones" aria-labelledby="protection-zones-title">
+  <header class="traffic-header story-header">
+    <div class="brand">
+      <span class="brand-icon" aria-hidden="true">↗</span>
+      <h2 class="oecd-title" id="protection-zones-title">서울 보호구역 현황</h2>
     </div>
-    <div class="oecd-sources">
-      <p>한국도로교통공단 《OECD 회원국 교통사고 비교》 2022~2025년판 표 II-13 · <a href="./data/13_OECD_%EA%B5%90%ED%86%B5%EC%82%AC%EA%B3%A0_2022~2025%EB%85%84%ED%8C%90(2020~2023).csv">마스터 CSV</a></p>
-      <p>같은 수치는 공동 순위이며, 표시 범위 경계에서 동률인 국가는 원문 표 순서로 선택. 일부 국가는 이전 연도 자료를 사용.</p>
-    </div>
+    <nav class="header-meta" aria-label="보호구역 화면 이동">
+      <a class="traffic-jump" href="#oecd-rankings"><span aria-hidden="true">↑</span> OECD 순위</a>
+      <a class="traffic-jump" href="#traffic-live">서울 교통 현황</a>
+      <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
+    </nav>
+  </header>
+  <div class="oecd-content">
+    <section class="audit-diagnosis" aria-labelledby="zone-summary">
+      <h2 class="audit-heading" id="zone-summary">그 뒤로 얼마나 달라졌나</h2>
+      <p class="audit-chart-caption">서울시 어린이·노인 인구와 보호구역 지정 현황</p>
+      <figure class="compare-chart">
+        <div class="metric-groups" role="group" aria-label="인구와 보호구역별 어린이·노인 비교">
+          <div class="metric-group">
+            <h3 id="population-chart">인구</h3>
+            <div class="metric-pair" role="group" aria-labelledby="population-chart">
+              <div class="metric-legend">
+                <div class="metric-legend-items">
+                  <span class="children">어린이</span>
+                  <span class="older">노인</span>
+                </div>
+              </div>
+              <div class="metric-bar children" style="--bar-height:32.98%"><strong aria-label="어린이 648,419명">648,419명</strong></div>
+              <div class="metric-bar older" style="--bar-height:100%"><strong aria-label="노인 1,965,896명">1,965,896명</strong></div>
+            </div>
+            <div class="metric-labels"><small>어린이</small><small>노인</small></div>
+          </div>
+          <div class="metric-group">
+            <h3 id="zones-chart">보호구역</h3>
+            <div class="metric-pair" role="group" aria-labelledby="zones-chart">
+              <div class="metric-bar children" style="--bar-height:100%"><strong aria-label="어린이 1,630개">1,630개</strong></div>
+              <div class="metric-bar older" style="--bar-height:11.96%"><strong aria-label="노인 195개">195개</strong></div>
+            </div>
+            <div class="metric-labels"><small>어린이<br>2026년</small><small>노인<br>2025년</small></div>
+          </div>
+        </div>
+        <figcaption class="muted">막대 높이는 지표별 최댓값을 100%로 환산한 비율입니다. 인구는 2026년 9월 말 기준입니다. 어린이는 경찰청 2026년 6월 말 서울 지정 현황의 기재 항목 합계(조례시설 미기재), 노인은 2025년 명단 기준입니다. <a href="./data/12_경찰청_어린이보호구역_지정현황_20260630.csv">어린이보호구역 집계표</a> · <a href="./data/11_서울_연령별_주민등록인구_202609.csv">인구 집계표</a> · <a href="https://kosis.kr/statisticsList/mass/mass_list.jsp?org_id=101&amp;tbl_id=DT_1B04006" target="_blank" rel="noopener">KOSIS 원자료</a></figcaption>
+      </figure>
+    </section>
   </div>
 </section>
 <dialog id="detail" aria-labelledby="detail-title">
@@ -2794,7 +2676,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
     }
   }, { threshold: 0.35 });
 
-  for (const chart of document.querySelectorAll('#national-fatalities .national-plot, #national-fatalities .national-population, #national-fatalities .national-donut, #oecd-rankings .oecd-chart')) {
+  for (const chart of document.querySelectorAll('#national-fatalities .national-plot, #national-fatalities .national-population, #national-fatalities .national-donut, #audit-video .oecd-chart')) {
     chart.classList.add('chart-awaiting');
     chartObserver.observe(chart);
   }

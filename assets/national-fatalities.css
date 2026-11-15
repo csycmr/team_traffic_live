@@ -1,0 +1,157 @@
+.national-screen {
+  display: grid;
+  align-content: center;
+  min-height: 100svh;
+  scroll-snap-align: start;
+  padding: clamp(16px, 3svh, 34px) clamp(14px, 4vw, 60px);
+  background: linear-gradient(145deg, rgb(16 35 55 / 24%), rgb(11 18 29 / 48%) 75%);
+  border-top: 1px solid var(--line);
+}
+.national-period { margin: 16px 0 6px; color: var(--mint); font-size: 13px }
+.national-lead { margin: 9px 0 16px; color: var(--muted); font-size: clamp(13px, 1.5vw, 17px) }
+.national-lead strong { color: var(--mint) }
+.national-charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px }
+.national-card {
+  min-width: 0;
+  padding: clamp(12px, 2vw, 22px);
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  background: #111e2c;
+}
+.national-card h3 { font-size: clamp(17px, 2vw, 24px); letter-spacing: -.04em }
+.national-key, .national-note { margin: 9px 0 12px; color: var(--muted); font-size: 12px }
+.national-key { display: flex; flex-wrap: wrap; gap: 6px 14px }
+.national-key span::before {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  margin-right: 5px;
+  border-radius: 2px;
+  background: var(--mint);
+  content: "";
+}
+.national-key span + span::before { background: #5b82a8 }
+.national-axis-unit { padding-left: 2px; color: var(--muted); font-size: 11px }
+.national-plot { position: relative; height: clamp(210px, 33svh, 330px); margin: 9px 0 27px 39px }
+.national-axis { position: absolute; inset: 0; pointer-events: none }
+.national-tick { position: absolute; inset-inline: 0; bottom: var(--level); border-top: 1px solid var(--line) }
+.national-tick span {
+  position: absolute;
+  right: calc(100% + 6px);
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+}
+.national-years {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.national-year { position: relative; min-width: 0; font-variant-numeric: tabular-nums }
+.national-year-label, .national-year-total {
+  position: absolute;
+  inset-inline: 50% auto;
+  transform: translateX(-50%);
+  font-size: clamp(11px, 1.1vw, 15px);
+  white-space: nowrap;
+}
+.national-year-label { top: calc(100% + 7px) }
+.national-year-total { bottom: calc(100% + 4px); font-weight: 700 }
+.national-total {
+  position: absolute;
+  inset: auto 0 0;
+  width: clamp(47px, 76%, 84px);
+  height: var(--total);
+  margin-inline: auto;
+  border-radius: 4px 4px 0 0;
+  background: #5b82a8;
+}
+.national-older {
+  position: absolute;
+  inset: auto 0 0;
+  display: grid;
+  align-content: center;
+  gap: 2px;
+  height: var(--older);
+  background: var(--mint);
+  color: #102337;
+  text-align: center;
+  font-size: clamp(10px, 1.08vw, 15px);
+  font-weight: 700;
+  white-space: nowrap;
+}
+.national-donuts {
+  --slice-1: #70edc8;
+  --slice-2: #83adde;
+  --slice-3: #ffcf77;
+  --slice-4: #c9aafa;
+  --slice-5: #a3b3c6;
+  --edge-1: #53d5b0;
+  --edge-2: #6a98cb;
+  --edge-3: #e3ad55;
+  --edge-4: #ac8be0;
+  --edge-5: #879bb2;
+  --side-1: #258d79;
+  --side-2: #416b98;
+  --side-3: #9f6c25;
+  --side-4: #7758a6;
+  --side-5: #586c83;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.national-donut {
+  min-width: 0;
+  margin: 0;
+  padding: 7px 6px 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: #0f1b29;
+}
+.national-donut figcaption { margin-left: 4px; font-size: 13px; font-weight: 700 }
+.national-donut-shape {
+  display: block;
+  width: min(100%, 288px);
+  height: auto;
+  margin-inline: auto;
+  overflow: visible;
+}
+.national-donut-surface { stroke-width: .85px }
+.national-slice-label, .national-donut-total {
+  text-anchor: middle;
+  font-variant-numeric: tabular-nums;
+  font-weight: 800;
+}
+.national-slice-label { fill: #102337; font-size: var(--label-size); font-weight: 500 }
+.national-slice-label-pedestrian { font-weight: 800 }
+.national-donut-total { fill: #f0f5fb; font-size: 18px }
+.national-donut-total tspan { font-size: 10px; fill: var(--muted) }
+@media (max-height: 850px) and (min-width: 851px) {
+  .national-donut-shape { width: min(100%, 28svh) }
+}
+@media (max-width: 500px) {
+  .national-donuts { grid-template-columns: minmax(0, 1fr) }
+}
+@media (max-width: 850px) {
+  .national-charts { grid-template-columns: minmax(0, 1fr) }
+  html { scroll-snap-type: y proximity }
+}
+
+.national-population { margin: 0; padding-top: 9px; border-top: 1px solid var(--line) }
+.national-population figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 3px 12px }
+.national-population figcaption h3 { font-size: 14px; letter-spacing: normal }
+.national-population figcaption span { color: var(--muted); font-size: 11px }
+.national-population svg { display: block; width: 100%; height: auto; margin-top: 3px }
+.national-population line { stroke: var(--line) }
+.national-population polyline { fill: none; stroke: var(--mint); stroke-width: 2.5 }
+.national-population circle { fill: var(--mint) }
+.national-population text { fill: var(--muted); font-size: 12px; text-anchor: middle }
+.national-population .population-tick { text-anchor: end }
+.national-population .population-value { fill: var(--mint); font-weight: 700 }
+.national-population .oecd-sources { margin-top: 1px }
+#national-fatalities .national-plot { height: clamp(170px, 26svh, 275px); margin-bottom: 52px }
