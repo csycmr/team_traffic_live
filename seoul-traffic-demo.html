@@ -258,11 +258,11 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
     margin: 17px 8px;
   }
 
-  main > aside > section:first-child > .panel-title {
+  main > aside > section:first-of-type > .panel-title {
     min-height: 34px;
   }
 
-  main > aside > section:first-child > .board {
+  main > aside > section:first-of-type > .board {
     height: 228px;
     margin-block: 0;
     grid-auto-rows: minmax(auto, 1fr);
@@ -706,10 +706,22 @@ section.story-screen {
   font-family: "Pretendard", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
 }
 .panel-title h2,
+.zone-panel .panel-title h3,
+.zone-panel .zone-panel-title,
 .story-screen .audit-heading,
 .story-screen .oecd-content h3 {
   font-family: "Paperlogy", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
 }
+.zone-panel .zone-panel-title {
+  font-size: 21px;
+  line-height: 1.2;
+  margin-bottom: 12px;
+}
+.zone-panel .panel-title h3 {
+  font-size: 17px;
+  letter-spacing: -.04em;
+}
+main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
 </style>
 <link rel="stylesheet" href="./assets/oecd-rankings.css">
 <link rel="stylesheet" href="./assets/national-fatalities.css">
@@ -778,9 +790,10 @@ section.story-screen {
       <span class="map-note">서울 모식도 · 지점과 교통 상태는 시연용</span>
     </div>
   </section>
-  <aside class="zone-panel" aria-label="서울 교통사고와 보행사고">
+  <aside class="zone-panel" aria-labelledby="seoul-statistics-title">
+    <h2 class="zone-panel-title" id="seoul-statistics-title">2025년 서울시 통계</h2>
     <section class="citydata-totals" aria-labelledby="annual-traffic">
-      <div class="panel-title"><h2 id="annual-traffic">2025년 연간 교통사고 통계</h2></div>
+      <div class="panel-title"><h3 id="annual-traffic">연간 교통사고</h3></div>
       <dl class="board" aria-label="2025년 서울 교통사고 연간 집계와 사고다발지역">
         <div class="stat"><dt>교통사고</dt><dd><strong>34,309</strong><small>건</small></dd></div>
         <div class="stat hotspot-total"><dt>사고다발지역</dt><dd><strong id="hotspot-total">—</strong><small>곳</small></dd></div>
@@ -790,7 +803,7 @@ section.story-screen {
       <p class="muted panel-source"><a href="https://taas.koroad.or.kr/sta/acs/gus/selectSignguTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAG_SGT">한국도로교통공단 TAAS</a></p>
     </section>
     <section class="feed" aria-labelledby="pedestrian-summary">
-      <div class="panel-title"><h2 id="pedestrian-summary">2025년 노인·어린이 보행사고</h2></div>
+      <div class="panel-title"><h3 id="pedestrian-summary">노인·어린이 보행사고</h3></div>
       <div class="board safety-board" id="pedestrian-summary-board">
         <dl class="stat">
           <dt>고령 보행자 사고수</dt>
@@ -812,7 +825,7 @@ section.story-screen {
       <p class="muted safety-board-note">서울 · 고령층 65세 이상 · 어린이 12세 이하 · <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/10_어린이보호구역_교통안전_요약.csv">집계 자료</a></p>
     </section>
     <section class="feed" aria-labelledby="senior-accident-rates">
-      <div class="panel-title"><h2 id="senior-accident-rates">2025년 노인 사고율</h2></div>
+      <div class="panel-title"><h3 id="senior-accident-rates">노인 교통사고율</h3></div>
       <div class="board safety-board">
         <dl class="stat">
           <dt>고령인구 1만 명당</dt>
