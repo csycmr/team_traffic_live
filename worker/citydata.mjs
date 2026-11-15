@@ -46,6 +46,7 @@ export function parseCitydata(xml, place = defaultPlace) {
   if (!name || !code || !matched || field(xml, 'RESULT\\.CODE') !== 'INFO-000') {
     throw new Error('Unexpected Seoul Citydata response');
   }
+  const population = section(xml, 'LIVE_PPLTN_STTS', 'AREA_CONGEST_LVL');
   const road = section(xml, 'ROAD_TRAFFIC_STTS', 'ROAD_TRAFFIC_SPD');
   const weather = section(xml, 'WEATHER_STTS', 'TEMP').split('<FCST24HOURS>')[0];
   // The XML may repeat the same wrapper name for the list and its entries.
@@ -67,6 +68,12 @@ export function parseCitydata(xml, place = defaultPlace) {
     source: '서울 열린데이터광장 · 서울시 실시간 도시데이터',
     area: { code, name, place },
     fetchedAt: new Date().toISOString(),
+    crowd: population ? {
+      status: field(population, 'AREA_CONGEST_LVL'),
+      minPeople: numericField(population, 'AREA_PPLTN_MIN'),
+      maxPeople: numericField(population, 'AREA_PPLTN_MAX'),
+      updatedAt: field(population, 'PPLTN_TIME'),
+    } : null,
     traffic: road ? {
       status: field(road, 'ROAD_TRAFFIC_IDX'),
       averageSpeedKmh: numericField(road, 'ROAD_TRAFFIC_SPD'),

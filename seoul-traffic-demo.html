@@ -472,8 +472,9 @@ section.story-screen {
 .citydata-live-status { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; margin: -5px 0 8px }
 .citydata-totals .board { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-block: 0 }
 .citydata-totals .stat strong { font-size: clamp(16px, 1.4vw, 22px) }
-#traffic-live #board { height: auto; grid-template-columns: repeat(3, minmax(0, 1fr)) }
-#traffic-live #board .stat { min-height: 80px }
+#traffic-live #board { height: auto; grid-template-columns: repeat(2, minmax(0, 1fr)) }
+#traffic-live #board .stat { min-height: 64px; padding-block: 8px }
+#crowd-estimate:not(:empty) { display: block; margin-top: 2px }
 .citydata-incidents { max-height: 220px; overflow-y: auto; padding-inline-end: 4px }
 .citydata-incidents .feed-row p { color: #d5e1ee; overflow-wrap: anywhere }
 .citydata-typewriter { display: grid }
@@ -755,6 +756,10 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
         <div class="stat"><dt>도로 소통</dt><dd><strong class="status" id="flow">—</strong></dd></div>
         <div class="stat"><dt>평균 속도</dt><dd><strong id="speed">—</strong><small>km/h</small></dd></div>
         <div class="stat"><dt>사고·통제 알림</dt><dd><strong id="incident-count">—</strong><small>건</small></dd></div>
+        <div class="stat" id="crowd-card">
+          <dt>주변 인파 혼잡도</dt>
+          <dd><strong class="status" id="crowd-status">—</strong><small id="crowd-estimate"></small></dd>
+        </div>
       </dl>
       <div class="refresh muted"><span id="refresh-label" role="status">불러오는 중</span><span id="updated"></span></div>
       <p class="muted panel-source">출처 · <a href="https://data.seoul.go.kr/dataList/OA-21285/F/1/datasetView.do">서울시 실시간 도시데이터</a></p>
@@ -1912,7 +1917,13 @@ function incidentElement(incident) {
 }
 
 function renderCitydataMetrics(data) {
-  const { traffic, weather, incidents } = data;
+  const { traffic, weather, incidents, crowd } = data;
+  byId('crowd-status').textContent = crowd?.status || '정보 없음';
+  byId('crowd-estimate').textContent =
+    Number.isFinite(crowd?.minPeople) && Number.isFinite(crowd?.maxPeople)
+      ? `추정 ${crowd.minPeople.toLocaleString('ko-KR')}~${crowd.maxPeople.toLocaleString('ko-KR')}명`
+      : '';
+  byId('crowd-card').title = crowd?.updatedAt ? `인파 기준 ${crowd.updatedAt}` : '';
   byId('flow').textContent = traffic?.status || '정보 없음';
   countCitydata(byId('speed'), traffic?.averageSpeedKmh);
   byId('updated').textContent = traffic?.updatedAt ? `소통 기준 ${traffic.updatedAt}` : '';
