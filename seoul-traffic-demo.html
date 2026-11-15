@@ -1373,7 +1373,9 @@ const clockFormat = new Intl.DateTimeFormat('en-GB', {
   timeZone: 'Asia/Seoul', hour: '2-digit', minute: '2-digit', second: '2-digit'
 });
 const timeNow = () => clockFormat.format(new Date());
-const citydataRefreshMs = 60_000;
+const citydataRefreshMs = 5_000;
+let citydataTick = 0;
+let lastIncidentSnapshot;
 let citydataPaused = false;
 let citydataReceived = false;
 let citydataRequest;
@@ -1397,7 +1399,7 @@ function incidentElement(incident) {
   return article;
 }
 
-function renderCitydata(data) {
+function renderCitydataMetrics(data) {
   const { traffic, weather, incidents } = data;
   byId('flow').textContent = traffic?.status || '정보 없음';
   byId('speed').textContent = Number.isFinite(traffic?.averageSpeedKmh) ? traffic.averageSpeedKmh : '—';
@@ -1408,6 +1410,17 @@ function renderCitydata(data) {
   if (weather?.precipitationType) conditions.push(`강수 ${weather.precipitationType}`);
   byId('weather-detail').textContent = conditions.join(' · ') || '정보 없음';
   byId('incident-count').textContent = Array.isArray(incidents) ? incidents.length : '—';
+}
+
+function pulseCitydata(element) {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  element.animate([{ opacity: .6 }, { opacity: 1 }], { duration: 550, easing: 'ease-out' });
+}
+
+function renderCitydataIncidents(incidents) {
+  const snapshot = JSON.stringify(incidents ?? null);
+  if (snapshot === lastIncidentSnapshot) return;
+  lastIncidentSnapshot = snapshot;
 
   if (incidents?.length) {
     byId('incident-list').replaceChildren(...incidents.map(incidentElement));
@@ -1419,7 +1432,7 @@ function renderCitydata(data) {
   }
 }
 
-async function refreshCitydata() {
+async function refreshCitydata({ includeIncidents = true } = {}) {
   if (citydataPaused || citydataRequest) return;
   const controller = new AbortController();
   citydataRequest = controller;
@@ -1429,12 +1442,21 @@ async function refreshCitydata() {
     const data = await response.json();
     if (data.area?.code !== 'POI009') throw new Error('Unexpected Citydata area');
     if (controller.signal.aborted) return;
-    renderCitydata(data);
+    renderCitydataMetrics(data);
+    pulseCitydata(byId('board'));
+    pulseCitydata(byId('weather-temperature'));
+    if (includeIncidents || !citydataReceived) {
+      renderCitydataIncidents(data.incidents);
+      pulseCitydata(byId('incident-list'));
+    }
     citydataReceived = true;
-    byId('refresh-label').textContent = '1분마다 확인';
+    byId('refresh-label').textContent = '수치 5초 · 속보 10초';
   } catch {
     if (controller.signal.aborted) return;
-    if (!citydataReceived) renderCitydata({});
+    if (!citydataReceived) {
+      renderCitydataMetrics({});
+      renderCitydataIncidents(null);
+    }
     byId('refresh-label').textContent = citydataReceived ? '갱신 실패 · 직전 자료 표시 중' : '실시간 정보 불러오기 실패';
   } finally {
     if (citydataRequest === controller) citydataRequest = null;
@@ -1450,10 +1472,15 @@ byId('pause').addEventListener('click', event => {
     citydataRequest?.abort();
     citydataRequest = null;
   } else {
+    citydataTick = 0;
     refreshCitydata();
   }
 });
-setInterval(refreshCitydata, citydataRefreshMs);
+setInterval(() => {
+  if (citydataPaused) return;
+  citydataTick += 1;
+  refreshCitydata({ includeIncidents: citydataTick % 2 === 0 });
+}, citydataRefreshMs);
 refreshCitydata();
 setInterval(() => byId('clock').textContent = timeNow() + ' KST', 1000);
 
