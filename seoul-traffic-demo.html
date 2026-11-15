@@ -475,7 +475,6 @@ html { scroll-snap-type: y mandatory }
   min-height: 0;
   padding: 0 0 5px;
   margin-bottom: 5px;
-  border-bottom: 1px solid var(--line);
 }
 .oecd-chart h3 { font-size: clamp(17px, 2.9vh, 26px); line-height: 1.1; letter-spacing: -.04em }
 .oecd-chart-header span { font-size: 11px; color: var(--muted) }
@@ -696,20 +695,20 @@ html { scroll-snap-type: y mandatory }
 .oecd-vertical-plot {
   --oecd-bar-height: clamp(100px, 16svh, 160px);
   --oecd-plot-top: 36px;
-  --oecd-tear-width: 22px;
+  --oecd-gap-width: 22px;
   --oecd-group-size: 10;
   display: grid;
   position: relative;
-  grid-template-columns: minmax(0, 1fr) var(--oecd-tear-width) minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr) var(--oecd-gap-width) minmax(0, 1fr);
   min-width: 290px;
   padding-inline-start: 23px;
 }
 .oecd-vertical-axis { position: absolute; inset: var(--oecd-plot-top) 0 auto 23px; height: var(--oecd-bar-height); pointer-events: none }
 .oecd-vertical-tick { position: absolute; inset-inline: 0; bottom: var(--level); height: 1px;
   background: linear-gradient(to right,
-    var(--line) calc(50% - var(--oecd-tear-width) / 2),
-    transparent calc(50% - var(--oecd-tear-width) / 2) calc(50% + var(--oecd-tear-width) / 2),
-    var(--line) calc(50% + var(--oecd-tear-width) / 2));
+    var(--line) calc(50% - var(--oecd-gap-width) / 2),
+    transparent calc(50% - var(--oecd-gap-width) / 2) calc(50% + var(--oecd-gap-width) / 2),
+    var(--line) calc(50% + var(--oecd-gap-width) / 2));
 }
 .oecd-vertical-tick span { position: absolute; right: calc(100% + 5px); transform: translateY(-50%); color: var(--muted); font-size: 10px }
 .oecd-vertical-group { min-width: 0; position: relative }
@@ -724,23 +723,15 @@ html { scroll-snap-type: y mandatory }
 .oecd-column.oecd-korea .oecd-column-bar { background: var(--mint) }
 .oecd-column.oecd-korea .oecd-column-rank { color: var(--mint) }
 .oecd-vertical-gap {
-  position: relative;
   align-self: start;
-  margin-top: calc(var(--oecd-plot-top) - 3px);
-  height: calc(var(--oecd-bar-height) + 6px);
-  filter: drop-shadow(0 0 2px #081321);
+  margin-top: var(--oecd-plot-top);
+  height: var(--oecd-bar-height);
+  display: grid;
+  place-items: center;
+  color: var(--muted);
+  font-size: 17px;
+  line-height: 1;
 }
-.oecd-vertical-gap::before,
-.oecd-vertical-gap::after {
-  content: "";
-  position: absolute;
-  inset-block: 0;
-  width: 8px;
-  background: #7895b5;
-  clip-path: polygon(0 0, 20% 0, 95% 13%, 51% 23%, 100% 35%, 31% 48%, 78% 61%, 41% 74%, 88% 86%, 25% 100%, 0 100%, 61% 86%, 15% 74%, 50% 61%, 5% 48%, 73% 35%, 24% 23%, 66% 13%);
-}
-.oecd-vertical-gap::before { left: 0 }
-.oecd-vertical-gap::after { right: 0; transform: scaleX(-1) }
 .oecd-count-8, .oecd-count-6 { display: none }
 @container (width < 450px) {
   .oecd-vertical-plot { --oecd-group-size: 8 }
@@ -1183,7 +1174,7 @@ html { scroll-snap-type: y mandatory }
                 </li>
               </ol>
             </div>
-            <div class="oecd-vertical-gap" role="img" title="중간 순위 생략" aria-label="중간 순위 생략"></div>
+            <div class="oecd-vertical-gap" role="img" title="중간 순위 생략" aria-label="중간 순위 생략">…</div>
             <div class="oecd-vertical-group">
               <p>하위 <span class="oecd-count-10">10</span><span class="oecd-count-8">8</span><span class="oecd-count-6">6</span>개국</p>
               <ol role="list" aria-label="하위 국가">
@@ -1327,7 +1318,7 @@ html { scroll-snap-type: y mandatory }
                 </li>
               </ol>
             </div>
-            <div class="oecd-vertical-gap" role="img" title="중간 순위 생략" aria-label="중간 순위 생략"></div>
+            <div class="oecd-vertical-gap" role="img" title="중간 순위 생략" aria-label="중간 순위 생략">…</div>
             <div class="oecd-vertical-group">
               <p>하위 <span class="oecd-count-10">10</span><span class="oecd-count-8">8</span><span class="oecd-count-6">6</span>개국</p>
               <ol role="list" aria-label="하위 국가">
@@ -1472,7 +1463,7 @@ html { scroll-snap-type: y mandatory }
                 </li>
               </ol>
             </div>
-            <div class="oecd-vertical-gap" role="img" title="중간 순위 생략" aria-label="중간 순위 생략"></div>
+            <div class="oecd-vertical-gap" role="img" title="중간 순위 생략" aria-label="중간 순위 생략">…</div>
             <div class="oecd-vertical-group">
               <p>하위 <span class="oecd-count-10">10</span><span class="oecd-count-8">8</span><span class="oecd-count-6">6</span>개국</p>
               <ol role="list" aria-label="하위 국가">
@@ -1616,7 +1607,7 @@ html { scroll-snap-type: y mandatory }
                 </li>
               </ol>
             </div>
-            <div class="oecd-vertical-gap" role="img" title="중간 순위 생략" aria-label="중간 순위 생략"></div>
+            <div class="oecd-vertical-gap" role="img" title="중간 순위 생략" aria-label="중간 순위 생략">…</div>
             <div class="oecd-vertical-group">
               <p>하위 <span class="oecd-count-10">10</span><span class="oecd-count-8">8</span><span class="oecd-count-6">6</span>개국</p>
               <ol role="list" aria-label="하위 국가">
