@@ -408,7 +408,18 @@ body { isolation: isolate }
   background: transparent;
 }
 @media (min-width: 1041px) {
-  #traffic-live > main { padding-top: 16px }
+  #traffic-live {
+    display: flex;
+    flex-direction: column;
+    padding-bottom: clamp(16px, 2.5svh, 32px);
+  }
+
+  #traffic-live > main {
+    flex: 1 0 auto;
+    padding-block: 16px;
+  }
+
+  #traffic-live > main > .map { align-self: center }
   #traffic-live > main > aside { padding-top: 8px }
 }
 .traffic-background-video, .traffic-backdrop::after {
