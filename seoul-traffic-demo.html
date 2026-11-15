@@ -475,6 +475,12 @@ section.story-screen {
 #traffic-live #board { height: auto; grid-template-columns: repeat(2, minmax(0, 1fr)) }
 #traffic-live #board .stat { min-height: 64px; padding-block: 8px }
 #crowd-estimate:not(:empty) { display: block; margin-top: 2px }
+.slow-roads { margin: 12px 0 8px }
+.slow-roads h3 { font-size: 14px; font-family: "Paperlogy", "Noto Sans KR", sans-serif }
+.slow-roads p, .slow-roads ul { margin: 4px 0 0; font-size: 12px }
+.slow-roads ul { padding: 0; list-style: none }
+.slow-roads li { padding-block: 4px; border-bottom: 1px solid var(--line); overflow-wrap: anywhere }
+.slow-roads strong { color: #ffd17a }
 .citydata-incidents { max-height: 220px; overflow-y: auto; padding-inline-end: 4px }
 .citydata-incidents .feed-row p { color: #d5e1ee; overflow-wrap: anywhere }
 .citydata-typewriter { display: grid }
@@ -762,6 +768,10 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
         </div>
       </dl>
       <div class="refresh muted"><span id="refresh-label" role="status">불러오는 중</span><span id="updated"></span></div>
+      <section class="slow-roads" aria-labelledby="slow-roads-title">
+        <h3 id="slow-roads-title">서행/정체 구간</h3>
+        <div id="slow-roads-list"><p class="muted">불러오는 중</p></div>
+      </section>
       <p class="muted panel-source">출처 · <a href="https://data.seoul.go.kr/dataList/OA-21285/F/1/datasetView.do">서울시 실시간 도시데이터</a></p>
     </section>
     <section class="feed" aria-labelledby="situation">
@@ -1916,7 +1926,31 @@ function incidentElement(incident) {
   return article;
 }
 
+function renderSlowRoads(segments) {
+  const container = byId('slow-roads-list');
+  if (!segments?.length) {
+    const message = document.createElement('p');
+    message.className = 'muted';
+    message.textContent = Array.isArray(segments) ? '현재 서행·정체 구간 없음' : '구간 정보 없음';
+    container.replaceChildren(message);
+    return;
+  }
+
+  const list = document.createElement('ul');
+  for (const segment of segments) {
+    const row = document.createElement('li');
+    const status = document.createElement('strong');
+    status.textContent = segment.status;
+    const direction = [segment.start, segment.end].filter(Boolean).join(' → ');
+    const speed = Number.isFinite(segment.speedKmh) ? `${segment.speedKmh} km/h` : '';
+    row.append(status, ' · ' + [segment.name, direction, speed].filter(Boolean).join(' · '));
+    list.append(row);
+  }
+  container.replaceChildren(list);
+}
+
 function renderCitydataMetrics(data) {
+  renderSlowRoads(data.traffic?.slowSegments);
   const { traffic, weather, incidents, crowd } = data;
   byId('crowd-status').textContent = crowd?.status || '정보 없음';
   byId('crowd-estimate').textContent =

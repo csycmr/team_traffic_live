@@ -36,6 +36,23 @@ function section(xml, tag, firstField) {
   return first !== -1 && first < end ? xml.slice(first, end) : '';
 }
 
+function slowRoadSegments(road) {
+  const segments = road.split('<LINK_ID>').slice(1).map(link => ({
+    name: field(link, 'ROAD_NM'),
+    start: field(link, 'START_ND_NM'),
+    end: field(link, 'END_ND_NM'),
+    status: field(link, 'IDX'),
+    speedKmh: numericField(link, 'SPD'),
+  }));
+  if (!segments.some(segment => ['원활', '서행', '정체'].includes(segment.status))) return null;
+
+  return segments
+    .filter(segment => (segment.name || segment.start || segment.end) && ['서행', '정체'].includes(segment.status))
+    .sort((a, b) => Number(b.status === '정체') - Number(a.status === '정체')
+      || (a.speedKmh ?? Infinity) - (b.speedKmh ?? Infinity))
+    .slice(0, 3);
+}
+
 export function parseCitydata(xml, place = defaultPlace) {
   const code = field(xml, 'AREA_CD');
   const name = places.get(place);
@@ -79,6 +96,7 @@ export function parseCitydata(xml, place = defaultPlace) {
       averageSpeedKmh: numericField(road, 'ROAD_TRAFFIC_SPD'),
       message: field(road, 'ROAD_MSG'),
       updatedAt: field(road, 'ROAD_TRAFFIC_TIME'),
+      slowSegments: slowRoadSegments(road),
     } : null,
     weather: weather ? {
       temperatureC: numericField(weather, 'TEMP'),
