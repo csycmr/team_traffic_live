@@ -674,6 +674,8 @@ html { scroll-snap-type: y mandatory }
 .national-population .oecd-sources { margin-top: 1px }
 #national-fatalities .national-plot { height: clamp(170px, 26svh, 275px); margin-bottom: 52px }
 .citydata-area { margin: -5px 0 8px }
+.citydata-totals .board { grid-template-columns: repeat(3, minmax(0, 1fr)); margin-block: 0 }
+.citydata-totals .stat strong { font-size: clamp(16px, 1.4vw, 22px) }
 #traffic-live #board { height: auto; grid-template-columns: repeat(3, minmax(0, 1fr)) }
 #traffic-live #board .stat { min-height: 80px }
 .citydata-incidents { max-height: 220px; overflow-y: auto; padding-inline-end: 4px }
@@ -707,6 +709,15 @@ html { scroll-snap-type: y mandatory }
       </dl>
       <div class="refresh muted"><span id="refresh-label" role="status">불러오는 중</span><span id="updated"></span></div>
       <p class="muted panel-source">출처 · <a href="https://data.seoul.go.kr/dataList/OA-21285/F/1/datasetView.do">서울시 실시간 도시데이터</a></p>
+    </section>
+    <section class="feed citydata-totals" aria-labelledby="annual-traffic">
+      <div class="panel-title"><h2 id="annual-traffic">2025년 서울 전체 교통사고</h2></div>
+      <dl class="board" aria-label="2025년 서울 전체 교통사고 연간 집계">
+        <div class="stat"><dt>교통사고</dt><dd><strong>34,309</strong><small>건</small></dd></div>
+        <div class="stat"><dt>부상자</dt><dd><strong>45,446</strong><small>명</small></dd></div>
+        <div class="stat"><dt>사망자</dt><dd><strong>212</strong><small>명</small></dd></div>
+      </dl>
+      <p class="muted panel-source">2025년 연간 집계 · <a href="https://taas.koroad.or.kr/sta/acs/gus/selectSignguTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAG_SGT">한국도로교통공단 TAAS</a></p>
     </section>
     <section class="feed" aria-labelledby="situation">
       <div class="panel-title"><h2 id="situation">기상·교통 상황</h2></div>
