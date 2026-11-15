@@ -647,6 +647,22 @@ section.story-screen {
 .oecd-top-charts .oecd-chart { min-width: 0 }
 #audit-video .oecd-top-charts .oecd-chart-header { border-bottom: 0; padding-bottom: 0; margin-bottom: 4px }
 .oecd-top-charts .oecd-column-measure strong { font-size: 10px }
+@media (min-width: 761px) {
+  #audit-video { padding-bottom: 12px }
+  #audit-video > .story-header { min-height: clamp(64px, 9svh, 88px) }
+  #audit-video > .oecd-content {
+    width: min(calc(100% - 2 * clamp(14px, 4vw, 60px)), 1280px, 148svh);
+    margin-top: 6px;
+    gap: clamp(10px, 1.6svh, 16px);
+  }
+  #audit-video .audit-trend { gap: 8px; padding-block: clamp(10px, 1.6svh, 16px) }
+  #audit-video .audit-trend-plot { height: clamp(112px, 22svh, 205px) }
+  #audit-video .oecd-top-charts .oecd-chart { padding-block: clamp(8px, 1.2svh, 12px) }
+  #audit-video .oecd-vertical-plot {
+    --oecd-bar-height: clamp(82px, 14svh, 150px);
+    --oecd-plot-top: 22px;
+  }
+}
 </style>
 <link rel="stylesheet" href="./assets/oecd-rankings.css">
 <link rel="stylesheet" href="./assets/national-fatalities.css">
