@@ -680,6 +680,9 @@ html { scroll-snap-type: y mandatory }
 #traffic-live #board .stat { min-height: 80px }
 .citydata-incidents { max-height: 220px; overflow-y: auto; padding-inline-end: 4px }
 .citydata-incidents .feed-row p { color: #d5e1ee; overflow-wrap: anywhere }
+.citydata-typewriter { display: grid }
+.citydata-typewriter > span { grid-area: 1 / 1 }
+.citydata-typewriter > .citydata-type-source { opacity: 0 }
 .panel-source a { color: inherit }
 </style>
 </head>
@@ -1394,7 +1397,14 @@ function incidentElement(incident) {
   meta.append(tag, time);
 
   const description = document.createElement('p');
-  description.textContent = incident.detail || '상세 정보 없음';
+  description.className = 'citydata-typewriter';
+  const fullText = document.createElement('span');
+  fullText.className = 'citydata-type-source';
+  fullText.textContent = incident.detail || '상세 정보 없음';
+  const typedText = document.createElement('span');
+  typedText.setAttribute('aria-hidden', 'true');
+  typedText.textContent = fullText.textContent;
+  description.append(fullText, typedText);
   article.append(meta, description);
   return article;
 }
@@ -1402,19 +1412,61 @@ function incidentElement(incident) {
 function renderCitydataMetrics(data) {
   const { traffic, weather, incidents } = data;
   byId('flow').textContent = traffic?.status || '정보 없음';
-  byId('speed').textContent = Number.isFinite(traffic?.averageSpeedKmh) ? traffic.averageSpeedKmh : '—';
+  countCitydata(byId('speed'), traffic?.averageSpeedKmh);
   byId('updated').textContent = traffic?.updatedAt ? `소통 기준 ${traffic.updatedAt}` : '';
-  byId('weather-temperature').textContent = Number.isFinite(weather?.temperatureC) ? `${weather.temperatureC}°C` : '—';
+  countCitydata(byId('weather-temperature'), weather?.temperatureC, '°C');
   const conditions = [];
   if (Number.isFinite(weather?.humidityPercent)) conditions.push(`습도 ${weather.humidityPercent}%`);
   if (weather?.precipitationType) conditions.push(`강수 ${weather.precipitationType}`);
   byId('weather-detail').textContent = conditions.join(' · ') || '정보 없음';
-  byId('incident-count').textContent = Array.isArray(incidents) ? incidents.length : '—';
+  countCitydata(byId('incident-count'), Array.isArray(incidents) ? incidents.length : null);
+}
+
+const citydataMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+function animateCitydata(duration, render) {
+  if (citydataMotion.matches) {
+    render(1);
+    return;
+  }
+  const start = performance.now();
+  render(0);
+  function step(now) {
+    const progress = Math.max(0, Math.min((now - start) / duration, 1));
+    render(progress);
+    if (progress < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function countCitydata(element, value, suffix = '') {
+  if (!Number.isFinite(value)) {
+    element.textContent = '—';
+    return;
+  }
+  const decimals = Number.isInteger(value) ? 0 : 1;
+  animateCitydata(750, progress => {
+    const count = progress === 0 ? 0 : value * (1 - (1 - progress) ** 3);
+    element.textContent = count.toFixed(decimals) + suffix;
+  });
 }
 
 function pulseCitydata(element) {
-  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  element.animate([{ opacity: .6 }, { opacity: 1 }], { duration: 550, easing: 'ease-out' });
+  if (citydataMotion.matches) return;
+  element.animate(
+    [{ filter: 'brightness(1.5)' }, { filter: 'brightness(1)' }],
+    { duration: 550, easing: 'ease-out' },
+  );
+}
+
+function typeCitydataIncidents() {
+  for (const line of byId('incident-list').querySelectorAll('.citydata-typewriter')) {
+    const characters = Array.from(line.firstElementChild.textContent);
+    const typed = line.lastElementChild;
+    animateCitydata(Math.min(1800, Math.max(400, characters.length * 23)), progress => {
+      typed.textContent = characters.slice(0, Math.floor(progress * characters.length)).join('');
+    });
+  }
 }
 
 function renderCitydataIncidents(incidents) {
@@ -1444,10 +1496,10 @@ async function refreshCitydata({ includeIncidents = true } = {}) {
     if (controller.signal.aborted) return;
     renderCitydataMetrics(data);
     pulseCitydata(byId('board'));
-    pulseCitydata(byId('weather-temperature'));
+    pulseCitydata(byId('weather-temperature').closest('.weather'));
     if (includeIncidents || !citydataReceived) {
       renderCitydataIncidents(data.incidents);
-      pulseCitydata(byId('incident-list'));
+      typeCitydataIncidents();
     }
     citydataReceived = true;
     byId('refresh-label').textContent = '수치 5초 · 속보 10초';
