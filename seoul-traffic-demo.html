@@ -685,7 +685,13 @@ section.story-screen {
   <aside>
     <section aria-labelledby="today">
       <div class="panel-title"><h2 id="today">오늘의 서울 교통</h2><button id="pause" type="button" aria-pressed="false">일시정지</button></div>
-      <div class="citydata-live-status"><span class="demo">광화문·덕수궁 실시간</span><time id="clock" class="clock"></time></div>
+      <div class="citydata-live-status"><select id="citydata-place" class="demo" aria-label="실시간 교통 주요 장소">
+          <option value="gwanghwamun" data-lat="37.5665" data-lng="126.9780">광화문·덕수궁</option>
+          <option value="seoul-station" data-lat="37.5547" data-lng="126.9707">서울역</option>
+          <option value="gangnam" data-lat="37.4981" data-lng="127.0276">강남역</option>
+          <option value="dongdaemun" data-lat="37.5665" data-lng="127.0092">동대문 관광특구</option>
+          <option value="namdaemun" data-lat="37.5592" data-lng="126.9771">남대문시장</option>
+        </select><time id="clock" class="clock"></time></div>
       <dl class="board" id="board">
         <div class="stat"><dt>도로 소통</dt><dd><strong class="status" id="flow">—</strong></dd></div>
         <div class="stat"><dt>평균 속도</dt><dd><strong id="speed">—</strong><small>km/h</small></dd></div>
@@ -697,7 +703,7 @@ section.story-screen {
     <section class="feed" aria-labelledby="situation">
       <div class="panel-title"><h2 id="situation">기상·교통 상황</h2></div>
       <div class="weather">
-        <div><div class="muted">광화문·덕수궁 · 날씨</div><p><strong id="weather-temperature">—</strong> <span id="weather-detail">불러오는 중</span></p></div>
+        <div><div class="muted" id="citydata-weather-area">광화문·덕수궁 · 날씨</div><p><strong id="weather-temperature">—</strong> <span id="weather-detail">불러오는 중</span></p></div>
       </div>
       <div id="incident-list" class="citydata-incidents"><p class="muted">사고·통제 정보를 불러오는 중</p></div>
       <p class="muted panel-source">출처 · <a href="https://data.seoul.go.kr/dataList/OA-21285/F/1/datasetView.do">서울시 실시간 도시데이터</a></p>
@@ -1795,6 +1801,8 @@ let lastIncidentSnapshot;
 let citydataPaused = false;
 let citydataReceived = false;
 let citydataRequest;
+let citydataGeneration = 0;
+const citydataPlace = byId('citydata-place');
 
 function incidentElement(incident) {
   const article = document.createElement('article');
@@ -1842,9 +1850,11 @@ function animateCitydata(duration, render) {
     render(1);
     return;
   }
+  const generation = citydataGeneration;
   const start = performance.now();
   render(0);
   function step(now) {
+    if (generation !== citydataGeneration) return;
     const progress = Math.max(0, Math.min((now - start) / duration, 1));
     render(progress);
     if (progress < 1) requestAnimationFrame(step);
@@ -1897,15 +1907,16 @@ function renderCitydataIncidents(incidents) {
   }
 }
 
-async function refreshCitydata({ includeIncidents = true } = {}) {
-  if (citydataPaused || citydataRequest) return;
+async function refreshCitydata({ includeIncidents = true, manual = false } = {}) {
+  if ((!manual && citydataPaused) || citydataRequest) return;
+  const place = citydataPlace.value;
   const controller = new AbortController();
   citydataRequest = controller;
   try {
-    const response = await fetch('./api/citydata', { signal: controller.signal });
+    const response = await fetch('./api/citydata?' + new URLSearchParams({ place }), { signal: controller.signal });
     if (!response.ok) throw new Error('Citydata is unavailable');
     const data = await response.json();
-    if (data.area?.code !== 'POI009') throw new Error('Unexpected Citydata area');
+    if (data.area?.place !== place) throw new Error('Unexpected Citydata area');
     if (controller.signal.aborted) return;
     renderCitydataMetrics(data);
     pulseCitydata(byId('board'));
@@ -1915,7 +1926,7 @@ async function refreshCitydata({ includeIncidents = true } = {}) {
       typeCitydataIncidents();
     }
     citydataReceived = true;
-    byId('refresh-label').textContent = '수치 5초 · 속보 10초';
+    byId('refresh-label').textContent = citydataPaused ? '갱신 일시정지' : '수치 5초 · 속보 10초';
   } catch {
     if (controller.signal.aborted) return;
     if (!citydataReceived) {
@@ -1927,6 +1938,20 @@ async function refreshCitydata({ includeIncidents = true } = {}) {
     if (citydataRequest === controller) citydataRequest = null;
   }
 }
+
+citydataPlace.addEventListener('change', () => {
+  citydataRequest?.abort();
+  citydataRequest = null;
+  citydataGeneration += 1;
+  citydataTick = 0;
+  citydataReceived = false;
+  lastIncidentSnapshot = undefined;
+  byId('citydata-weather-area').textContent = citydataPlace.selectedOptions[0].textContent + ' · 날씨';
+  renderCitydataMetrics({});
+  byId('incident-list').textContent = '사고·통제 정보를 불러오는 중';
+  byId('refresh-label').textContent = '갱신 중';
+  refreshCitydata({ manual: true });
+});
 
 byId('pause').addEventListener('click', event => {
   citydataPaused = !citydataPaused;
@@ -2578,12 +2603,20 @@ if (window.kakao?.maps?.load) {
 
     try {
       const initialLevel = 8;
+      const selectedCenter = () => {
+        const { lat, lng } = citydataPlace.selectedOptions[0].dataset;
+        return new kakao.maps.LatLng(Number(lat), Number(lng));
+      };
       const kakaoMap = new kakao.maps.Map(mapElement, {
-        center: new kakao.maps.LatLng(37.5665, 126.9780),
+        center: selectedCenter(),
         level: initialLevel
       });
       kakaoMap.setMaxLevel(initialLevel + 1);
       kakaoMap.addOverlayMapTypeId(kakao.maps.MapTypeId.TRAFFIC);
+      citydataPlace.addEventListener('change', () => {
+        kakaoMap.setLevel(citydataPlace.value === 'gwanghwamun' ? initialLevel : 5);
+        kakaoMap.setCenter(selectedCenter());
+      });
       new ResizeObserver(() => kakaoMap.relayout()).observe(mapElement);
       showSeoulBoundaries(kakaoMap).catch(error => console.error("서울 경계 로드 실패", error));
       showProtectionZones(kakaoMap);

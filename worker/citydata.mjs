@@ -1,7 +1,14 @@
-const areaCode = 'POI009';
+const defaultPlace = 'gwanghwamun';
+const places = new Map([
+  ['gwanghwamun', '광화문·덕수궁'],
+  ['seoul-station', '서울역'],
+  ['gangnam', '강남역'],
+  ['dongdaemun', '동대문 관광특구'],
+  ['namdaemun', '남대문시장'],
+]);
 const endpoint = 'http://openapi.seoul.go.kr:8088';
 const cacheTimeMs = 60_000;
-let cached;
+const cache = new Map();
 
 const entities = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'" };
 
@@ -29,8 +36,14 @@ function section(xml, tag, firstField) {
   return first !== -1 && first < end ? xml.slice(first, end) : '';
 }
 
-export function parseCitydata(xml) {
-  if (field(xml, 'RESULT\\.CODE') !== 'INFO-000' || field(xml, 'AREA_CD') !== areaCode) {
+export function parseCitydata(xml, place = defaultPlace) {
+  const code = field(xml, 'AREA_CD');
+  const name = places.get(place);
+  const normalize = value => value?.replace(/\s/g, '');
+  const matched = place === defaultPlace
+    ? code === 'POI009'
+    : normalize(field(xml, 'AREA_NM')) === normalize(name);
+  if (!name || !code || !matched || field(xml, 'RESULT\\.CODE') !== 'INFO-000') {
     throw new Error('Unexpected Seoul Citydata response');
   }
   const road = section(xml, 'ROAD_TRAFFIC_STTS', 'ROAD_TRAFFIC_SPD');
@@ -52,7 +65,7 @@ export function parseCitydata(xml) {
   });
   return {
     source: '서울 열린데이터광장 · 서울시 실시간 도시데이터',
-    area: { code: areaCode, name: '광화문·덕수궁' },
+    area: { code, name, place },
     fetchedAt: new Date().toISOString(),
     traffic: road ? {
       status: field(road, 'ROAD_TRAFFIC_IDX'),
@@ -81,17 +94,21 @@ export async function citydata(request, env) {
   if (request.method !== 'GET') {
     return citydataJson({ error: 'method_not_allowed' }, 405, { allow: 'GET' });
   }
+  const place = new URL(request.url).searchParams.get('place') ?? defaultPlace;
+  if (!places.has(place)) return citydataJson({ error: 'unknown_place' }, 400);
   const key = env.SEOUL_CITYDATA_API_KEY?.trim();
   if (!key) {
     return citydataJson({ error: 'citydata_not_configured' }, 503);
   }
+  const cached = cache.get(place);
   if (cached?.key === key && Date.now() < cached.expiresAt) {
     return citydataJson(cached.data, 200, { 'cache-control': 'private, max-age=60' });
   }
   let upstream;
   let xml;
   try {
-    const url = `${endpoint}/${encodeURIComponent(key)}/xml/citydata/1/5/${areaCode}`;
+    const area = place === defaultPlace ? 'POI009' : places.get(place);
+    const url = `${endpoint}/${encodeURIComponent(key)}/xml/citydata/1/5/${encodeURIComponent(area)}`;
     upstream = await fetch(url, {
       signal: AbortSignal.timeout(8_000),
       redirect: 'manual',
@@ -111,8 +128,8 @@ export async function citydata(request, env) {
     return citydataJson({ error: 'citydata_upstream_api', code: resultCode }, 502);
   }
   try {
-    const data = parseCitydata(xml);
-    cached = { key, data, expiresAt: Date.now() + cacheTimeMs };
+    const data = parseCitydata(xml, place);
+    cache.set(place, { key, data, expiresAt: Date.now() + cacheTimeMs });
     return citydataJson(data, 200, { 'cache-control': 'private, max-age=60' });
   } catch {
     return citydataJson({ error: 'citydata_upstream_response' }, 502);
