@@ -1102,6 +1102,8 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 .risk-change-table tr > :first-child { text-align: left }
 .risk-change-table thead { background: #203447 }
 .risk-change-table tbody tr:nth-child(even) { background: #ffffff04 }
+#district-change .risk-change-table tbody tr { height: clamp(19px, 2.45svh, 26px) }
+#district-change .risk-change-table tbody :is(th, td) { padding-block: 0 }
 #district-change .risk-change-table td:nth-child(6) { color: #8cf0e8 }
 .risk-metric-controls { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 10px }
 .risk-metric-controls [aria-pressed="true"] { color: #8cf0e8; border-color: #8cf0e8; background: #1b393b }
