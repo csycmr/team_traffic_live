@@ -756,6 +756,38 @@ html { scroll-snap-type: y mandatory }
   html:has(.audit-comparison) { scroll-snap-type: y proximity }
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .national-total { --chart-bar-height: var(--total) }
+  .oecd-column-bar { --chart-bar-height: var(--level) }
+  .chart-awaiting :is(.national-total, .oecd-column-bar) { height: 0 }
+  .chart-entered :is(.national-total, .oecd-column-bar) {
+    animation: chart-bar-rise 850ms cubic-bezier(.22, .61, .36, 1) both;
+  }
+
+  .national-population:is(.chart-awaiting, .chart-entered) polyline {
+    stroke-dasharray: 1 1;
+  }
+  .national-population.chart-awaiting polyline { stroke-dashoffset: 1 }
+  .national-population.chart-entered polyline {
+    animation: chart-line-draw 950ms ease-out both;
+  }
+
+  .chart-awaiting :is(.national-year-total, .national-older > *, .population-value, circle, .oecd-column-measure strong) {
+    opacity: 0;
+  }
+  .chart-entered :is(.national-year-total, .national-older > *, .population-value, circle, .oecd-column-measure strong) {
+    animation: reveal-metric-value 200ms ease-out 750ms both;
+  }
+}
+@keyframes chart-bar-rise {
+  from { height: 0 }
+  to { height: var(--chart-bar-height) }
+}
+@keyframes chart-line-draw {
+  from { stroke-dashoffset: 1 }
+  to { stroke-dashoffset: 0 }
+}
+
 .oecd-vertical-scroll { container-type: inline-size; overflow-x: auto }
 .oecd-vertical-plot {
   --oecd-bar-height: clamp(100px, 16svh, 160px);
@@ -1035,7 +1067,7 @@ html { scroll-snap-type: y mandatory }
             <line x1="42" x2="510" y1="85" y2="85"/><text class="population-tick" x="36" y="89">900</text>
             <line x1="42" x2="510" y1="59.5" y2="59.5"/><text class="population-tick" x="36" y="63.5">1,000</text>
             <line x1="42" x2="510" y1="34" y2="34"/><text class="population-tick" x="36" y="38">1,100</text>
-            <polyline points="82,78.18 181,66.37 280,52.95 379,38.06 478,25.07"/>
+            <polyline pathLength="1" points="82,78.18 181,66.37 280,52.95 379,38.06 478,25.07"/>
             <g><title>2022년 12월 말 9,267,290명</title><circle cx="82" cy="78.18" r="4"/><text class="population-value" x="82" y="70.18">927</text><text x="82" y="105">2022년</text></g>
             <g><title>2023년 12월 말 9,730,411명</title><circle cx="181" cy="66.37" r="4"/><text class="population-value" x="181" y="58.37">973</text><text x="181" y="105">2023년</text></g>
             <g><title>2024년 12월 말 10,256,782명</title><circle cx="280" cy="52.95" r="4"/><text class="population-value" x="280" y="44.95">1,026</text><text x="280" y="105">2024년</text></g>
@@ -2657,6 +2689,22 @@ if (window.kakao?.maps?.load) {
   });
 } else {
   mapFrame.classList.add("show-fallback");
+}
+</script>
+<script>
+if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+  const chartObserver = new IntersectionObserver((entries, observer) => {
+    for (const entry of entries) {
+      if (entry.intersectionRatio < 0.35) continue;
+      entry.target.classList.replace('chart-awaiting', 'chart-entered');
+      observer.unobserve(entry.target);
+    }
+  }, { threshold: 0.35 });
+
+  for (const chart of document.querySelectorAll('#national-fatalities .national-plot, #national-fatalities .national-population, #oecd-rankings .oecd-chart')) {
+    chart.classList.add('chart-awaiting');
+    chartObserver.observe(chart);
+  }
 }
 </script>
 </body>
