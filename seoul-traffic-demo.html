@@ -399,6 +399,67 @@ main { min-height: calc(100dvh - 118px) }
   .traffic-header { min-height: 90px }
   main { min-height: calc(100dvh - 90px) }
 }
+
+html { scroll-snap-type: y mandatory }
+.traffic-screen, .oecd-screen { scroll-snap-align: start; min-height: 100svh }
+.traffic-jump {
+  display: inline-flex;
+  align-items: center;
+  gap: .45em;
+  width: fit-content;
+  border: 1px solid #49627c;
+  border-radius: 6px;
+  padding: .55em .75em;
+  background: #111f30;
+  color: #f0f5fb;
+  font-size: 12px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.traffic-jump:hover { background: #22374d }
+.traffic-jump:focus-visible, .oecd-sources a:focus-visible {
+  outline: 2px solid var(--mint);
+  outline-offset: 3px;
+}
+.oecd-screen {
+  display: grid;
+  align-content: center;
+  padding: clamp(24px, 5vw, 72px);
+  background: linear-gradient(145deg, #0d2032, #0b121d 70%);
+  border-top: 1px solid var(--line);
+}
+.oecd-content { width: min(100%, 1120px); margin-inline: auto }
+.oecd-content > .traffic-jump { margin-bottom: clamp(18px, 3vh, 32px) }
+.oecd-title { font-size: clamp(25px, 4vw, 48px); line-height: 1.14 }
+.oecd-unit { margin: 9px 0 22px; color: var(--muted); font-size: 14px }
+.oecd-charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px }
+.oecd-chart { border: 1px solid var(--line); border-radius: 10px; background: #111e2c; padding: clamp(12px, 2vw, 24px) }
+.oecd-chart h3 { font-size: clamp(22px, 3vw, 32px); letter-spacing: -.04em }
+.oecd-bars { list-style: none; display: grid; gap: 13px; padding: 0; margin: 16px 0 10px }
+.oecd-row, .oecd-axis { display: grid; grid-template-columns: 8em minmax(0, 1fr) 3.1em; gap: 8px; align-items: center; font-size: 13px }
+.oecd-row strong { text-align: right; font-variant-numeric: tabular-nums }
+.oecd-track {
+  display: block;
+  height: 16px;
+  border-radius: 2px;
+  background: repeating-linear-gradient(to right, #34485f55 0 1px, transparent 1px 33.333%), #1a2a3c;
+}
+.oecd-track span { display: block; width: var(--bar-width); height: 100%; border-radius: 2px; background: #729bc5 }
+.oecd-korea { color: var(--mint); font-weight: 700 }
+.oecd-korea .oecd-track span { background: var(--mint) }
+.oecd-ticks { grid-column: 2; display: flex; justify-content: space-between; color: var(--muted); font-variant-numeric: tabular-nums }
+.oecd-sources { margin-top: 16px; color: var(--muted); font-size: 12px; line-height: 1.6 }
+.oecd-sources a { color: #c1dcf5 }
+@media (max-width: 760px), (max-height: 730px) {
+  html { scroll-snap-type: y proximity }
+}
+@media (max-width: 650px) {
+  .oecd-charts { grid-template-columns: minmax(0, 1fr) }
+  .traffic-header .header-meta { flex-wrap: wrap; justify-content: flex-end }
+}
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth }
+}
 </style>
 </head>
 <body>
@@ -407,12 +468,13 @@ main { min-height: calc(100dvh - 118px) }
     poster="./assets/traffic-header.jpg" data-src="./assets/traffic-header.mp4"
     aria-hidden="true"></video>
   </div>
+<div class="traffic-screen" id="traffic-live">
 <header class="traffic-header">
   <div class="brand">
     <span class="brand-icon" aria-hidden="true">↗</span>
     <div><div class="eyebrow">SEOUL TRAFFIC NEWSROOM</div><h1>서울 교통안전 라이브</h1></div>
   </div>
-  <div class="header-meta"><span class="demo">시연 데이터</span><time id="clock" class="clock"></time></div>
+  <div class="header-meta"><a class="traffic-jump" href="#oecd-rankings">OECD 순위 <span aria-hidden="true">↓</span></a><span class="demo">시연 데이터</span><time id="clock" class="clock"></time></div>
 </header>
 <main>
   <aside>
@@ -513,6 +575,66 @@ main { min-height: calc(100dvh - 118px) }
           </section>
   </aside>
 </main>
+</div>
+<section class="oecd-screen" id="oecd-rankings" aria-labelledby="oecd-title">
+  <div class="oecd-content">
+    <a class="traffic-jump" href="#traffic-live"><span aria-hidden="true">↑</span> 서울 교통 현황</a>
+    <h2 class="oecd-title" id="oecd-title">OECD 고령 보행자 사망 순위</h2>
+    <p class="oecd-unit">65세 이상 인구 10만 명당 보행 중 교통사고 사망자 수 · 연도별 상위 3개국</p>
+    <div class="oecd-charts">
+      <article class="oecd-chart" aria-labelledby="oecd-2020">
+        <h3 id="oecd-2020">2020년</h3>
+        <ol class="oecd-bars" role="list">
+          <li class="oecd-row oecd-korea">
+            <span>1위 대한민국</span>
+            <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 51.3333%"></span></span>
+            <strong>7.7</strong>
+          </li>
+          <li class="oecd-row">
+            <span>2위 리투아니아</span>
+            <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 28.0000%"></span></span>
+            <strong>4.2</strong>
+          </li>
+          <li class="oecd-row">
+            <span>3위 칠레</span>
+            <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 25.3333%"></span></span>
+            <strong>3.8</strong>
+          </li>
+        </ol>
+        <div class="oecd-axis" aria-hidden="true">
+          <span class="oecd-ticks"><span>0</span><span>5</span><span>10</span><span>15</span></span>
+        </div>
+      </article>
+      <article class="oecd-chart" aria-labelledby="oecd-2023">
+        <h3 id="oecd-2023">2023년</h3>
+        <ol class="oecd-bars" role="list">
+          <li class="oecd-row">
+            <span>1위 콜롬비아</span>
+            <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 97.3333%"></span></span>
+            <strong>14.6</strong>
+          </li>
+          <li class="oecd-row oecd-korea">
+            <span>2위 대한민국</span>
+            <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 38.6667%"></span></span>
+            <strong>5.8</strong>
+          </li>
+          <li class="oecd-row">
+            <span>3위 칠레</span>
+            <span class="oecd-track" aria-hidden="true"><span style="--bar-width: 28.6667%"></span></span>
+            <strong>4.3</strong>
+          </li>
+        </ol>
+        <div class="oecd-axis" aria-hidden="true">
+          <span class="oecd-ticks"><span>0</span><span>5</span><span>10</span><span>15</span></span>
+        </div>
+      </article>
+    </div>
+    <div class="oecd-sources">
+      <p>2020년은 도로교통공단 발표를 인용한 <a href="https://www.yna.co.kr/view/AKR20230523111800004">연합뉴스</a>, 2023년은 한국도로교통공단 《OECD 회원국 교통사고 비교》 2025년판 표 II-13(57쪽). <a href="./data/13_OECD_%EA%B5%90%ED%86%B5%EC%82%AC%EA%B3%A0_2025.csv">2023년 집계 CSV</a></p>
+      <p>2023년 순위는 수치가 있는 32개국 기준. 보고서는 일부 국가에 이전 연도 자료를 사용했습니다.</p>
+    </div>
+  </div>
+</section>
 <dialog id="detail" aria-labelledby="detail-title">
   <div class="panel-title"><h2 id="detail-title"></h2><form method="dialog"><button class="close">닫기</button></form></div>
   <p id="detail-text"></p>
