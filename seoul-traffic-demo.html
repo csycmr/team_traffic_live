@@ -764,6 +764,26 @@ html { scroll-snap-type: y mandatory }
     animation: chart-bar-rise 850ms cubic-bezier(.22, .61, .36, 1) both;
   }
 
+  .chart-awaiting .national-donut-shape > :is(path, text) { opacity: 0 }
+  .chart-entered .national-donut-shape > :is(path, text) {
+    animation: reveal-metric-value 160ms ease-out var(--donut-delay, 875ms) both;
+  }
+  .national-donut-shape :is([fill="var(--slice-1)"], [fill="var(--side-1)"], .national-slice-label:nth-of-type(1)) {
+    --donut-delay: 0ms;
+  }
+  .national-donut-shape :is([fill="var(--slice-2)"], [fill="var(--side-2)"], .national-slice-label:nth-of-type(2)) {
+    --donut-delay: 175ms;
+  }
+  .national-donut-shape :is([fill="var(--slice-3)"], [fill="var(--side-3)"], .national-slice-label:nth-of-type(3)) {
+    --donut-delay: 350ms;
+  }
+  .national-donut-shape :is([fill="var(--slice-4)"], [fill="var(--side-4)"], .national-slice-label:nth-of-type(4)) {
+    --donut-delay: 525ms;
+  }
+  .national-donut-shape :is([fill="var(--slice-5)"], [fill="var(--side-5)"], .national-slice-label:nth-of-type(5)) {
+    --donut-delay: 700ms;
+  }
+
   .national-population:is(.chart-awaiting, .chart-entered) polyline {
     stroke-dasharray: 1 1;
   }
@@ -2701,7 +2721,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
     }
   }, { threshold: 0.35 });
 
-  for (const chart of document.querySelectorAll('#national-fatalities .national-plot, #national-fatalities .national-population, #oecd-rankings .oecd-chart')) {
+  for (const chart of document.querySelectorAll('#national-fatalities .national-plot, #national-fatalities .national-population, #national-fatalities .national-donut, #oecd-rankings .oecd-chart')) {
     chart.classList.add('chart-awaiting');
     chartObserver.observe(chart);
   }
