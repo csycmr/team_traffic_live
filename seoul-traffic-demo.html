@@ -783,12 +783,9 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
   color: #ffdf8b;
   font-size: .85em;
 }
-#district-risk .zone-data-table tbody { position: relative }
-#district-risk .zone-data-table tbody::after {
-  content: "";
+#district-risk .district-table-scroll { position: relative }
+#district-risk .district-average-line {
   position: absolute;
-  inset-block: 0;
-  left: var(--district-average-x, 75%);
   width: 2px;
   background: repeating-linear-gradient(to bottom, #ffdf8b 0 5px, transparent 5px 10px);
   z-index: 1;
@@ -3779,12 +3776,22 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
 {
   const districtRows = document.querySelector("#district-risk .zone-data-table tbody");
   const firstTrack = districtRows.querySelector(".district-track");
+  const scrollRegion = districtRows.closest(".district-table-scroll");
+  const line = document.createElement("span");
+  line.className = "district-average-line";
+  line.setAttribute("aria-hidden", "true");
+  scrollRegion.append(line);
 
   const positionAverage = () => {
     const track = firstTrack.getBoundingClientRect();
     const rows = districtRows.getBoundingClientRect();
-    const offset = track.left - rows.left + track.width * 0.4308;
-    districtRows.style.setProperty("--district-average-x", offset + "px");
+    const region = scrollRegion.getBoundingClientRect();
+
+    line.style.left = track.left - region.left - scrollRegion.clientLeft
+      + scrollRegion.scrollLeft + track.width * 0.4308 + "px";
+    line.style.top = rows.top - region.top - scrollRegion.clientTop
+      + scrollRegion.scrollTop + "px";
+    line.style.height = rows.height + "px";
   };
 
   positionAverage();
