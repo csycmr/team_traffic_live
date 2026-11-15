@@ -58,7 +58,8 @@ aside { padding: 21px; border-right: 1px solid var(--line); background: #0e1723 
 .weather > span { color: #ffdc8b; font-size: 24px }
 .weather strong { font-size: 22px; margin-right: 6px }
 .feed-row { padding: 10px 0; border-bottom: 1px solid var(--line) }
-.feed-row:last-child { border: 0 }
+.feed-row:last-of-type { border: 0 }
+.panel-source { margin-top: 6px; line-height: 1.45 }
 .feed-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
 .tag { font-size: 10px; color: var(--mint); background: #173630; border-radius: 4px; padding: 3px 6px }
 .tag.alert { color: #ffaaa7; background: #3a252d }
@@ -701,6 +702,7 @@ html { scroll-snap-type: y mandatory }
         <div class="stat"><dt>CCTV 정상</dt><dd><strong id="cctv">128</strong><small>/ 132대</small></dd></div>
       </dl>
       <div class="refresh muted"><span id="refresh-label">5초마다 갱신</span><span>갱신 <time id="updated"></time></span></div>
+      <p class="muted panel-source">출처 · 자체 제작 시연 데이터</p>
     </section>
     <section class="feed" aria-labelledby="situation">
       <div class="panel-title"><h2 id="situation">기상·교통 상황</h2></div>
@@ -719,6 +721,7 @@ html { scroll-snap-type: y mandatory }
         <div class="feed-meta"><span class="tag notice">재난안내</span><time class="muted">시연</time></div>
         <h3>한강변 저지대 산책로 출입 통제 예시</h3><p>재난문자와 교통 통제가 함께 들어오는 경우의 표시 예시.</p>
       </article>
+      <p class="muted panel-source">출처 · 자체 제작 시연용 기상·교통 정보</p>
     </section>
   </aside>
   <section class="map" id="map" aria-label="서울 교통 시연 지도">
