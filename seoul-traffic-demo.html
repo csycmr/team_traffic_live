@@ -774,7 +774,18 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 #district-risk .zone-data-table tbody tr { height: clamp(19px, 2.45svh, 26px) }
 #district-risk .zone-data-table :is(th:first-child, th:last-child) { text-align: left }
 #district-risk .zone-data-table .district-rate { color: var(--mint); font-weight: 700 }
-#district-risk .district-bar-column { width: 49% }
+#district-risk .district-bar-column { width: 44% }
+#district-risk .district-average-label { color: #ffdf8b; margin-inline-start: .7em; font-size: .85em }
+#district-risk .zone-data-table tbody td:last-child { position: relative }
+#district-risk .zone-data-table tbody td:last-child::after {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline-start: calc(7px + (100% - 14px) * .4308);
+  border-inline-start: 2px dashed #ffdf8b;
+  z-index: 1;
+  pointer-events: none;
+}
 #district-risk .district-track { display: block; height: 13px; background: transparent }
 #policy-alternatives .policy-content { display: grid; gap: clamp(8px, 1.5svh, 16px) }
 .policy-evidence { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 14px; align-items: start }
@@ -1920,132 +1931,132 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
         <table class="zone-data-table">
           <thead><tr>
             <th scope="col">자치구</th><th scope="col">65세 이상 인구</th><th scope="col">고령 보행자 사고</th>
-            <th scope="col">사고다발지역</th><th scope="col">경계 중첩</th><th scope="col">1만 명당 사고</th>
-            <th scope="col" class="district-bar-column">사고율 비교</th>
+            <th scope="col">사고다발지역</th><th scope="col">노인보호구역</th><th scope="col">경계 중첩</th><th scope="col">1만 명당 사고</th>
+            <th scope="col" class="district-bar-column">사고율 비교 <span class="district-average-label">┆ 서울 전체 10.77건</span></th>
           </tr></thead>
           <tbody>
             <tr>
-              <th scope="row">중구</th><td>27,623</td><td>61</td><td>2</td><td>1</td>
+              <th scope="row">중구</th><td>27,623</td><td>61</td><td>2</td><td>8</td><td>1</td>
               <td class="district-rate">22.08</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:88.33%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">동대문구</th><td>72,779</td><td>132</td><td>10</td><td>3</td>
+              <th scope="row">동대문구</th><td>72,779</td><td>132</td><td>10</td><td>9</td><td>3</td>
               <td class="district-rate">18.14</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:72.55%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">종로구</th><td>30,958</td><td>51</td><td>2</td><td>1</td>
+              <th scope="row">종로구</th><td>30,958</td><td>51</td><td>2</td><td>6</td><td>1</td>
               <td class="district-rate">16.47</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:65.90%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">금천구</th><td>50,658</td><td>83</td><td>4</td><td>0</td>
+              <th scope="row">금천구</th><td>50,658</td><td>83</td><td>4</td><td>4</td><td>0</td>
               <td class="district-rate">16.38</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:65.54%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">영등포구</th><td>73,471</td><td>106</td><td>2</td><td>0</td>
+              <th scope="row">영등포구</th><td>73,471</td><td>106</td><td>2</td><td>4</td><td>0</td>
               <td class="district-rate">14.43</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:57.71%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">강북구</th><td>74,406</td><td>105</td><td>4</td><td>1</td>
+              <th scope="row">강북구</th><td>74,406</td><td>105</td><td>4</td><td>2</td><td>1</td>
               <td class="district-rate">14.11</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:56.45%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">중랑구</th><td>88,128</td><td>105</td><td>7</td><td>0</td>
+              <th scope="row">중랑구</th><td>88,128</td><td>105</td><td>7</td><td>3</td><td>0</td>
               <td class="district-rate">11.91</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:47.66%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">강남구</th><td>95,530</td><td>113</td><td>0</td><td>0</td>
+              <th scope="row">강남구</th><td>95,530</td><td>113</td><td>0</td><td>13</td><td>0</td>
               <td class="district-rate">11.83</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:47.31%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">강동구</th><td>98,148</td><td>113</td><td>5</td><td>1</td>
+              <th scope="row">강동구</th><td>98,148</td><td>113</td><td>5</td><td>9</td><td>1</td>
               <td class="district-rate">11.51</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:46.05%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">은평구</th><td>102,485</td><td>117</td><td>5</td><td>0</td>
+              <th scope="row">은평구</th><td>102,485</td><td>117</td><td>5</td><td>11</td><td>0</td>
               <td class="district-rate">11.42</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:45.67%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">서대문구</th><td>62,510</td><td>71</td><td>4</td><td>0</td>
+              <th scope="row">서대문구</th><td>62,510</td><td>71</td><td>4</td><td>6</td><td>0</td>
               <td class="district-rate">11.36</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:45.43%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">양천구</th><td>84,581</td><td>93</td><td>2</td><td>0</td>
+              <th scope="row">양천구</th><td>84,581</td><td>93</td><td>2</td><td>7</td><td>0</td>
               <td class="district-rate">11.00</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:43.98%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">동작구</th><td>76,039</td><td>83</td><td>5</td><td>1</td>
+              <th scope="row">동작구</th><td>76,039</td><td>83</td><td>5</td><td>8</td><td>1</td>
               <td class="district-rate">10.92</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:43.66%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">성북구</th><td>87,537</td><td>88</td><td>5</td><td>1</td>
+              <th scope="row">성북구</th><td>87,537</td><td>88</td><td>5</td><td>8</td><td>1</td>
               <td class="district-rate">10.05</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:40.21%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">용산구</th><td>40,470</td><td>39</td><td>1</td><td>0</td>
+              <th scope="row">용산구</th><td>40,470</td><td>39</td><td>1</td><td>5</td><td>0</td>
               <td class="district-rate">9.64</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:38.55%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">구로구</th><td>88,122</td><td>84</td><td>1</td><td>0</td>
+              <th scope="row">구로구</th><td>88,122</td><td>84</td><td>1</td><td>3</td><td>0</td>
               <td class="district-rate">9.53</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:38.13%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">강서구</th><td>113,320</td><td>105</td><td>3</td><td>1</td>
+              <th scope="row">강서구</th><td>113,320</td><td>105</td><td>3</td><td>12</td><td>1</td>
               <td class="district-rate">9.27</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:37.06%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">송파구</th><td>119,251</td><td>110</td><td>2</td><td>1</td>
+              <th scope="row">송파구</th><td>119,251</td><td>110</td><td>2</td><td>24</td><td>1</td>
               <td class="district-rate">9.22</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:36.90%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">성동구</th><td>53,444</td><td>49</td><td>2</td><td>0</td>
+              <th scope="row">성동구</th><td>53,444</td><td>49</td><td>2</td><td>6</td><td>0</td>
               <td class="district-rate">9.17</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:36.67%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">마포구</th><td>62,150</td><td>54</td><td>1</td><td>0</td>
+              <th scope="row">마포구</th><td>62,150</td><td>54</td><td>1</td><td>7</td><td>0</td>
               <td class="district-rate">8.69</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:34.75%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">노원구</th><td>104,776</td><td>85</td><td>1</td><td>0</td>
+              <th scope="row">노원구</th><td>104,776</td><td>85</td><td>1</td><td>7</td><td>0</td>
               <td class="district-rate">8.11</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:32.45%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">관악구</th><td>92,939</td><td>75</td><td>3</td><td>1</td>
+              <th scope="row">관악구</th><td>92,939</td><td>75</td><td>3</td><td>13</td><td>1</td>
               <td class="district-rate">8.07</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:32.28%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">서초구</th><td>72,308</td><td>54</td><td>0</td><td>0</td>
+              <th scope="row">서초구</th><td>72,308</td><td>54</td><td>0</td><td>14</td><td>0</td>
               <td class="district-rate">7.47</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:29.87%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">광진구</th><td>62,783</td><td>46</td><td>0</td><td>0</td>
+              <th scope="row">광진구</th><td>62,783</td><td>46</td><td>0</td><td>4</td><td>0</td>
               <td class="district-rate">7.33</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:29.31%"></span></span></td>
             </tr>
             <tr>
-              <th scope="row">도봉구</th><td>78,335</td><td>38</td><td>0</td><td>0</td>
+              <th scope="row">도봉구</th><td>78,335</td><td>38</td><td>0</td><td>2</td><td>0</td>
               <td class="district-rate">4.85</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:19.40%"></span></span></td>
             </tr>
