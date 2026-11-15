@@ -1013,6 +1013,30 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
   #zone-overlap .overlap-counts .stat { padding: 8px }
   #zone-overlap .overlap-map { min-height: 420px; height: 60svh }
 }
+
+.child-policy-timeline strong {
+  padding: 1px 5px;
+  font-size: 12px;
+  line-height: 1.45;
+  margin-block: 3px 4px;
+}
+#school-zone-fines > .policy-content {
+  display: grid;
+  grid-template-columns: minmax(0, 1.75fr) minmax(280px, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+.minsik-law { font-size: 14px; line-height: 1.65 }
+.minsik-law .law-kicker { color: #ffd166; margin: 6px 0 18px; font-size: 12px }
+.minsik-law h3 { margin: 20px 0 8px }
+.minsik-law p { margin: 8px 0 }
+.minsik-penalties { display: grid; gap: 12px; margin: 18px 0 }
+.minsik-penalties > div { padding: 14px; background: #203447; border: 1px solid #38536c; border-radius: 8px }
+.minsik-penalties dt { color: #a9bfd3; font-size: 13px }
+.minsik-penalties dd { margin: 5px 0 0; color: #ffd166; font-size: 17px; font-weight: 700 }
+@media(max-width:850px) {
+  #school-zone-fines > .policy-content { grid-template-columns: minmax(0, 1fr) }
+}
 </style>
 <link rel="stylesheet" href="./assets/oecd-rankings.css">
 <link rel="stylesheet" href="./assets/national-fatalities.css">
@@ -2281,6 +2305,19 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
       <p class="muted policy-source">과태료와 범칙금은 부과 대상과 단속 방식에 따라 구분됩니다. 치사상 행은 형사처벌 기준입니다. 같은 장소에서 2시간 이상 불법 주정차한 경우 과태료에 1만원이 추가됩니다.</p>
       <p class="muted policy-source"><a href="https://www.law.go.kr/flDownload.do?bylClsCd=110201&amp;flSeq=150017271">과태료 · 시행령 별표 7</a> · <a href="https://easylaw.go.kr/CSP/CnpClsMain.laf?ccfNo=1&amp;cciNo=1&amp;cnpClsNo=3&amp;csmSeq=690">범칙금 · 시행령 별표 10</a> · <a href="https://www.law.go.kr/LSW/flDownload.do?bylClsCd=110201&amp;flSeq=158706525">벌점 · 시행규칙 별표 28</a> · <a href="https://law.go.kr/lsLinkCommonInfo.do?chrClsCd=010202&amp;lsJoLnkSeq=1018791639">특정범죄가중법</a> · <a href="https://www.law.go.kr/lsLinkCommonInfo.do?chrClsCd=010202&amp;lsJoLnkSeq=1028448901">교통사고처리 특례법</a></p>
       </details>
+    </section>
+    <section class="audit-diagnosis minsik-law" aria-labelledby="minsik-law-title">
+      <h2 class="audit-heading" id="minsik-law-title">민식이법 · 어린이 치사상 가중처벌</h2>
+      <p class="law-kicker">특정범죄 가중처벌 등에 관한 법률 제5조의13</p>
+      <h3>어떤 사고에 적용되나?</h3>
+      <p>어린이보호구역에서 자동차 등의 운전자가 제한속도 준수 등 안전운전 의무를 위반해 13세 미만 어린이를 다치게 하거나 사망하게 하고, 교통사고처리 특례법 제3조제1항의 죄가 성립하는 경우 적용됩니다.</p>
+      <dl class="minsik-penalties">
+        <div><dt>어린이 사망</dt><dd>무기 또는 3년 이상 징역</dd></div>
+        <div><dt>어린이 상해</dt><dd>1년 이상 15년 이하 징역<br>또는 벌금 500만~3,000만 원</dd></div>
+      </dl>
+      <p>사고 발생 경위와 운전자의 의무 위반, 피해 사이의 인과관계 등을 따져 적용 여부를 판단합니다.</p>
+      <p class="muted policy-source">위 과태료 표의 오전 8시~오후 8시 조건과 별개로, 이 형사처벌 조항에는 시간대 제한이 없습니다.</p>
+      <p class="muted policy-source">출처 · <a href="https://law.go.kr/lsLinkCommonInfo.do?chrClsCd=010202&amp;lsJoLnkSeq=1018791639">국가법령정보센터 제5조의13</a> · <a href="https://www.ccourt.go.kr/site/kor/ex/bbs/View.do?bcIdx=1005028&amp;cbIdx=1106">헌법재판소 관련 결정</a></p>
     </section>
   </div>
 </section>
