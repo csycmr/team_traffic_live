@@ -3300,7 +3300,7 @@ async function showZoneOverlapMap() {
       }),
     ]);
     const map = new kakao.maps.Map(container, { center: new kakao.maps.LatLng(37.555, 126.993), level: 8, scrollwheel: true });
-    map.setMaxLevel(10);
+    map.setMaxLevel(9);
     showSeoulBoundaries(map, "#193557").catch(error => {
       console.error("서울 경계 로드 실패", error);
     });
