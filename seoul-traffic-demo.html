@@ -922,6 +922,44 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 .zone-density-people { align-self: end; line-height: 1 }
 .zone-density-people strong { font-size: 15px }
  .school-study-bars { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+.review-title-note { display:inline-block; margin-left:10px; font-size:.65em; color:var(--muted,#a4b5c8) }
+.review-content { display:grid; grid-template-columns:minmax(0,.94fr) minmax(0,1.38fr); gap:12px; align-content:start }
+.review-content > .audit-diagnosis { min-width:0; padding:clamp(10px,1.65svh,18px) }
+.review-list { grid-row:span 2 }
+.review-content .audit-chart-caption { margin:4px 0 8px }
+.review-table-wrap,.review-chart-scroll { overflow-x:auto }
+.review-table { width:100%; border-collapse:collapse; font-size:clamp(11px,1.49svh,14px); line-height:1.3; font-variant-numeric:tabular-nums }
+.review-table :is(th,td) { padding:clamp(4px,.65svh,8px) 7px; border-bottom:1px solid #293b4d; text-align:right }
+.review-table :is(th,td):first-child { text-align:left }
+.review-table tr > :last-child,.review-table td { white-space:nowrap }
+.review-table thead { background:#203447 }
+.review-table tbody tr:nth-child(even) { background:#ffffff04 }
+.review-badge { background:#1f4a4a; color:#a0f3e4; border-radius:5px; padding:2px 6px }
+.review-details { margin-top:10px }
+.review-details summary { cursor:pointer; font-size:13px; font-weight:700 }
+.review-table-scroll { max-height:240px; margin-top:8px; overflow:auto; overscroll-behavior:contain }
+.review-table-scroll thead { position:sticky; top:0 }
+.review-source { font-size:12px; color:var(--muted,#a4b5c8); margin:8px 0 0 }
+.review-legend { display:flex; flex-wrap:wrap; gap:6px 14px; font-size:12px; margin-bottom:8px }
+.review-legend span::before { content:''; display:inline-block; width:10px; height:10px; border-radius:2px; margin-right:5px; background:#79dfcd }
+.review-legend span + span::before { background:#f5ab6e }
+.review-chart { --plot-height:clamp(96px,17svh,180px); display:grid; grid-template-columns:22px 1fr; gap:5px; min-width:540px }
+.review-axis { height:var(--plot-height); display:flex; flex-direction:column; justify-content:space-between; text-align:right; font-size:11px; color:#a4b5c8; transform:translateY(-.6em) }
+.review-chart ol { display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); position:relative; list-style:none; padding:0; margin:0 }
+.review-chart ol::before { content:''; position:absolute; inset:0 0 auto; height:var(--plot-height); background:repeating-linear-gradient(to top,#293b4d 0 1px,transparent 1px 20%); border-top:1px solid #293b4d; pointer-events:none }
+.review-chart li { position:relative; display:grid; justify-items:center; gap:4px; font-size:10px }
+.review-chart li > span { writing-mode:vertical-rl; text-orientation:upright; line-height:1 }
+.review-stack { display:flex; flex-direction:column-reverse; justify-content:flex-start; height:var(--plot-height); width:72% }
+.review-stack span { display:grid; place-items:center; height:calc(var(--count) * 10%); overflow:hidden; color:#0f1a26; font-size:10px; font-weight:800 }
+.review-inside { background:#79dfcd }
+.review-outside { background:#f5ab6e }
+.review-method { grid-column:1/-1; background:#162536; border:1px solid #293b4d; border-radius:10px; padding:10px 14px; font-size:12px; line-height:1.45 }
+.review-method p { margin:3px 0 0 }
+@media(max-width:850px) {
+  .review-content { grid-template-columns:minmax(0,1fr) }
+  .review-list { grid-row:auto }
+  .review-candidates { min-width:485px }
+}
 </style>
 <link rel="stylesheet" href="./assets/oecd-rankings.css">
 <link rel="stylesheet" href="./assets/national-fatalities.css">
@@ -1879,7 +1917,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
     </div>
     <nav class="header-meta" aria-label="어디를 우선 검토해야 하는가? 화면 이동">
       <a class="traffic-jump" href="#district-risk"><span aria-hidden="true">↑</span> 자치구별 사고율</a>
-      <a class="traffic-jump" href="#school-zone-precedent">어린이보호구역 선례 <span aria-hidden="true">↓</span></a>
+      <a class="traffic-jump" href="#zone-review">현장 검토 자료 <span aria-hidden="true">↓</span></a>
       <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
     </nav>
   </header>
@@ -1893,16 +1931,162 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
       </dl>
       <p class="overlap-caveat">중첩은 두 구역의 경계를 기준으로 계산했어. 확보한 보호구역 경계에는 공식 명단의 일부 시설이 빠져 있어, 비중첩만으로 보호구역의 필요성이나 정책 효과를 판단하기 어려워.</p>
       <div class="overlap-legend"><span>● 사고다발지역 대표 좌표</span><span>■ 노인보호구역 API 경계</span></div>
-      <div class="overlap-map" id="zone-overlap-map" role="region" aria-label="사고다발지역과 노인보호구역 경계 카카오맵"><p class="muted" id="zone-overlap-map-status">지도를 불러오는 중</p></div>
-      <p class="muted overlap-note">주황 점은 사고다발지역의 대표 위치야. 중첩 수치는 <a href="https://github.com/csy04x2/elder_accident/blob/main/data/processed/01_%EC%9E%90%EC%B9%98%EA%B5%AC%EC%97%B0%EB%8F%84_%ED%8C%A8%EB%84%90.csv">팀 집계표</a>의 경계 비교 결과를 사용했어.</p>
+      <div class="overlap-map" id="zone-overlap-map" role="region" aria-label="사고다발지역과 노인보호구역 경계 카카오맵 · 휠로 확대 및 축소"><p class="muted" id="zone-overlap-map-status">지도를 불러오는 중</p></div>
+      <p class="muted overlap-note">지도 위에서 휠을 굴리면 확대·축소할 수 있어. 주황 점은 사고다발지역의 대표 위치야. 중첩 수치는 <a href="https://github.com/csy04x2/elder_accident/blob/main/data/processed/01_%EC%9E%90%EC%B9%98%EA%B5%AC%EC%97%B0%EB%8F%84_%ED%8C%A8%EB%84%90.csv">팀 집계표</a>의 경계 비교 결과를 사용했어.</p>
     </section>
+  </div>
+</section>
+<section class="oecd-screen story-screen" id="zone-review" aria-labelledby="zone-review-title">
+  <header class="traffic-header story-header">
+    <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="zone-review-title">어디를 우선 검토해야 하는가? <span class="review-title-note">현장 검토 자료</span></h2></div>
+    <nav class="header-meta" aria-label="현장 검토 자료 화면 이동">
+      <a class="traffic-jump" href="#zone-overlap"><span aria-hidden="true">↑</span> 보호구역 중첩 지도</a>
+      <a class="traffic-jump" href="#school-zone-precedent">어린이보호구역 선례 <span aria-hidden="true">↓</span></a>
+      <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
+    </nav>
+  </header>
+  <div class="oecd-content review-content">
+    <section class="audit-diagnosis review-list" aria-labelledby="review-list-title">
+      <h3 class="audit-heading" id="review-list-title">사고다발지역 목록</h3>
+      <p class="audit-chart-caption">2025년 집계 사고 건수 상위 12곳 · 가장 가까운 보호구역 경계까지 직선거리</p>
+      <div class="review-table-wrap"><table class="review-table"><thead><tr><th scope="col">지점</th><th scope="col">사고</th><th scope="col">보호구역</th></tr></thead><tbody>
+          <tr><th scope="row">동대문구 제기동 동서시장</th><td>12건</td><td><span class="review-badge">겹침</span></td></tr>
+          <tr><th scope="row">동대문구 제기동 청량리전통시장</th><td>10건</td><td><span class="review-badge">겹침</span></td></tr>
+          <tr><th scope="row">동작구 상도동 계령약국</th><td>10건</td><td>111m</td></tr>
+          <tr><th scope="row">강북구 번동 수유역교차로</th><td>7건</td><td>408m</td></tr>
+          <tr><th scope="row">동작구 사당동 남성사계시장</th><td>7건</td><td>451m</td></tr>
+          <tr><th scope="row">성북구 길음동 길음역교차로</th><td>7건</td><td>468m</td></tr>
+          <tr><th scope="row">성북구 종암동 종암동주민센터</th><td>7건</td><td>856m</td></tr>
+          <tr><th scope="row">강북구 미아동 미아사거리역 4호선</th><td>7건</td><td>1,372m</td></tr>
+          <tr><th scope="row">성북구 상월곡동 장위2동주민센터</th><td>6건</td><td><span class="review-badge">겹침</span></td></tr>
+          <tr><th scope="row">관악구 봉천동 낙성대역 2호선</th><td>6건</td><td><span class="review-badge">겹침</span></td></tr>
+          <tr><th scope="row">강동구 명일동 굽은다리역교차로</th><td>6건</td><td><span class="review-badge">겹침</span></td></tr>
+          <tr><th scope="row">동대문구 제기동 경동시장교차로</th><td>6건</td><td>74m</td></tr>
+        </tbody></table></div>
+      <details class="review-details">
+        <summary>나머지 59곳 자료 표 보기</summary>
+        <div class="review-table-wrap review-table-scroll" tabindex="0" role="region" aria-label="나머지 사고다발지역 목록"><table class="review-table"><thead><tr><th scope="col">지점</th><th scope="col">사고</th><th scope="col">보호구역</th></tr></thead><tbody>
+          <tr><th scope="row">영등포구 영등포동4가 영등포역교차로</th><td>6건</td><td>106m</td></tr>
+          <tr><th scope="row">은평구 갈현동 연신내역 GTX-A</th><td>6건</td><td>116m</td></tr>
+          <tr><th scope="row">동대문구 제기동 경동시장광성상가</th><td>6건</td><td>124m</td></tr>
+          <tr><th scope="row">마포구 도화동 아카데미약국</th><td>6건</td><td>306m</td></tr>
+          <tr><th scope="row">은평구 응암동 응암오거리</th><td>6건</td><td>358m</td></tr>
+          <tr><th scope="row">강북구 미아동 미아역교차로</th><td>6건</td><td>583m</td></tr>
+          <tr><th scope="row">중랑구 망우동 신내지하차도교차로</th><td>6건</td><td>795m</td></tr>
+          <tr><th scope="row">양천구 목동 약초원한약국</th><td>6건</td><td>941m</td></tr>
+          <tr><th scope="row">양천구 목동 옹달샘어린이집</th><td>6건</td><td>954m</td></tr>
+          <tr><th scope="row">중랑구 면목동 사가정시장</th><td>6건</td><td>957m</td></tr>
+          <tr><th scope="row">서대문구 홍제동 홍제1동주민센터</th><td>6건</td><td>1,039m</td></tr>
+          <tr><th scope="row">중랑구 망우동 신혜원어린이집</th><td>6건</td><td>1,239m</td></tr>
+          <tr><th scope="row">용산구 용산동2가 해방촌오거리</th><td>6건</td><td>1,703m</td></tr>
+          <tr><th scope="row">종로구 종로2가 종로2가지구대</th><td>5건</td><td><span class="review-badge">겹침</span></td></tr>
+          <tr><th scope="row">중구 신당동 메디팜늘봄약국</th><td>5건</td><td><span class="review-badge">겹침</span></td></tr>
+          <tr><th scope="row">동대문구 청량리동 떡전교사거리</th><td>5건</td><td><span class="review-badge">겹침</span></td></tr>
+          <tr><th scope="row">강북구 수유동 중화단무</th><td>5건</td><td><span class="review-badge">겹침</span></td></tr>
+          <tr><th scope="row">강서구 화곡동 신영유치원</th><td>5건</td><td><span class="review-badge">겹침</span></td></tr>
+          <tr><th scope="row">동작구 상도동 상도119안전센터</th><td>5건</td><td><span class="review-badge">겹침</span></td></tr>
+          <tr><th scope="row">송파구 거여동 거여역교차로</th><td>5건</td><td><span class="review-badge">겹침</span></td></tr>
+          <tr><th scope="row">강동구 천호동 큰사랑약국</th><td>5건</td><td>100m</td></tr>
+          <tr><th scope="row">은평구 응암동 사랑이어린이집</th><td>5건</td><td>101m</td></tr>
+          <tr><th scope="row">강서구 등촌동 가양역교차로</th><td>5건</td><td>141m</td></tr>
+          <tr><th scope="row">동대문구 제기동 홍파초교교차로</th><td>5건</td><td>183m</td></tr>
+          <tr><th scope="row">동작구 상도동 장승배기교차로</th><td>5건</td><td>294m</td></tr>
+          <tr><th scope="row">금천구 시흥동 한사랑약국</th><td>5건</td><td>298m</td></tr>
+          <tr><th scope="row">성북구 동선동2가 팔백집 본점</th><td>5건</td><td>332m</td></tr>
+          <tr><th scope="row">동대문구 전농동 새성수약국</th><td>5건</td><td>333m</td></tr>
+          <tr><th scope="row">종로구 종로5가 종로5가교차로</th><td>5건</td><td>335m</td></tr>
+          <tr><th scope="row">강동구 길동 길동119안전센터</th><td>5건</td><td>361m</td></tr>
+          <tr><th scope="row">영등포구 신길동 신길약국</th><td>5건</td><td>361m</td></tr>
+          <tr><th scope="row">금천구 독산동 독산3동주민센터</th><td>5건</td><td>384m</td></tr>
+          <tr><th scope="row">동대문구 회기동 회기역앞교차로</th><td>5건</td><td>395m</td></tr>
+          <tr><th scope="row">강서구 화곡동 화곡역교차로</th><td>5건</td><td>416m</td></tr>
+          <tr><th scope="row">금천구 독산동 시흥4동교차로</th><td>5건</td><td>438m</td></tr>
+          <tr><th scope="row">중구 황학동 독일사약국</th><td>5건</td><td>451m</td></tr>
+          <tr><th scope="row">관악구 봉천동 한길약국</th><td>5건</td><td>472m</td></tr>
+          <tr><th scope="row">송파구 풍납동 올림픽대교남단교차로</th><td>5건</td><td>478m</td></tr>
+          <tr><th scope="row">중랑구 면목동 참약사바른약국</th><td>5건</td><td>545m</td></tr>
+          <tr><th scope="row">성동구 용답동 성동용답상가시장</th><td>5건</td><td>578m</td></tr>
+          <tr><th scope="row">금천구 독산동 명수약국</th><td>5건</td><td>592m</td></tr>
+          <tr><th scope="row">은평구 응암동 대림골목시장</th><td>5건</td><td>619m</td></tr>
+          <tr><th scope="row">관악구 봉천동 은천삼거리</th><td>5건</td><td>662m</td></tr>
+          <tr><th scope="row">성북구 장위동 장위1동주민센터</th><td>5건</td><td>680m</td></tr>
+          <tr><th scope="row">동대문구 신설동 양가네분식</th><td>5건</td><td>751m</td></tr>
+          <tr><th scope="row">서대문구 홍제동 해솔어린이집</th><td>5건</td><td>756m</td></tr>
+          <tr><th scope="row">동작구 흑석동 신세명약국</th><td>5건</td><td>796m</td></tr>
+          <tr><th scope="row">성동구 행당동 응봉사거리</th><td>5건</td><td>857m</td></tr>
+          <tr><th scope="row">강동구 길동 강동성심병원앞사거리</th><td>5건</td><td>871m</td></tr>
+          <tr><th scope="row">중랑구 상봉동 상봉삼거리</th><td>5건</td><td>871m</td></tr>
+          <tr><th scope="row">강동구 천호동 강동역 5호선</th><td>5건</td><td>889m</td></tr>
+          <tr><th scope="row">은평구 증산동 증산3교교차로</th><td>5건</td><td>920m</td></tr>
+          <tr><th scope="row">동대문구 장안동 장한평역교차로</th><td>5건</td><td>927m</td></tr>
+          <tr><th scope="row">중랑구 면목동 면목시장</th><td>5건</td><td>956m</td></tr>
+          <tr><th scope="row">중랑구 망우동 우림맛솜씨길 골목형상점가</th><td>5건</td><td>1,047m</td></tr>
+          <tr><th scope="row">서대문구 홍제동 홍시약국</th><td>5건</td><td>1,109m</td></tr>
+          <tr><th scope="row">서대문구 홍은동 홍은사거리</th><td>5건</td><td>1,158m</td></tr>
+          <tr><th scope="row">노원구 상계동 건강한생활약국</th><td>5건</td><td>1,291m</td></tr>
+          <tr><th scope="row">구로구 구로동 구로2동주민센터</th><td>5건</td><td>1,456m</td></tr>
+        </tbody></table></div>
+      </details>
+      <p class="review-source">출처 · <a href="https://github.com/csy04x2/elder_accident/blob/main/data/processed/06_%EB%8B%A4%EB%B0%9C%EC%A7%80%EC%97%AD_%EB%B3%B4%ED%98%B8%EA%B5%AC%EC%97%AD_%EC%97%B0%EA%B2%B0.csv">팀 집계표</a></p>
+    </section>
+    <section class="audit-diagnosis" aria-labelledby="review-chart-title">
+      <h3 class="audit-heading" id="review-chart-title">자치구별 사고다발지역과 보호구역 중첩</h3>
+      <p class="audit-chart-caption">2025년 사고다발지역 선정 영역 수(곳) · 선정 지역이 있는 21개 자치구</p>
+      <div class="review-legend"><span>보호구역과 겹침</span><span>보호구역 밖</span></div>
+      <div class="review-chart-scroll" tabindex="0" role="region" aria-label="자치구별 중첩 막대그래프">
+        <div class="review-chart">
+          <div class="review-axis" aria-hidden="true"><span>10</span><span>8</span><span>6</span><span>4</span><span>2</span><span>0</span></div>
+          <ol>
+            <li aria-label="동대문구, 겹침 3곳, 보호구역 밖 7곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:3">3</span><span class="review-outside" style="--count:7">7</span></div><span aria-hidden="true">동대문구</span></li>
+            <li aria-label="중랑구, 겹침 0곳, 보호구역 밖 7곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:0"></span><span class="review-outside" style="--count:7">7</span></div><span aria-hidden="true">중랑구</span></li>
+            <li aria-label="성북구, 겹침 1곳, 보호구역 밖 4곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:1">1</span><span class="review-outside" style="--count:4">4</span></div><span aria-hidden="true">성북구</span></li>
+            <li aria-label="동작구, 겹침 1곳, 보호구역 밖 4곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:1">1</span><span class="review-outside" style="--count:4">4</span></div><span aria-hidden="true">동작구</span></li>
+            <li aria-label="강동구, 겹침 1곳, 보호구역 밖 4곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:1">1</span><span class="review-outside" style="--count:4">4</span></div><span aria-hidden="true">강동구</span></li>
+            <li aria-label="은평구, 겹침 0곳, 보호구역 밖 5곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:0"></span><span class="review-outside" style="--count:5">5</span></div><span aria-hidden="true">은평구</span></li>
+            <li aria-label="강북구, 겹침 1곳, 보호구역 밖 3곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:1">1</span><span class="review-outside" style="--count:3">3</span></div><span aria-hidden="true">강북구</span></li>
+            <li aria-label="서대문구, 겹침 0곳, 보호구역 밖 4곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:0"></span><span class="review-outside" style="--count:4">4</span></div><span aria-hidden="true">서대문구</span></li>
+            <li aria-label="금천구, 겹침 0곳, 보호구역 밖 4곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:0"></span><span class="review-outside" style="--count:4">4</span></div><span aria-hidden="true">금천구</span></li>
+            <li aria-label="강서구, 겹침 1곳, 보호구역 밖 2곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:1">1</span><span class="review-outside" style="--count:2">2</span></div><span aria-hidden="true">강서구</span></li>
+            <li aria-label="관악구, 겹침 1곳, 보호구역 밖 2곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:1">1</span><span class="review-outside" style="--count:2">2</span></div><span aria-hidden="true">관악구</span></li>
+            <li aria-label="종로구, 겹침 1곳, 보호구역 밖 1곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:1">1</span><span class="review-outside" style="--count:1">1</span></div><span aria-hidden="true">종로구</span></li>
+            <li aria-label="중구, 겹침 1곳, 보호구역 밖 1곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:1">1</span><span class="review-outside" style="--count:1">1</span></div><span aria-hidden="true">중구</span></li>
+            <li aria-label="송파구, 겹침 1곳, 보호구역 밖 1곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:1">1</span><span class="review-outside" style="--count:1">1</span></div><span aria-hidden="true">송파구</span></li>
+            <li aria-label="성동구, 겹침 0곳, 보호구역 밖 2곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:0"></span><span class="review-outside" style="--count:2">2</span></div><span aria-hidden="true">성동구</span></li>
+            <li aria-label="양천구, 겹침 0곳, 보호구역 밖 2곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:0"></span><span class="review-outside" style="--count:2">2</span></div><span aria-hidden="true">양천구</span></li>
+            <li aria-label="영등포구, 겹침 0곳, 보호구역 밖 2곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:0"></span><span class="review-outside" style="--count:2">2</span></div><span aria-hidden="true">영등포구</span></li>
+            <li aria-label="용산구, 겹침 0곳, 보호구역 밖 1곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:0"></span><span class="review-outside" style="--count:1">1</span></div><span aria-hidden="true">용산구</span></li>
+            <li aria-label="노원구, 겹침 0곳, 보호구역 밖 1곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:0"></span><span class="review-outside" style="--count:1">1</span></div><span aria-hidden="true">노원구</span></li>
+            <li aria-label="마포구, 겹침 0곳, 보호구역 밖 1곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:0"></span><span class="review-outside" style="--count:1">1</span></div><span aria-hidden="true">마포구</span></li>
+            <li aria-label="구로구, 겹침 0곳, 보호구역 밖 1곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:0"></span><span class="review-outside" style="--count:1">1</span></div><span aria-hidden="true">구로구</span></li>
+          </ol>
+        </div>
+      </div>
+      <p class="review-source">판정 가능한 71곳 중 보호구역 밖은 <strong>59곳(83.1%)</strong>입니다.</p>
+    </section>
+    <section class="audit-diagnosis" aria-labelledby="review-candidates-title">
+      <h3 class="audit-heading" id="review-candidates-title">현장 검토 후보 살펴보기</h3>
+      <p class="audit-chart-caption">동대문·중랑·은평·금천은 후보 예시입니다. 조사 우선순위는 현장 확인을 거쳐 정해야 합니다.</p>
+      <div class="review-table-wrap"><table class="review-table review-candidates">
+        <thead><tr><th scope="col">자치구</th><th scope="col">선정 영역</th><th scope="col">비중첩</th><th scope="col">중첩</th><th scope="col">판정 미상</th><th scope="col">고령인구 1만 명당 사고</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">동대문구</th><td>10</td><td>64</td><td>3</td><td>-57</td><td>18.14</td></tr>
+          <tr><th scope="row">중랑구</th><td>7</td><td>38</td><td>0</td><td>-31</td><td>11.91</td></tr>
+          <tr><th scope="row">은평구</th><td>5</td><td>27</td><td>0</td><td>-22</td><td>11.42</td></tr>
+          <tr><th scope="row">금천구</th><td>4</td><td>20</td><td>0</td><td>-16</td><td>16.38</td></tr>
+        </tbody>
+      </table></div>
+    </section>
+    <aside class="review-method" aria-label="자료 해석 기준">
+      <strong>이 자료를 읽을 때</strong>
+      <p>거리는 자치구 경계와 관계없이 서울 전체에서 가장 가까운 보호구역 경계까지의 직선거리입니다. 현재 확보한 API 경계는 공식 지정 시설 일부가 빠져 있을 수 있습니다. 선정 영역과 개별 사고 건수는 서로 다른 지표이며, 중첩 결과만으로 정책 효과를 판단하기 어렵습니다.</p>
+    </aside>
   </div>
 </section>
 <section class="oecd-screen story-screen" id="school-zone-precedent" aria-labelledby="school-zone-title">
   <header class="traffic-header story-header">
     <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="school-zone-title">어린이보호구역 선례</h2></div>
     <nav class="header-meta" aria-label="어린이보호구역 선례 화면 이동">
-      <a class="traffic-jump" href="#zone-overlap"><span aria-hidden="true">↑</span> 보호구역 중첩 지도</a>
+      <a class="traffic-jump" href="#zone-review"><span aria-hidden="true">↑</span> 현장 검토 자료</a>
       <a class="traffic-jump" href="#school-zone-fines">과태료 비교 <span aria-hidden="true">↓</span></a>
       <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
     </nav>
@@ -3001,7 +3185,7 @@ async function showZoneOverlapMap() {
         return response.json();
       }),
     ]);
-    const map = new kakao.maps.Map(container, { center: new kakao.maps.LatLng(37.555, 126.993), level: 8, scrollwheel: false });
+    const map = new kakao.maps.Map(container, { center: new kakao.maps.LatLng(37.555, 126.993), level: 8, scrollwheel: true });
     map.addControl(new kakao.maps.ZoomControl(), kakao.maps.ControlPosition.RIGHT);
     const popup = createMapPopup(map);
     kakao.maps.event.addListener(map, 'click', () => popup.close());
