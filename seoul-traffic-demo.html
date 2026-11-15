@@ -741,7 +741,6 @@ section.story-screen {
 main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
 html:root { scroll-snap-type: y mandatory }
 body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
-#protection-zones .metric-pair { height: clamp(190px, 44svh, 420px) }
 @media (max-height: 760px) {
   #zone-overlap .overlap-map { height: clamp(260px, 44svh, 330px) }
 }
@@ -814,6 +813,29 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 .policy-jeju-photo { margin: 8px 0 0 }
 .policy-jeju-photo img { display: block; margin-inline: auto; width: auto; height: auto; max-width: 100%; max-height: clamp(200px, 32svh, 328px); border-radius: 5px }
 @media (max-width: 850px) { .policy-law-grid { grid-template-columns: minmax(0, 1fr) } }
+#school-zone-precedent .school-precedent-content { display: grid; gap: 12px }
+#school-zone-precedent .school-zone-overview,
+#school-zone-precedent .policy-law-grid > section { padding: clamp(10px, 1.65svh, 18px) }
+#school-zone-precedent .school-zone-overview .metric-pair { height: clamp(52px, 8svh, 86px) }
+#school-zone-precedent .school-zone-overview .metric-bar strong { font-size: 12px }
+#school-zone-precedent .school-zone-overview .audit-chart-caption { margin-bottom: 5px }
+#school-zone-precedent .school-zone-overview figcaption { margin-top: 3px; font-size: 11px }
+#school-zone-precedent .law-timeline { gap: 8px; margin: 8px 0 14px }
+.policy-fines { min-width: 430px; font-size: 13px }
+.policy-fines :is(th, td) { padding: 4px 8px }
+.policy-fines td { text-align: right; font-variant-numeric: tabular-nums }
+.policy-fines thead th:not(:first-child) { text-align: right }
+.policy-fines tbody tr:last-child { color: var(--mint); font-weight: 700 }
+.parking-fine-chart { margin: 10px 0 0 }
+.parking-fine-chart h3 { margin-bottom: 6px }
+.parking-fine-bars { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin: 0; text-align: center }
+.parking-fine-bars > div { display: grid; grid-template-rows: 84px auto }
+.parking-fine-bars dt { grid-row: 2; font-size: 12px; margin-top: 4px }
+.parking-fine-bars dd { grid-row: 1; display: flex; flex-direction: column; justify-content: end; align-items: center; gap: 3px; margin: 0; border-bottom: 1px solid var(--line); font-size: 12px }
+.parking-fine-bars dd span { height: var(--bar-height); width: min(60%, 86px); background: #83a9d0; border-radius: 4px 4px 0 0 }
+.parking-fine-bars > div:last-child dd span { background: var(--mint) }
+.policy-sanctions { margin-top: 9px; font-size: 12px }
+.policy-sanctions summary { cursor: pointer; color: #c1dcf5 }
 </style>
 <link rel="stylesheet" href="./assets/oecd-rankings.css">
 <link rel="stylesheet" href="./assets/national-fatalities.css">
@@ -1364,7 +1386,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
     </div>
     <nav class="header-meta" aria-label="전국 교통사고 화면 이동">
       <a class="traffic-jump" href="#audit-video"><span aria-hidden="true">↑</span> 국정감사와 교통사고</a>
-      <a class="traffic-jump" href="#protection-zones">서울 보호구역 현황 <span aria-hidden="true">↓</span></a>
+      <a class="traffic-jump" href="#district-risk">자치구별 사고율 <span aria-hidden="true">↓</span></a>
       <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
     </nav>
   </header>
@@ -1607,52 +1629,6 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
     </div>
   </div>
 </section>
-<section class="oecd-screen story-screen" id="protection-zones" aria-labelledby="protection-zones-title">
-  <header class="traffic-header story-header">
-    <div class="brand">
-      <span class="brand-icon" aria-hidden="true">↗</span>
-      <h2 class="oecd-title" id="protection-zones-title">서울 보호구역 현황</h2>
-    </div>
-    <nav class="header-meta" aria-label="보호구역 화면 이동">
-      <a class="traffic-jump" href="#national-fatalities"><span aria-hidden="true">↑</span> 전국 사망자 추이</a>
-      <a class="traffic-jump" href="#district-risk">자치구별 사고율 <span aria-hidden="true">↓</span></a>
-      <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
-    </nav>
-  </header>
-  <div class="oecd-content">
-    <section class="audit-diagnosis" aria-labelledby="zone-summary">
-      <h2 class="audit-heading" id="zone-summary">그 뒤로 얼마나 달라졌나</h2>
-      <p class="audit-chart-caption">서울시 어린이·노인 인구와 보호구역 지정 현황</p>
-      <figure class="compare-chart">
-        <div class="metric-groups" role="group" aria-label="인구와 보호구역별 어린이·노인 비교">
-          <div class="metric-group">
-            <h3 id="population-chart">인구</h3>
-            <div class="metric-pair" role="group" aria-labelledby="population-chart">
-              <div class="metric-legend">
-                <div class="metric-legend-items">
-                  <span class="children">어린이</span>
-                  <span class="older">노인</span>
-                </div>
-              </div>
-              <div class="metric-bar children" style="--bar-height:32.98%"><strong aria-label="어린이 648,419명">648,419명</strong></div>
-              <div class="metric-bar older" style="--bar-height:100%"><strong aria-label="노인 1,965,896명">1,965,896명</strong></div>
-            </div>
-            <div class="metric-labels"><small>어린이</small><small>노인</small></div>
-          </div>
-          <div class="metric-group">
-            <h3 id="zones-chart">보호구역</h3>
-            <div class="metric-pair" role="group" aria-labelledby="zones-chart">
-              <div class="metric-bar children" style="--bar-height:100%"><strong aria-label="어린이 1,630개">1,630개</strong></div>
-              <div class="metric-bar older" style="--bar-height:11.96%"><strong aria-label="노인 195개">195개</strong></div>
-            </div>
-            <div class="metric-labels"><small>어린이<br>2026년</small><small>노인<br>2025년</small></div>
-          </div>
-        </div>
-        <figcaption class="muted">막대 높이는 지표별 최댓값을 100%로 환산한 비율입니다. 인구는 2026년 9월 말 기준입니다. 어린이는 경찰청 2026년 6월 말 서울 지정 현황의 기재 항목 합계(조례시설 미기재), 노인은 2025년 명단 기준입니다. <a href="./data/12_경찰청_어린이보호구역_지정현황_20260630.csv">어린이보호구역 집계표</a> · <a href="./data/11_서울_연령별_주민등록인구_202609.csv">인구 집계표</a> · <a href="https://kosis.kr/statisticsList/mass/mass_list.jsp?org_id=101&amp;tbl_id=DT_1B04006" target="_blank" rel="noopener">KOSIS 원자료</a></figcaption>
-      </figure>
-    </section>
-  </div>
-</section>
 <section class="oecd-screen story-screen" id="district-risk" aria-labelledby="district-risk-title">
   <header class="traffic-header story-header">
     <div class="brand">
@@ -1660,7 +1636,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
       <h2 class="oecd-title" id="district-risk-title">어디가 위험한가?</h2>
     </div>
     <nav class="header-meta" aria-label="어디가 위험한가? 화면 이동">
-      <a class="traffic-jump" href="#protection-zones"><span aria-hidden="true">↑</span> 서울 보호구역 현황</a>
+      <a class="traffic-jump" href="#national-fatalities"><span aria-hidden="true">↑</span> 전국 사망자 추이</a>
       <a class="traffic-jump" href="#zone-overlap">보호구역 중첩 지도 <span aria-hidden="true">↓</span></a>
       <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
     </nav>
@@ -1845,7 +1821,33 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
       <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
     </nav>
   </header>
-  <div class="oecd-content policy-content policy-law-grid">
+  <div class="oecd-content policy-content school-precedent-content">
+    <section class="audit-diagnosis school-zone-overview" aria-labelledby="zone-summary">
+      <h2 class="audit-heading" id="zone-summary">서울 보호구역 현황</h2>
+      <p class="audit-chart-caption">서울시 어린이·노인 인구와 보호구역 지정 현황</p>
+      <figure class="compare-chart">
+        <div class="metric-groups" role="group" aria-label="인구와 보호구역별 어린이·노인 비교">
+          <div class="metric-group">
+            <h3 id="population-chart">인구</h3>
+            <div class="metric-pair" role="group" aria-labelledby="population-chart">
+              <div class="metric-bar children" style="--bar-height:32.98%"><strong aria-label="어린이 648,419명">648,419명</strong></div>
+              <div class="metric-bar older" style="--bar-height:100%"><strong aria-label="노인 1,965,896명">1,965,896명</strong></div>
+            </div>
+            <div class="metric-labels"><small>어린이</small><small>노인</small></div>
+          </div>
+          <div class="metric-group">
+            <h3 id="zones-chart">보호구역</h3>
+            <div class="metric-pair" role="group" aria-labelledby="zones-chart">
+              <div class="metric-bar children" style="--bar-height:100%"><strong aria-label="어린이 1,630개">1,630개</strong></div>
+              <div class="metric-bar older" style="--bar-height:11.96%"><strong aria-label="노인 195개">195개</strong></div>
+            </div>
+            <div class="metric-labels"><small>어린이<br>2026년</small><small>노인<br>2025년</small></div>
+          </div>
+        </div>
+        <figcaption class="muted">막대 높이는 지표별 최댓값을 100%로 환산한 비율입니다. 인구는 2026년 9월 말 기준입니다. 어린이는 경찰청 2026년 6월 말 서울 지정 현황의 기재 항목 합계(조례시설 미기재), 노인은 2025년 명단 기준입니다. <a href="./data/12_경찰청_어린이보호구역_지정현황_20260630.csv">어린이보호구역 집계표</a> · <a href="./data/11_서울_연령별_주민등록인구_202609.csv">인구 집계표</a> · <a href="https://kosis.kr/statisticsList/mass/mass_list.jsp?org_id=101&amp;tbl_id=DT_1B04006" target="_blank" rel="noopener">KOSIS 원자료</a></figcaption>
+      </figure>
+    </section>
+    <div class="policy-law-grid">
     <section class="audit-diagnosis" aria-labelledby="policy-school-zones">
       <h2 class="audit-heading" id="policy-school-zones">스쿨존 안전 대책의 변화</h2>
       <dl class="law-timeline">
@@ -1861,9 +1863,34 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
       <p class="muted policy-source">서울시 무인단속카메라 107대 설치 대상지의 전후 각 2년 집계 · <a href="https://clik.nanet.go.kr/clikr-collection/policyinfo/77/313/2023/CLIKC9541231271682321_attach_2.pdf">서울시 분석</a> · <a href="https://m.easylaw.go.kr/MOB/IssueQnaRetrieve.laf?issueqaSeq=115">2021년 제재 변경</a></p>
     </section>
     <section class="audit-diagnosis" aria-labelledby="policy-law-title">
-      <h2 class="audit-heading" id="policy-law-title">어린이·노인보호구역 제재 비교</h2>
-      <p class="muted policy-source">2026년 11월 기준 · 승용차 · 가중 단속 08:00~20:00 · 과태료 / 범칙금 / 벌점</p>
+      <h2 class="audit-heading" id="policy-law-title">2026년 기준 과태료 비교</h2>
+      <p class="muted policy-source">승용차 기준 · 오전 8시~오후 8시</p>
       <div class="policy-law-scroll" tabindex="0" role="region" aria-labelledby="policy-law-title">
+        <table class="policy-law-table policy-fines">
+          <thead><tr><th scope="col">위반 항목</th><th scope="col">어린이보호구역</th><th scope="col">노인보호구역</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">제한속도 20km/h 이하 초과</th><td>7만 원</td><td>7만 원</td></tr>
+            <tr><th scope="row">제한속도 20km/h 초과~40km/h 이하</th><td>10만 원</td><td>10만 원</td></tr>
+            <tr><th scope="row">제한속도 40km/h 초과~60km/h 이하</th><td>13만 원</td><td>13만 원</td></tr>
+            <tr><th scope="row">제한속도 60km/h 초과</th><td>16만 원</td><td>16만 원</td></tr>
+            <tr><th scope="row">신호·지시 위반</th><td>13만 원</td><td>13만 원</td></tr>
+            <tr><th scope="row">불법 주정차</th><td>12만 원</td><td>8만 원</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <figure class="parking-fine-chart" aria-labelledby="parking-fine-title">
+        <h3 id="parking-fine-title">불법 주정차 과태료 비교</h3>
+        <dl class="parking-fine-bars">
+          <div><dt>일반도로</dt><dd><strong>4만 원</strong><span style="--bar-height: 20px" aria-hidden="true"></span></dd></div>
+          <div><dt>노인보호구역</dt><dd><strong>8만 원</strong><span style="--bar-height: 40px" aria-hidden="true"></span></dd></div>
+          <div><dt>어린이보호구역</dt><dd><strong>12만 원</strong><span style="--bar-height: 60px" aria-hidden="true"></span></dd></div>
+        </dl>
+        <figcaption class="muted policy-source"><a href="https://law.go.kr/flDownload.do?bylClsCd=110201&amp;flSeq=133674929&amp;gubun=">도로교통법 시행령 별표 7</a> · <a href="https://child.gangbuk.seoul.kr/portal/bbs/B0000082/list.do?menuNo=200271">강북구 주정차 과태료 안내</a></figcaption>
+      </figure>
+      <details class="policy-sanctions">
+        <summary>범칙금·벌점·형사처벌 상세 비교</summary>
+        <p class="muted policy-source">단속 금액 표기 순서: 과태료 / 범칙금 / 벌점</p>
+      <div class="policy-law-scroll" tabindex="0" role="region" aria-label="보호구역 위반 유형별 단속 기준과 형사처벌">
         <table class="policy-law-table">
           <thead><tr><th scope="col">위반 유형</th><th scope="col">어린이보호구역</th><th scope="col">노인보호구역</th></tr></thead>
           <tbody>
@@ -1878,7 +1905,9 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
       </div>
       <p class="muted policy-source">과태료와 범칙금은 부과 대상과 단속 방식에 따라 구분됩니다. 치사상 행은 형사처벌 기준입니다. 같은 장소에서 2시간 이상 불법 주정차한 경우 과태료에 1만원이 추가됩니다.</p>
       <p class="muted policy-source"><a href="https://www.law.go.kr/flDownload.do?bylClsCd=110201&amp;flSeq=150017271">과태료 · 시행령 별표 7</a> · <a href="https://easylaw.go.kr/CSP/CnpClsMain.laf?ccfNo=1&amp;cciNo=1&amp;cnpClsNo=3&amp;csmSeq=690">범칙금 · 시행령 별표 10</a> · <a href="https://www.law.go.kr/LSW/flDownload.do?bylClsCd=110201&amp;flSeq=158706525">벌점 · 시행규칙 별표 28</a> · <a href="https://law.go.kr/lsLinkCommonInfo.do?chrClsCd=010202&amp;lsJoLnkSeq=1018791639">특정범죄가중법</a> · <a href="https://www.law.go.kr/lsLinkCommonInfo.do?chrClsCd=010202&amp;lsJoLnkSeq=1028448901">교통사고처리 특례법</a></p>
+      </details>
     </section>
+    </div>
   </div>
 </section>
 <section class="oecd-screen story-screen" id="policy-alternatives" aria-labelledby="policy-title">
