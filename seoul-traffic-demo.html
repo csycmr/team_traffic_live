@@ -851,6 +851,29 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 .parking-fine-bars > div:last-child dd span { background: var(--mint) }
 .policy-sanctions { margin-top: 9px; font-size: 12px }
 .policy-sanctions summary { cursor: pointer; color: #c1dcf5 }
+.child-precedent { display: grid; gap: 12px }
+#school-zone-precedent .child-precedent > section,
+#school-zone-precedent .child-examples > section { padding: clamp(10px, 1.5svh, 16px) }
+.child-policy-timeline { list-style: none; display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; padding: 0; margin: 10px 0 0 }
+.child-policy-timeline li { font-size: 13px; line-height: 1.5; border-top: 2px solid var(--line); padding-top: 7px }
+.child-policy-timeline time { color: var(--mint); font-weight: 700; display: block }
+.child-policy-timeline strong { display: block; margin-block: 2px }
+.child-data-grid, .child-examples { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px }
+.child-series { min-width: 0; margin: 8px 0 0 }
+.child-series svg { display: block; width: 100%; max-height: 156px }
+.child-series svg text { text-anchor: middle; fill: var(--muted); font-size: 12px }
+.child-series svg .child-value { fill: var(--child-series-color); font-size: 12px; font-weight: 700 }
+.child-series svg circle { fill: var(--child-series-color) }
+.child-series svg polyline { fill: none; stroke: var(--child-series-color); stroke-width: 2.5 }
+.child-axis { stroke: var(--line) }
+.child-law-marker { stroke: #6f879a; stroke-dasharray: 3 4 }
+.child-precedent .audit-heading { margin-bottom: 4px }
+.child-precedent .audit-chart-caption { margin-bottom: 3px }
+#school-zone-fines .policy-fines { min-width: min(430px,100%) }
+#school-zone-fines .parking-fine-bars { margin-inline: auto; max-width: 850px }
+@media (max-width: 850px) {
+  .child-policy-timeline, .child-data-grid, .child-examples { grid-template-columns: minmax(0,1fr) }
+}
 </style>
 <link rel="stylesheet" href="./assets/oecd-rankings.css">
 <link rel="stylesheet" href="./assets/national-fatalities.css">
@@ -1832,12 +1855,65 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
     <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="school-zone-title">어린이보호구역 선례</h2></div>
     <nav class="header-meta" aria-label="어린이보호구역 선례 화면 이동">
       <a class="traffic-jump" href="#zone-overlap"><span aria-hidden="true">↑</span> 보호구역 중첩 지도</a>
-      <a class="traffic-jump" href="#policy-alternatives">노인보호구역 개선안 <span aria-hidden="true">↓</span></a>
+      <a class="traffic-jump" href="#school-zone-fines">과태료 비교 <span aria-hidden="true">↓</span></a>
       <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
     </nav>
   </header>
-  <div class="oecd-content policy-content school-precedent-content">
-    <div class="policy-law-grid">
+  <div class="oecd-content policy-content child-precedent">
+    <section class="audit-diagnosis" aria-labelledby="child-timeline-title">
+      <h2 class="audit-heading" id="child-timeline-title">스쿨존 안전 대책의 변화</h2>
+      <ol class="child-policy-timeline">
+        <li><time datetime="2020">2020년</time><strong>민식이법 시행</strong>어린이 치사상 가중처벌이 신설되고, 스쿨존 안전시설 설치가 본격화됐습니다.</li>
+        <li><time datetime="2021-05-11">2021년 5월</time><strong>불법 주정차 제재 강화</strong>승용차 과태료와 범칙금이 각각 8만 원에서 12만 원으로 올랐습니다.</li>
+        <li><time datetime="2022">2022년까지</time><strong>서울 스쿨존 안전시설 확대</strong>2020~2022년 무인단속카메라 1,303대, 옐로카펫 980개를 설치했습니다.</li>
+      </ol>
+    </section>
+    <section class="audit-diagnosis" aria-labelledby="child-trends-title">
+      <h2 class="audit-heading" id="child-trends-title">전국 어린이 보행 교통사고 추이</h2>
+      <p class="audit-chart-caption">12세 이하 · 전국 모든 도로 · 2019년 대비 2025년 사고 38.9% 감소, 사망 65.0% 감소</p>
+      <div class="child-data-grid">
+        <figure class="child-series">
+  <h3>보행사고 건수</h3>
+  <svg viewBox="0 0 542 137" role="img" aria-label="2019년 3,856건, 2020년 2,079건, 2021년 2,451건, 2022년 2,787건, 2023년 2,624건, 2024년 2,606건, 2025년 2,356건" style="--child-series-color:#8cf0e8">
+    <line class="child-axis" x1="37" x2="505" y1="112" y2="112"/>
+    <line class="child-law-marker" x1="115" x2="115" y1="15" y2="112"/>
+    <polyline points="37,22.3 115,63.7 193,55.0 271,47.2 349,51.0 427,51.4 505,57.2"/>
+    <circle cx="37" cy="22.3" r="3.5"/><text class="child-value" x="37" y="14.3">3,856건</text><text x="37" y="131">2019</text>
+    <circle cx="115" cy="63.7" r="3.5"/><text class="child-value" x="115" y="55.7">2,079건</text><text x="115" y="131">2020</text>
+    <circle cx="193" cy="55.0" r="3.5"/><text class="child-value" x="193" y="47.0">2,451건</text><text x="193" y="131">2021</text>
+    <circle cx="271" cy="47.2" r="3.5"/><text class="child-value" x="271" y="39.2">2,787건</text><text x="271" y="131">2022</text>
+    <circle cx="349" cy="51.0" r="3.5"/><text class="child-value" x="349" y="43.0">2,624건</text><text x="349" y="131">2023</text>
+    <circle cx="427" cy="51.4" r="3.5"/><text class="child-value" x="427" y="43.4">2,606건</text><text x="427" y="131">2024</text>
+    <circle cx="505" cy="57.2" r="3.5"/><text class="child-value" x="505" y="49.2">2,356건</text><text x="505" y="131">2025</text>
+  </svg>
+</figure>
+        <figure class="child-series">
+  <h3>보행사고 사망자 수</h3>
+  <svg viewBox="0 0 542 137" role="img" aria-label="2019년 20명, 2020년 16명, 2021년 10명, 2022년 14명, 2023년 12명, 2024년 4명, 2025년 7명" style="--child-series-color:#ffd17a">
+    <line class="child-axis" x1="37" x2="505" y1="112" y2="112"/>
+    <line class="child-law-marker" x1="115" x2="115" y1="15" y2="112"/>
+    <polyline points="37,27.5 115,44.4 193,69.7 271,52.8 349,61.3 427,95.1 505,82.4"/>
+    <circle cx="37" cy="27.5" r="3.5"/><text class="child-value" x="37" y="19.5">20명</text><text x="37" y="131">2019</text>
+    <circle cx="115" cy="44.4" r="3.5"/><text class="child-value" x="115" y="36.4">16명</text><text x="115" y="131">2020</text>
+    <circle cx="193" cy="69.7" r="3.5"/><text class="child-value" x="193" y="61.7">10명</text><text x="193" y="131">2021</text>
+    <circle cx="271" cy="52.8" r="3.5"/><text class="child-value" x="271" y="44.8">14명</text><text x="271" y="131">2022</text>
+    <circle cx="349" cy="61.3" r="3.5"/><text class="child-value" x="349" y="53.3">12명</text><text x="349" y="131">2023</text>
+    <circle cx="427" cy="95.1" r="3.5"/><text class="child-value" x="427" y="87.1">4명</text><text x="427" y="131">2024</text>
+    <circle cx="505" cy="82.4" r="3.5"/><text class="child-value" x="505" y="74.4">7명</text><text x="505" y="131">2025</text>
+  </svg>
+</figure>
+      </div>
+      <p class="muted policy-source">점선: 2020년 민식이법 시행. 전국 추이에는 통행량 등 다른 요인도 반영됩니다. · <a href="https://www.nabo.go.kr/board/file/down.do?fid=33318243">2019~2023년 국회예산정책처·한국도로교통공단</a> · <a href="https://taas.koroad.or.kr/sta/acs/gus/selectChildPdstrnTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAS_CPT">2024~2025년 TAAS</a></p>
+    </section>
+    <div class="child-examples">
+    <section class="audit-diagnosis" aria-labelledby="policy-school-zones">
+      <h2 class="audit-heading" id="policy-school-zones">서울 설치 대상지의 전후 비교</h2><p class="audit-chart-caption">어린이 보행사고 31건 → 9건 · 71% 감소</p>
+      <dl class="school-crash-bars">
+        <div><dt>2018~2019년</dt><dd><span aria-hidden="true"><i style="width:100%"></i></span><strong>31건</strong></dd></div>
+        <div><dt>2021~2022년</dt><dd><span aria-hidden="true"><i style="width:29.03%"></i></span><strong>9건</strong></dd></div>
+      </dl>
+      <p class="muted policy-source">서울시 무인단속카메라 107대 설치 대상지의 전후 각 2년 집계 · <a href="https://clik.nanet.go.kr/clikr-collection/policyinfo/77/313/2023/CLIKC9541231271682321_attach_2.pdf">서울시 분석</a> · <a href="https://m.easylaw.go.kr/MOB/IssueQnaRetrieve.laf?issueqaSeq=115">2021년 제재 변경</a></p>
+    </section>
     <section class="audit-diagnosis school-zone-overview" aria-labelledby="zone-summary">
       <h2 class="audit-heading" id="zone-summary">서울 보호구역 현황</h2>
       <p class="audit-chart-caption">서울시 어린이·노인 인구와 보호구역 지정 현황</p>
@@ -1863,20 +1939,19 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
         <figcaption class="muted">막대 높이는 지표별 최댓값을 100%로 환산한 비율입니다. 인구는 2026년 9월 말 기준입니다. 어린이는 경찰청 2026년 6월 말 서울 지정 현황의 기재 항목 합계(조례시설 미기재), 노인은 2025년 명단 기준입니다. <a href="./data/12_경찰청_어린이보호구역_지정현황_20260630.csv">어린이보호구역 집계표</a> · <a href="./data/11_서울_연령별_주민등록인구_202609.csv">인구 집계표</a> · <a href="https://kosis.kr/statisticsList/mass/mass_list.jsp?org_id=101&amp;tbl_id=DT_1B04006" target="_blank" rel="noopener">KOSIS 원자료</a></figcaption>
       </figure>
     </section>
-    <section class="audit-diagnosis" aria-labelledby="policy-school-zones">
-      <h2 class="audit-heading" id="policy-school-zones">스쿨존 안전 대책의 변화</h2>
-      <dl class="law-timeline">
-        <div><dt>2020년 · 민식이법 시행</dt><dd>스쿨존 안전이 공론화되고 어린이 치사상 가중처벌이 신설됐습니다. 서울시는 2020~2022년에 무인단속카메라 1,303대를 설치했습니다.</dd></div>
-        <div><dt>2021년 · 불법 주정차 제재 강화</dt><dd>5월 11일부터 스쿨존 내 승용차 과태료와 범칙금이 각각 8만원에서 12만원으로 올랐습니다.</dd></div>
-        <div><dt>현행 기준 · 제한속도 소폭 초과에도 벌점</dt><dd>어린이보호구역에서 제한속도를 20km/h 이하로 초과한 경우 오전 8시~오후 8시에는 벌점 15점이 부과됩니다.</dd></div>
-      </dl>
-      <h3>어린이 보행사고 31건 → 9건</h3>
-      <dl class="school-crash-bars">
-        <div><dt>2018~2019년</dt><dd><span aria-hidden="true"><i style="width:100%"></i></span><strong>31건</strong></dd></div>
-        <div><dt>2021~2022년</dt><dd><span aria-hidden="true"><i style="width:29.03%"></i></span><strong>9건</strong></dd></div>
-      </dl>
-      <p class="muted policy-source">서울시 무인단속카메라 107대 설치 대상지의 전후 각 2년 집계 · <a href="https://clik.nanet.go.kr/clikr-collection/policyinfo/77/313/2023/CLIKC9541231271682321_attach_2.pdf">서울시 분석</a> · <a href="https://m.easylaw.go.kr/MOB/IssueQnaRetrieve.laf?issueqaSeq=115">2021년 제재 변경</a></p>
-    </section>
+    </div>
+  </div>
+</section>
+<section class="oecd-screen story-screen" id="school-zone-fines" aria-labelledby="school-fines-title">
+  <header class="traffic-header story-header">
+    <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="school-fines-title">어린이·노인보호구역 과태료 비교</h2></div>
+    <nav class="header-meta" aria-label="어린이·노인보호구역 과태료 비교 화면 이동">
+      <a class="traffic-jump" href="#school-zone-precedent"><span aria-hidden="true">↑</span> 어린이보호구역 선례</a>
+      <a class="traffic-jump" href="#policy-alternatives">노인보호구역 개선안 <span aria-hidden="true">↓</span></a>
+      <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
+    </nav>
+  </header>
+  <div class="oecd-content policy-content">
     <section class="audit-diagnosis" aria-labelledby="policy-law-title">
       <h2 class="audit-heading" id="policy-law-title">2026년 기준 과태료 비교</h2>
       <p class="muted policy-source">승용차 기준 · 오전 8시~오후 8시</p>
@@ -1922,7 +1997,6 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
       <p class="muted policy-source"><a href="https://www.law.go.kr/flDownload.do?bylClsCd=110201&amp;flSeq=150017271">과태료 · 시행령 별표 7</a> · <a href="https://easylaw.go.kr/CSP/CnpClsMain.laf?ccfNo=1&amp;cciNo=1&amp;cnpClsNo=3&amp;csmSeq=690">범칙금 · 시행령 별표 10</a> · <a href="https://www.law.go.kr/LSW/flDownload.do?bylClsCd=110201&amp;flSeq=158706525">벌점 · 시행규칙 별표 28</a> · <a href="https://law.go.kr/lsLinkCommonInfo.do?chrClsCd=010202&amp;lsJoLnkSeq=1018791639">특정범죄가중법</a> · <a href="https://www.law.go.kr/lsLinkCommonInfo.do?chrClsCd=010202&amp;lsJoLnkSeq=1028448901">교통사고처리 특례법</a></p>
       </details>
     </section>
-    </div>
   </div>
 </section>
 <section class="oecd-screen story-screen" id="policy-alternatives" aria-labelledby="policy-title">
@@ -1932,7 +2006,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
       <h2 class="oecd-title" id="policy-title">노인보호구역 개선안</h2>
     </div>
     <nav class="header-meta" aria-label="대안 화면 이동">
-      <a class="traffic-jump" href="#school-zone-precedent"><span aria-hidden="true">↑</span> 어린이보호구역 선례</a>
+      <a class="traffic-jump" href="#school-zone-fines"><span aria-hidden="true">↑</span> 과태료 비교</a>
       <a class="traffic-jump" href="#traffic-live">서울 교통 현황</a>
       <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
     </nav>
