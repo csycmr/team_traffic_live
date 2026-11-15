@@ -441,6 +441,13 @@ body.background-video-off :is(.national-screen, .oecd-screen, .oecd-video-screen
   background: linear-gradient(90deg, #081421de 0%, #0b1a297a 58%, #081421c9 100%);
 }
 .traffic-header .eyebrow { color: #d5e1ee }
+.traffic-header-live { display: flex; align-items: center; flex-wrap: wrap; gap: 6px 10px; margin-inline-start: 6px }
+@media (max-width: 760px) {
+  #traffic-live > .traffic-header { flex-wrap: wrap }
+  #traffic-live > .traffic-header .brand { flex-wrap: wrap }
+  #traffic-live > .traffic-header .header-meta { margin-inline-start: auto }
+  .traffic-header-live { margin-inline-start: 0 }
+}
 section.story-screen {
   grid-template-rows: auto 1fr;
   align-content: start;
@@ -825,8 +832,9 @@ html { scroll-snap-type: y mandatory }
   <div class="brand">
     <span class="brand-icon" aria-hidden="true">↗</span>
     <div><div class="eyebrow">SEOUL TRAFFIC NEWSROOM</div><h1>서울 교통안전 라이브</h1></div>
+    <div class="traffic-header-live"><span class="demo">광화문·덕수궁 실시간</span><time id="clock" class="clock"></time></div>
   </div>
-  <div class="header-meta"><a class="traffic-jump" href="#audit-video">국정감사와 보호구역 <span aria-hidden="true">↓</span></a><span class="demo">광화문·덕수궁 실시간</span><time id="clock" class="clock"></time><button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button></div>
+  <div class="header-meta"><a class="traffic-jump" href="#audit-video">국정감사와 보호구역 <span aria-hidden="true">↓</span></a><button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button></div>
 </header>
 <main>
   <aside>
