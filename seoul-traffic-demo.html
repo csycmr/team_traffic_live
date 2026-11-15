@@ -452,7 +452,7 @@ section.story-screen {
   border-top: 0;
 }
 .story-screen > .oecd-content {
-  align-self: center;
+  align-self: start;
   width: min(calc(100% - 2 * clamp(14px, 4vw, 60px)), 1280px);
 }
 .story-header .oecd-title {
@@ -475,7 +475,8 @@ section.story-screen {
 #traffic-live #board { height: auto; grid-template-columns: repeat(2, minmax(0, 1fr)) }
 #traffic-live #board .stat { min-height: 64px; padding-block: 8px }
 #crowd-estimate:not(:empty) { display: block; margin-top: 2px }
-.slow-roads { margin: 12px 0 8px }
+.slow-roads { margin: 12px 0 8px; padding-top: 10px; border-top: 1px solid var(--line) }
+.citydata-incidents .feed-row { border-bottom: 0 }
 .slow-roads h3 { font-size: 17px; font-family: "Paperlogy", "Noto Sans KR", sans-serif }
 #slow-roads-list p, #slow-roads-list ul { margin: 4px 0 0; font-size: 12px }
 .slow-roads ul { padding: 0; list-style: none }
@@ -543,7 +544,6 @@ section.story-screen {
 #audit-video > .oecd-content {
   display: grid;
   align-self: start;
-  margin-top: clamp(4px, 1svh, 12px);
   gap: clamp(16px, 2.4svh, 24px);
 }
 #audit-video .audit-heading { margin-bottom: 6px }
@@ -672,10 +672,8 @@ section.story-screen {
 .oecd-top-charts .oecd-column-measure strong { font-size: 10px }
 @media (min-width: 761px) {
   #audit-video { padding-bottom: 12px }
-  #audit-video > .story-header { min-height: clamp(64px, 9svh, 88px) }
   #audit-video > .oecd-content {
     width: min(calc(100% - 2 * clamp(14px, 4vw, 60px)), 1280px, 148svh);
-    margin-top: 6px;
     gap: clamp(10px, 1.6svh, 16px);
   }
   #audit-video .audit-trend { gap: 8px; padding-block: clamp(10px, 1.6svh, 16px) }
@@ -779,7 +777,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 #district-risk .zone-data-table .district-rate { color: var(--mint); font-weight: 700 }
 #district-risk .district-bar-column { width: 49% }
 #district-risk .district-track { display: block; height: 13px }
-#policy-alternatives .policy-content { display: grid; gap: clamp(8px, 1.5svh, 16px); padding-block: 12px }
+#policy-alternatives .policy-content { display: grid; gap: clamp(8px, 1.5svh, 16px) }
 .policy-evidence { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 14px; align-items: start }
 .policy-cases { display: grid; gap: 10px }
 #policy-alternatives .audit-diagnosis { padding: clamp(10px, 1.6svh, 17px) }
@@ -795,7 +793,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 @media (max-width: 850px) {
   .policy-evidence, .policy-actions { grid-template-columns: minmax(0, 1fr) }
 }
-#school-zone-precedent .policy-content { padding-block: 12px }
+#national-fatalities .national-lead { margin-top: 0 }
 .policy-law-grid { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.45fr); gap: 14px }
 .policy-law-grid .audit-diagnosis { min-width: 0 }
 .law-timeline { display: grid; gap: 12px; margin: 12px 0 20px }
