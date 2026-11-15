@@ -905,6 +905,23 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 @media (max-width: 650px) {
   .child-data-grid, .child-examples { grid-template-columns: minmax(0, 1fr) }
 }
+@media (min-width: 651px) {
+  .child-precedent .child-examples { grid-template-columns: minmax(0, 4fr) minmax(0, 6fr) }
+}
+.child-examples .school-study-bars { margin-top: 10px }
+.school-study-bars > div { grid-template-rows: 118px auto }
+.school-study-bars dd span { background: var(--mint) }
+.zone-ratio-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; text-align: center }
+.zone-ratio-ring { position: relative; width: min(100%, 126px); margin-inline: auto }
+.zone-ratio-ring svg { display: block; width: 100%; fill: none; stroke-width: 9 }
+.zone-ratio-base { stroke: #29445b }
+.zone-ratio-arc { stroke: var(--zone-color) }
+.zone-ratio-center { position: absolute; inset: 0; display: grid; align-content: center; justify-items: center; gap: 2px }
+.zone-ratio-center strong { font-size: clamp(13px, 1.4vw, 17px); color: var(--zone-color) }
+.zone-ratio-center small, .zone-ratio p { font-size: 11px }
+.zone-ratio p { line-height: 1.4 }
+.zone-ratio-share strong { color: var(--zone-color) }
+ .school-study-bars { grid-template-columns: repeat(2, minmax(0, 1fr)) }
 </style>
 <link rel="stylesheet" href="./assets/oecd-rankings.css">
 <link rel="stylesheet" href="./assets/national-fatalities.css">
@@ -1941,9 +1958,9 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
     <div class="child-examples">
     <section class="audit-diagnosis" aria-labelledby="policy-school-zones">
       <h2 class="audit-heading" id="policy-school-zones">서울 설치 대상지의 전후 비교</h2><p class="audit-chart-caption">어린이 보행사고 31건 → 9건 · 71% 감소</p>
-      <dl class="school-crash-bars">
-        <div><dt>2018~2019년</dt><dd><span aria-hidden="true"><i style="width:100%"></i></span><strong>31건</strong></dd></div>
-        <div><dt>2021~2022년</dt><dd><span aria-hidden="true"><i style="width:29.03%"></i></span><strong>9건</strong></dd></div>
+      <dl class="parking-fine-bars school-study-bars">
+        <div><dt>설치 전<br>2018~2019년</dt><dd><strong>31건</strong><span style="--bar-height: 93px" aria-hidden="true"></span></dd></div>
+        <div><dt>설치 후<br>2021~2022년</dt><dd><strong>9건</strong><span style="--bar-height: 27px" aria-hidden="true"></span></dd></div>
       </dl>
       <p class="muted policy-source">서울시 무인단속카메라 107대 설치 대상지의 전후 각 2년 집계 · <a href="https://clik.nanet.go.kr/clikr-collection/policyinfo/77/313/2023/CLIKC9541231271682321_attach_2.pdf">서울시 분석</a> · <a href="https://m.easylaw.go.kr/MOB/IssueQnaRetrieve.laf?issueqaSeq=115">2021년 제재 변경</a></p>
     </section>
@@ -1951,25 +1968,35 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
       <h2 class="audit-heading" id="zone-summary">서울 보호구역 현황</h2>
       <p class="audit-chart-caption">서울시 어린이·노인 인구와 보호구역 지정 현황</p>
       <figure class="compare-chart">
-        <div class="metric-groups" role="group" aria-label="인구와 보호구역별 어린이·노인 비교">
-          <div class="metric-group">
-            <h3 id="population-chart">인구</h3>
-            <div class="metric-pair" role="group" aria-labelledby="population-chart">
-              <div class="metric-bar children" style="--bar-height:32.98%"><strong aria-label="어린이 648,419명">648,419명</strong></div>
-              <div class="metric-bar older" style="--bar-height:100%"><strong aria-label="노인 1,965,896명">1,965,896명</strong></div>
+        <div class="zone-ratio-grid">
+          <div class="zone-ratio" style="--zone-color:#ffd54f">
+            <h3>어린이</h3>
+            <div class="zone-ratio-ring">
+              <svg viewBox="0 0 120 120" aria-hidden="true">
+                <circle class="zone-ratio-base" cx="60" cy="60" r="50" />
+                <circle class="zone-ratio-arc" cx="60" cy="60" r="50" pathLength="100" stroke-dasharray="0.251381 100" transform="rotate(-90 60 60)" />
+              </svg>
+              <div class="zone-ratio-center"><strong>약 398명</strong><small>보호구역 1곳당</small></div>
             </div>
-            <div class="metric-labels"><small>어린이</small><small>노인</small></div>
+            <p>인구 <strong>648,419명</strong></p>
+            <p>보호구역 <strong>1,630곳</strong> <small>(2026년)</small></p>
+            <p class="zone-ratio-share">보호구역 수 ÷ 인구수 <strong>0.2514%</strong></p>
           </div>
-          <div class="metric-group">
-            <h3 id="zones-chart">보호구역</h3>
-            <div class="metric-pair" role="group" aria-labelledby="zones-chart">
-              <div class="metric-bar children" style="--bar-height:100%"><strong aria-label="어린이 1,630개">1,630개</strong></div>
-              <div class="metric-bar older" style="--bar-height:11.96%"><strong aria-label="노인 195개">195개</strong></div>
+          <div class="zone-ratio" style="--zone-color:#73adff">
+            <h3>노인</h3>
+            <div class="zone-ratio-ring">
+              <svg viewBox="0 0 120 120" aria-hidden="true">
+                <circle class="zone-ratio-base" cx="60" cy="60" r="50" />
+                <circle class="zone-ratio-arc" cx="60" cy="60" r="50" pathLength="100" stroke-dasharray="0.009919 100" transform="rotate(-90 60 60)" />
+              </svg>
+              <div class="zone-ratio-center"><strong>약 10,082명</strong><small>보호구역 1곳당</small></div>
             </div>
-            <div class="metric-labels"><small>어린이<br>2026년</small><small>노인<br>2025년</small></div>
+            <p>인구 <strong>1,965,896명</strong></p>
+            <p>보호구역 <strong>195곳</strong> <small>(2025년)</small></p>
+            <p class="zone-ratio-share">보호구역 수 ÷ 인구수 <strong>0.0099%</strong></p>
           </div>
         </div>
-        <figcaption class="muted">막대 높이는 지표별 최댓값을 100%로 환산한 비율입니다. 인구는 2026년 9월 말 기준입니다. 어린이는 경찰청 2026년 6월 말 서울 지정 현황의 기재 항목 합계(조례시설 미기재), 노인은 2025년 명단 기준입니다. <a href="./data/12_경찰청_어린이보호구역_지정현황_20260630.csv">어린이보호구역 집계표</a> · <a href="./data/11_서울_연령별_주민등록인구_202609.csv">인구 집계표</a> · <a href="https://kosis.kr/statisticsList/mass/mass_list.jsp?org_id=101&amp;tbl_id=DT_1B04006" target="_blank" rel="noopener">KOSIS 원자료</a></figcaption>
+        <figcaption class="muted">전체 원은 연령별 인구 100%, 색 호는 보호구역 수를 인구수로 나눈 비율입니다. 1곳당 인구는 인구수를 지정 구역 수로 나눈 값입니다. 인구는 2026년 9월 말 기준입니다. 어린이는 경찰청 2026년 6월 말 서울 지정 현황의 기재 항목 합계(조례시설 미기재), 노인은 2025년 명단 기준입니다. <a href="./data/12_경찰청_어린이보호구역_지정현황_20260630.csv">어린이보호구역 집계표</a> · <a href="./data/11_서울_연령별_주민등록인구_202609.csv">인구 집계표</a> · <a href="https://kosis.kr/statisticsList/mass/mass_list.jsp?org_id=101&amp;tbl_id=DT_1B04006" target="_blank" rel="noopener">KOSIS 원자료</a></figcaption>
       </figure>
     </section>
     </div>
