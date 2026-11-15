@@ -88,18 +88,33 @@ export async function citydata(request, env) {
   if (cached?.key === key && Date.now() < cached.expiresAt) {
     return citydataJson(cached.data, 200, { 'cache-control': 'private, max-age=60' });
   }
+  let upstream;
+  let xml;
   try {
     const url = `${endpoint}/${encodeURIComponent(key)}/xml/citydata/1/5/${areaCode}`;
-    const upstream = await fetch(url, {
+    upstream = await fetch(url, {
       signal: AbortSignal.timeout(8_000),
-      redirect: 'error',
+      redirect: 'manual',
       headers: { accept: 'application/xml' },
     });
-    if (!upstream.ok) throw new Error('Seoul Citydata HTTP error');
-    const data = parseCitydata(await upstream.text());
+    if (!upstream.ok) {
+      return citydataJson({ error: 'citydata_upstream_http', status: upstream.status }, 502);
+    }
+    xml = await upstream.text();
+  } catch (error) {
+    const code = error?.name === 'TimeoutError' ? 'citydata_upstream_timeout' : 'citydata_upstream_connection';
+    return citydataJson({ error: code }, 502);
+  }
+
+  const resultCode = field(xml, 'RESULT\\.CODE') ?? field(xml, 'CODE');
+  if (resultCode !== 'INFO-000' && /^(?:ERROR|INFO)-[0-9]{3}$/.test(resultCode ?? '')) {
+    return citydataJson({ error: 'citydata_upstream_api', code: resultCode }, 502);
+  }
+  try {
+    const data = parseCitydata(xml);
     cached = { key, data, expiresAt: Date.now() + cacheTimeMs };
     return citydataJson(data, 200, { 'cache-control': 'private, max-age=60' });
   } catch {
-    return citydataJson({ error: 'citydata_upstream_unavailable' }, 502);
+    return citydataJson({ error: 'citydata_upstream_response' }, 502);
   }
 }
