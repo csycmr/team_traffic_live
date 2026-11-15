@@ -883,6 +883,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 }
 .child-policy-timeline time { color: var(--mint); font-weight: 700; display: block }
 .child-policy-timeline strong { display: block; margin-block: 2px }
+.child-policy-timeline .timeline-source { display: block; width: fit-content; margin-top: 3px }
 .child-data-grid, .child-examples { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px }
 .child-series { min-width: 0; margin: 8px 0 0 }
 .child-series svg { display: block; width: 100%; max-height: 156px }
@@ -1913,9 +1914,9 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
       <ol class="child-policy-timeline">
         <li><time datetime="2020">2020년</time><strong>민식이법 시행</strong>어린이 치사상 가중처벌이 신설되고, 스쿨존 안전시설 설치가 본격화됐습니다.</li>
         <li><time datetime="2021-05-11">2021년 5월</time><strong>불법 주정차 제재 강화</strong>승용차 과태료와 범칙금이 각각 8만 원에서 12만 원으로 올랐습니다.</li>
-        <li><time datetime="2022-07-12">2022년 7월</time><strong>무신호 횡단보도 일시정지</strong>스쿨존의 신호등 없는 횡단보도 앞에서는 보행자가 없어도 일시정지해야 합니다. <a href="https://www.police.go.kr/user/bbs/BD_selectBbs.do?q_bbsCode=1007&amp;q_bbscttSn=20220711162716654">경찰청</a></li>
+        <li><time datetime="2022-07-12">2022년 7월</time><strong>무신호 횡단보도 일시정지</strong>스쿨존의 신호등 없는 횡단보도 앞에서는 보행자가 없어도 일시정지해야 합니다. <a class="muted policy-source timeline-source" href="https://www.police.go.kr/user/bbs/BD_selectBbs.do?q_bbsCode=1007&amp;q_bbscttSn=20220711162716654">경찰청</a></li>
         <li><time datetime="2022">2022년까지</time><strong>서울 스쿨존 안전시설 확대</strong>2020~2022년 무인단속카메라 1,303대, 옐로카펫 980개를 설치했습니다.</li>
-        <li><time datetime="2023">2023년 하반기</time><strong>노란색 횡단보도 도입</strong>스쿨존을 알아보기 쉽도록 노란색 횡단보도와 구역 시작·끝 노면 표시를 도입했습니다. <a href="https://www.police.go.kr/user/bbs/BD_selectBbs.do?q_bbsCode=1002&amp;q_bbscttSn=20230517134639199">경찰청</a></li>
+        <li><time datetime="2023">2023년 하반기</time><strong>노란색 횡단보도 도입</strong>스쿨존을 알아보기 쉽도록 노란색 횡단보도와 구역 시작·끝 노면 표시를 도입했습니다. <a class="muted policy-source timeline-source" href="https://www.police.go.kr/user/bbs/BD_selectBbs.do?q_bbsCode=1002&amp;q_bbscttSn=20230517134639199">경찰청</a></li>
       </ol>
     </section>
     <section class="audit-diagnosis" aria-labelledby="child-trends-title">
