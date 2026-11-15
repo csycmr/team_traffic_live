@@ -775,7 +775,14 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 #district-risk .zone-data-table :is(th:first-child, th:last-child) { text-align: left }
 #district-risk .zone-data-table .district-rate { color: var(--mint); font-weight: 700 }
 #district-risk .district-bar-column { width: 44% }
-#district-risk .district-average-label { color: #ffdf8b; margin-inline-start: .7em; font-size: .85em }
+#district-risk .district-bar-column { position: relative }
+#district-risk .district-average-label {
+  position: absolute;
+  left: calc(8px + (100% - 14px) * .4308);
+  transform: translateX(-50%);
+  color: #ffdf8b;
+  font-size: .85em;
+}
 #district-risk .zone-data-table tbody { position: relative }
 #district-risk .zone-data-table tbody::after {
   content: "";
@@ -1933,7 +1940,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
           <thead><tr>
             <th scope="col">자치구</th><th scope="col">65세 이상 인구</th><th scope="col">고령 보행자 사고</th>
             <th scope="col">사고다발지역</th><th scope="col">노인보호구역</th><th scope="col">경계 중첩</th><th scope="col">1만 명당 사고</th>
-            <th scope="col" class="district-bar-column">사고율 비교 <span class="district-average-label">┆ 서울시 평균 10.77</span></th>
+            <th scope="col" class="district-bar-column">사고율 비교 <span class="district-average-label">서울시 평균 10.77</span></th>
           </tr></thead>
           <tbody>
             <tr>
