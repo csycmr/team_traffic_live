@@ -249,6 +249,13 @@ dialog p { font-size: 13px; line-height: 1.65; margin-top: 8px }
 @media (min-width: 1041px) {
   main { grid-template-columns: minmax(300px, 360px) minmax(0, 1fr) minmax(290px, 340px) }
 
+  main > .map {
+    align-self: start;
+    min-height: 0;
+    height: var(--desktop-map-height, 650px);
+    margin-inline: 8px;
+  }
+
   main > aside > section:first-child > .panel-title {
     min-height: 34px;
   }
@@ -1661,6 +1668,27 @@ canvas.addEventListener('pointermove', event => {
 });
 canvas.addEventListener('lostpointercapture', () => { drag = null; });
 new ResizeObserver(draw).observe(map);
+
+const desktopMapLayout = window.matchMedia('(min-width: 1041px)');
+const zoneChart = document.querySelector('.zone-panel .compare-chart');
+const zoneChartCaption = zoneChart.querySelector('figcaption');
+
+function alignMapWithZoneCaption() {
+  if (!desktopMapLayout.matches) return;
+
+  const mapTop = map.getBoundingClientRect().top;
+  const captionBottom = zoneChartCaption.getBoundingClientRect().bottom;
+  if (captionBottom > mapTop) {
+    map.style.setProperty('--desktop-map-height', `${captionBottom - mapTop}px`);
+  }
+}
+
+const zoneChartObserver = new ResizeObserver(alignMapWithZoneCaption);
+zoneChartObserver.observe(zoneChart);
+zoneChartObserver.observe(zoneChartCaption);
+window.addEventListener('resize', alignMapWithZoneCaption);
+desktopMapLayout.addEventListener('change', alignMapWithZoneCaption);
+alignMapWithZoneCaption();
 byId('clock').textContent = timeNow() + ' KST';
 renderBoard();
 start();
@@ -2062,6 +2090,7 @@ if (window.kakao?.maps?.load) {
         level: initialLevel
       });
       kakaoMap.setMaxLevel(initialLevel + 1);
+      new ResizeObserver(() => kakaoMap.relayout()).observe(mapElement);
       showSeoulBoundaries(kakaoMap).catch(error => console.error("서울 경계 로드 실패", error));
       showProtectionZones(kakaoMap);
       showAccidentHotspots(kakaoMap);
