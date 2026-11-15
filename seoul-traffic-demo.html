@@ -765,23 +765,8 @@ html { scroll-snap-type: y mandatory }
   }
 
   .chart-awaiting .national-donut-shape > :is(path, text) { opacity: 0 }
-  .chart-entered .national-donut-shape > :is(path, text) {
-    animation: reveal-metric-value 160ms ease-out var(--donut-delay, 875ms) both;
-  }
-  .national-donut-shape :is([fill="var(--slice-1)"], [fill="var(--side-1)"], .national-slice-label:nth-of-type(1)) {
-    --donut-delay: 0ms;
-  }
-  .national-donut-shape :is([fill="var(--slice-2)"], [fill="var(--side-2)"], .national-slice-label:nth-of-type(2)) {
-    --donut-delay: 175ms;
-  }
-  .national-donut-shape :is([fill="var(--slice-3)"], [fill="var(--side-3)"], .national-slice-label:nth-of-type(3)) {
-    --donut-delay: 350ms;
-  }
-  .national-donut-shape :is([fill="var(--slice-4)"], [fill="var(--side-4)"], .national-slice-label:nth-of-type(4)) {
-    --donut-delay: 525ms;
-  }
-  .national-donut-shape :is([fill="var(--slice-5)"], [fill="var(--side-5)"], .national-slice-label:nth-of-type(5)) {
-    --donut-delay: 700ms;
+  .chart-entered .national-donut-shape > text {
+    animation: reveal-metric-value 180ms ease-out 950ms both;
   }
 
   .national-population:is(.chart-awaiting, .chart-entered) polyline {
@@ -2712,10 +2697,101 @@ if (window.kakao?.maps?.load) {
 }
 </script>
 <script>
+function animateDonut(chart, startedAt) {
+  const svg = chart.querySelector('.national-donut-shape');
+  if (!svg) return;
+
+  const namespace = svg.namespaceURI;
+  const duration = 950;
+  const turn = Math.PI * 2;
+  const defs = document.createElementNS(namespace, 'defs');
+  const createPath = () => document.createElementNS(namespace, 'path');
+
+  function addClip(id, paths) {
+    const clip = document.createElementNS(namespace, 'clipPath');
+    clip.id = id;
+    clip.append(...paths);
+    defs.append(clip);
+    return clip;
+  }
+
+  const slices = Array.from(svg.querySelectorAll('.national-donut-surface'), (surface, index) => {
+    // Each top face starts with the outer arc followed by the radial line to the inner arc.
+    const coordinates = surface.getAttribute('d').match(/-?\d+(?:\.\d+)?/g).map(Number);
+    const [startX, startY, outerX, outerY] = coordinates;
+    const [endX, endY, endInnerX, endInnerY, innerX, innerY] = coordinates.slice(7, 13);
+    const [startInnerX, startInnerY] = coordinates.slice(16);
+    const startAngle = Math.atan2((startY - startInnerY) / (outerY - innerY), (startX - startInnerX) / (outerX - innerX));
+    const endAngle = Math.atan2((endY - endInnerY) / (outerY - innerY), (endX - endInnerX) / (outerX - innerX));
+    const sweep = (endAngle - startAngle + turn) % turn;
+    const centerX = startX - outerX * Math.cos(startAngle);
+    const centerY = startY - outerY * Math.sin(startAngle);
+    const sliceNumber = surface.getAttribute('fill').match(/\d+/)[0];
+    const sides = Array.from(svg.querySelectorAll('path[fill="var(--side-' + sliceNumber + ')"]'));
+    const depth = sliceNumber === '1' ? 21 : 14;
+    const id = chart.getAttribute('aria-labelledby') + '-sweep-' + index;
+    const top = createPath();
+    const sideTop = createPath();
+    const sideBottom = createPath();
+    const sideStart = createPath();
+    const sideEnd = createPath();
+    sideBottom.setAttribute('transform', 'translate(0 ' + depth + ')');
+    addClip(id, [top]);
+    addClip(id + '-side', [sideTop, sideBottom, sideStart, sideEnd]);
+    surface.setAttribute('clip-path', 'url(#' + id + ')');
+    for (const side of sides) side.setAttribute('clip-path', 'url(#' + id + '-side)');
+
+    const movingFace = createPath();
+    movingFace.setAttribute('fill', 'var(--side-' + sliceNumber + ')');
+    surface.before(movingFace);
+
+    const point = (angle, radiusX, radiusY) =>
+      [centerX + radiusX * Math.cos(angle), centerY + radiusY * Math.sin(angle)];
+    const wideStart = point(startAngle, outerX * 2, outerY * 2);
+    const edge = (a, b) =>
+      'M ' + a.join(' ') + ' L ' + b.join(' ') + ' v ' + depth + ' L ' + a[0] + ' ' + (a[1] + depth) + ' Z';
+    sideStart.setAttribute('d', edge([centerX, centerY], wideStart));
+
+    return {
+      draw(progress) {
+        const angle = startAngle + sweep * Math.max(progress, 0.0001);
+        const wideEnd = point(angle, outerX * 2, outerY * 2);
+        const sector = 'M ' + centerX + ' ' + centerY + ' L ' + wideStart.join(' ') +
+          ' A ' + (outerX * 2) + ' ' + (outerY * 2) + ' 0 0 1 ' + wideEnd.join(' ') + ' Z';
+        for (const shape of [top, sideTop, sideBottom]) shape.setAttribute('d', sector);
+        sideEnd.setAttribute('d', edge([centerX, centerY], wideEnd));
+        movingFace.setAttribute('d', Math.cos(angle) > 0
+          ? edge(point(angle, innerX, innerY), point(angle, outerX, outerY))
+          : '');
+      },
+      finish() {
+        for (const path of [surface, ...sides]) path.removeAttribute('clip-path');
+        movingFace.remove();
+      }
+    };
+  });
+  svg.prepend(defs);
+
+  function drawFrame(now) {
+    const elapsed = Math.min(Math.max((now - startedAt) / duration, 0), 1);
+    if (elapsed === 1) {
+      for (const slice of slices) slice.finish();
+      defs.remove();
+      return;
+    }
+    const progress = 1 - (1 - elapsed) ** 2;
+    for (const slice of slices) slice.draw(progress);
+    requestAnimationFrame(drawFrame);
+  }
+  drawFrame(startedAt);
+}
+
 if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
   const chartObserver = new IntersectionObserver((entries, observer) => {
+    const startedAt = performance.now();
     for (const entry of entries) {
       if (entry.intersectionRatio < 0.35) continue;
+      if (entry.target.classList.contains('national-donut')) animateDonut(entry.target, startedAt);
       entry.target.classList.replace('chart-awaiting', 'chart-entered');
       observer.unobserve(entry.target);
     }
