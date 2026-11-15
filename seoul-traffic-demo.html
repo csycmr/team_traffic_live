@@ -2141,21 +2141,21 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
       <p class="audit-chart-caption">자치구 전체 사고 건수 기준 · 증가 5개 · 감소 3개 · 동일 1개</p>
       <div class="risk-change-scroll" tabindex="0" role="region" aria-label="노인보호구역 지정 전후 비교표">
         <table class="risk-change-table">
-          <thead><tr><th scope="col">자치구</th><th scope="col">지정연도</th><th scope="col">지정 구역 수</th><th scope="col">사고 건수 전 → 후</th><th scope="col">증감(건)</th><th scope="col">사고율 전 → 후</th></tr></thead>
+          <thead><tr><th scope="col">자치구</th><th scope="col">지정연도</th><th scope="col">지정 구역 수</th><th scope="col">사고 건수 전 → 지정 → 후</th><th scope="col">증감(건)</th><th scope="col">사고율 전 → 지정 → 후</th></tr></thead>
           <tbody>
-            <tr><th scope="row">은평구</th><td>2023</td><td>1곳</td><td>78 → 111</td><td>+33</td><td>8.70 → 11.32</td></tr>
-            <tr><th scope="row">송파구</th><td>2023</td><td>4곳</td><td>102 → 116</td><td>+14</td><td>9.85 → 10.15</td></tr>
-            <tr><th scope="row">관악구</th><td>2023</td><td>1곳</td><td>78 → 82</td><td>+4</td><td>9.46 → 9.23</td></tr>
-            <tr><th scope="row">마포구</th><td>2023</td><td>1곳</td><td>40 → 38</td><td>−2</td><td>7.15 → 6.33</td></tr>
-            <tr><th scope="row">노원구</th><td>2024</td><td>1곳</td><td>82 → 85</td><td>+3</td><td>8.50 → 8.11</td></tr>
-            <tr><th scope="row">서초구</th><td>2024</td><td>2곳</td><td>52 → 54</td><td>+2</td><td>7.92 → 7.47</td></tr>
-            <tr><th scope="row">관악구</th><td>2024</td><td>1곳</td><td>75 → 75</td><td>0</td><td>8.78 → 8.07</td></tr>
-            <tr><th scope="row">송파구</th><td>2024</td><td>6곳</td><td>121 → 110</td><td>−11</td><td>11.11 → 9.22</td></tr>
-            <tr><th scope="row">동대문구</th><td>2024</td><td>1곳</td><td>155 → 132</td><td>−23</td><td>23.12 → 18.14</td></tr>
+            <tr><th scope="row">은평구</th><td>2023</td><td>1곳</td><td>78 → 112 → 111</td><td>+33</td><td>8.70 → 11.94 → 11.32</td></tr>
+            <tr><th scope="row">송파구</th><td>2023</td><td>4곳</td><td>102 → 121 → 116</td><td>+14</td><td>9.85 → 11.11 → 10.15</td></tr>
+            <tr><th scope="row">관악구</th><td>2023</td><td>1곳</td><td>78 → 75 → 82</td><td>+4</td><td>9.46 → 8.78 → 9.23</td></tr>
+            <tr><th scope="row">마포구</th><td>2023</td><td>1곳</td><td>40 → 46 → 38</td><td>−2</td><td>7.15 → 7.95 → 6.33</td></tr>
+            <tr><th scope="row">노원구</th><td>2024</td><td>1곳</td><td>82 → 85 → 85</td><td>+3</td><td>8.50 → 8.45 → 8.11</td></tr>
+            <tr><th scope="row">서초구</th><td>2024</td><td>2곳</td><td>52 → 47 → 54</td><td>+2</td><td>7.92 → 6.84 → 7.47</td></tr>
+            <tr><th scope="row">관악구</th><td>2024</td><td>1곳</td><td>75 → 82 → 75</td><td>0</td><td>8.78 → 9.23 → 8.07</td></tr>
+            <tr><th scope="row">송파구</th><td>2024</td><td>6곳</td><td>121 → 116 → 110</td><td>−11</td><td>11.11 → 10.15 → 9.22</td></tr>
+            <tr><th scope="row">동대문구</th><td>2024</td><td>1곳</td><td>155 → 130 → 132</td><td>−23</td><td>23.12 → 18.68 → 18.14</td></tr>
           </tbody>
         </table>
       </div>
-      <p class="muted policy-source">2023년 지정은 2022년과 2024년, 2024년 지정은 2023년과 2025년을 비교했습니다. 구역 수는 2025년 명단 기준입니다.</p>
+      <p class="muted policy-source">각 수치는 전년도 → 지정연도 → 이듬해 순입니다. 증감은 전년도와 이듬해의 차이입니다. 구역 수는 2025년 명단 기준입니다.</p>
       <p class="muted policy-source">사고율은 자치구의 65세 이상 인구 1만 명당 고령 보행자 사고 건수입니다. 보호구역 주변 사고와 지정 효과를 확인하려면 사고 위치 자료와 비교 지역이 필요합니다.</p>
       <p class="muted policy-source">출처 · <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/04_보호구역_마스터.csv">팀 보호구역 명단</a> · <a href="https://github.com/csy04x2/elder_accident/blob/main/data/processed/01_자치구연도_패널.csv">팀 자치구·연도별 사고 자료</a></p>
     </section>
