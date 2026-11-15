@@ -960,6 +960,33 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
   .review-list { grid-row:auto }
   .review-candidates { min-width:485px }
 }
+
+/* Give the school-zone charts room between headings, plots and sources. */
+.child-policy-timeline { gap: clamp(10px, 1.6svh, 16px); margin-top: 16px }
+.child-policy-timeline strong {
+  display: table;
+  padding: 3px 7px;
+  margin-block: 4px 5px;
+  border: 1px solid #3a655e;
+  border-radius: 3px;
+  background: #203f3d;
+  color: #b5f6e7;
+}
+.child-policy-timeline .timeline-source { font-size: 11px; line-height: 1.4; margin-top: 5px }
+.child-precedent > [aria-labelledby="child-trends-title"],
+.child-examples > .audit-diagnosis { display: flex; flex-direction: column }
+.child-precedent .child-data-grid { margin-block: clamp(16px, 2.5svh, 26px) clamp(18px, 3svh, 30px) }
+.child-precedent .child-series { margin-top: 0 }
+.child-precedent .child-series h3 { margin-bottom: 14px }
+.child-precedent > [aria-labelledby="child-trends-title"] > .policy-source,
+.child-examples > .audit-diagnosis > .policy-source { margin-top: auto; padding-top: 12px }
+.child-examples .school-study-bars { margin-block: 24px 22px }
+.child-examples .school-zone-overview .compare-chart { display: flex; flex-direction: column; flex: 1; margin-top: 0 }
+.child-examples .zone-density { row-gap: 20px; margin-block: 22px 24px }
+.child-examples .school-zone-overview .compare-chart > .policy-source { margin-top: auto }
+@media(max-width:960px) {
+  .child-precedent .child-data-grid { margin-block: 18px }
+}
 </style>
 <link rel="stylesheet" href="./assets/oecd-rankings.css">
 <link rel="stylesheet" href="./assets/national-fatalities.css">
@@ -2095,11 +2122,11 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
     <section class="audit-diagnosis" aria-labelledby="child-timeline-title">
       <h2 class="audit-heading" id="child-timeline-title">스쿨존 안전 대책의 변화</h2>
       <ol class="child-policy-timeline">
-        <li><time datetime="2020">2020년</time><strong>민식이법 시행</strong>어린이 치사상 가중처벌이 신설되고, 스쿨존 안전시설 설치가 본격화됐습니다.</li>
-        <li><time datetime="2021-05-11">2021년 5월</time><strong>불법 주정차 제재 강화</strong>승용차 과태료와 범칙금이 각각 8만 원에서 12만 원으로 올랐습니다.</li>
-        <li><time datetime="2022-07-12">2022년 7월</time><strong>무신호 횡단보도 일시정지</strong>스쿨존의 신호등 없는 횡단보도 앞에서는 보행자가 없어도 일시정지해야 합니다. <a class="muted policy-source timeline-source" href="https://www.police.go.kr/user/bbs/BD_selectBbs.do?q_bbsCode=1007&amp;q_bbscttSn=20220711162716654">경찰청</a></li>
-        <li><time datetime="2022">2022년까지</time><strong>서울 스쿨존 안전시설 확대</strong>2020~2022년 무인단속카메라 1,303대, 옐로카펫 980개를 설치했습니다.</li>
-        <li><time datetime="2023">2023년 하반기</time><strong>노란색 횡단보도 도입</strong>스쿨존을 알아보기 쉽도록 노란색 횡단보도와 구역 시작·끝 노면 표시를 도입했습니다. <a class="muted policy-source timeline-source" href="https://www.police.go.kr/user/bbs/BD_selectBbs.do?q_bbsCode=1002&amp;q_bbscttSn=20230517134639199">경찰청</a></li>
+        <li><time datetime="2020">2020년</time><strong>민식이법 시행</strong>어린이 치사상 가중처벌이 신설되고, 스쿨존 안전시설 설치가 본격화됐습니다. <a class="muted policy-source timeline-source" href="https://www.korea.kr/news/policyNewsView.do?newsId=148870845">출처 · 정책브리핑</a></li>
+        <li><time datetime="2021-05-11">2021년 5월</time><strong>불법 주정차 제재 강화</strong>승용차 과태료와 범칙금이 각각 8만 원에서 12만 원으로 올랐습니다. <a class="muted policy-source timeline-source" href="https://m.easylaw.go.kr/MOB/IssueQnaRetrieve.laf?issueqaSeq=115">출처 · 찾기 쉬운 생활법령정보</a></li>
+        <li><time datetime="2022-07-12">2022년 7월</time><strong>무신호 횡단보도 일시정지</strong>스쿨존의 신호등 없는 횡단보도 앞에서는 보행자가 없어도 일시정지해야 합니다. <a class="muted policy-source timeline-source" href="https://www.police.go.kr/user/bbs/BD_selectBbs.do?q_bbsCode=1007&amp;q_bbscttSn=20220711162716654">출처 · 경찰청</a></li>
+        <li><time datetime="2022">2022년까지</time><strong>서울 스쿨존 안전시설 확대</strong>2020~2022년 무인단속카메라 1,303대, 옐로카펫 980개를 설치했습니다. <a class="muted policy-source timeline-source" href="https://clik.nanet.go.kr/clikr-collection/policyinfo/77/313/2023/CLIKC9541231271682321_attach_2.pdf">출처 · 서울시 보도자료</a></li>
+        <li><time datetime="2023">2023년 하반기</time><strong>노란색 횡단보도 도입</strong>스쿨존을 알아보기 쉽도록 노란색 횡단보도와 구역 시작·끝 노면 표시를 도입했습니다. <a class="muted policy-source timeline-source" href="https://www.police.go.kr/user/bbs/BD_selectBbs.do?q_bbsCode=1002&amp;q_bbscttSn=20230517134639199">출처 · 경찰청</a></li>
       </ol>
     </section>
     <section class="audit-diagnosis" aria-labelledby="child-trends-title">
