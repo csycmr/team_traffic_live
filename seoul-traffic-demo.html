@@ -617,7 +617,8 @@ html { scroll-snap-type: y mandatory }
   font-variant-numeric: tabular-nums;
   font-weight: 800;
 }
-.national-slice-label { fill: #102337; font-size: var(--label-size) }
+.national-slice-label { fill: #102337; font-size: var(--label-size); font-weight: 500 }
+.national-slice-label-pedestrian { font-weight: 800 }
 .national-donut-total { fill: #f0f5fb; font-size: 18px }
 .national-donut-total tspan { font-size: 10px; fill: var(--muted) }
 @media (max-height: 850px) and (min-width: 851px) {
@@ -832,12 +833,12 @@ html { scroll-snap-type: y mandatory }
                 <path d="M 176.47 142.88 L 139.82 108.20 L 139.82 129.20 L 176.47 163.88 Z" fill="var(--side-1)"/>
                 <path d="M 38.00 34.93 L 83.90 63.84 L 83.90 84.84 L 38.00 55.93 Z" fill="var(--side-1)"/>
                 <path d="M 176.47 142.88 A 104 73 0 0 1 38.00 34.93 L 83.90 63.84 A 42 30 0 0 0 139.82 108.20 Z" fill="var(--slice-1)" class="national-donut-surface" stroke="var(--edge-1)"/>
-                <text class="national-slice-label" x="118.23" y="133.05" style="--label-size: 11px"><tspan x="118.23">보행 중</tspan><tspan x="118.23" dy="11">628명</tspan></text>
+                <text class="national-slice-label national-slice-label-pedestrian" transform="translate(-25 -5)" x="118.23" y="133.05" style="--label-size: 11px"><tspan x="118.23">보행 중</tspan><tspan x="118.23" dy="11">628명</tspan></text>
                 <text class="national-slice-label" x="121.41" y="33.73" style="--label-size: 11px"><tspan x="121.41">이륜차</tspan><tspan x="121.41" dy="11">274명</tspan></text>
                 <text class="national-slice-label" x="180.21" y="43.63" style="--label-size: 10px"><tspan x="180.21">승용차</tspan><tspan x="180.21" dy="11">131명</tspan></text>
                 <text class="national-slice-label" x="204.72" y="73.68" style="--label-size: 11px"><tspan x="204.72">자전거</tspan><tspan x="204.72" dy="11">122명</tspan></text>
                 <text class="national-slice-label" x="190.40" y="106.22" style="--label-size: 11px"><tspan x="190.40">그 외</tspan><tspan x="190.40" dy="11">187명</tspan></text>
-                <text class="national-donut-total" x="126" y="90">1,342<tspan>명</tspan></text>
+                <text class="national-donut-total" x="126" y="99">1,342<tspan>명</tspan></text>
             </svg>
             <p class="oecd-sr">65세 이상 사망자 합계 1,342명</p>
             <ul class="oecd-sr" role="list">
@@ -865,12 +866,12 @@ html { scroll-snap-type: y mandatory }
                 <path d="M 175.45 143.40 L 139.41 108.41 L 139.41 129.41 L 175.45 164.40 Z" fill="var(--side-1)"/>
                 <path d="M 37.15 35.59 L 83.56 64.11 L 83.56 85.11 L 37.15 56.59 Z" fill="var(--side-1)"/>
                 <path d="M 175.45 143.40 A 104 73 0 0 1 37.15 35.59 L 83.56 64.11 A 42 30 0 0 0 139.41 108.41 Z" fill="var(--slice-1)" class="national-donut-surface" stroke="var(--edge-1)"/>
-                <text class="national-slice-label" x="117.70" y="133.06" style="--label-size: 11px"><tspan x="117.70">보행 중</tspan><tspan x="117.70" dy="11">601명</tspan></text>
+                <text class="national-slice-label national-slice-label-pedestrian" transform="translate(-25 -5)" x="117.70" y="133.06" style="--label-size: 11px"><tspan x="117.70">보행 중</tspan><tspan x="117.70" dy="11">601명</tspan></text>
                 <text class="national-slice-label" x="113.10" y="34.45" style="--label-size: 11px"><tspan x="113.10">이륜차</tspan><tspan x="113.10" dy="11">235명</tspan></text>
                 <text class="national-slice-label" x="169.99" y="38.79" style="--label-size: 10.5px"><tspan x="169.99">승용차</tspan><tspan x="169.99" dy="11">130명</tspan></text>
                 <text class="national-slice-label" x="202.81" y="63.53" style="--label-size: 9.5px"><tspan x="202.81">자전거</tspan><tspan x="202.81" dy="11">106명</tspan></text>
                 <text class="national-slice-label" x="193.53" y="98.74" style="--label-size: 11px"><tspan x="193.53">그 외</tspan><tspan x="193.53" dy="11">223명</tspan></text>
-                <text class="national-donut-total" x="126" y="90">1,295<tspan>명</tspan></text>
+                <text class="national-donut-total" x="126" y="99">1,295<tspan>명</tspan></text>
             </svg>
             <p class="oecd-sr">65세 이상 사망자 합계 1,295명</p>
             <ul class="oecd-sr" role="list">
@@ -898,12 +899,12 @@ html { scroll-snap-type: y mandatory }
                 <path d="M 169.87 146.01 L 137.16 109.49 L 137.16 130.49 L 169.87 167.01 Z" fill="var(--side-1)"/>
                 <path d="M 32.87 39.22 L 81.83 65.60 L 81.83 86.60 L 32.87 60.22 Z" fill="var(--side-1)"/>
                 <path d="M 169.87 146.01 A 104 73 0 0 1 32.87 39.22 L 81.83 65.60 A 42 30 0 0 0 137.16 109.49 Z" fill="var(--slice-1)" class="national-donut-surface" stroke="var(--edge-1)"/>
-                <text class="national-slice-label" x="111.50" y="133.04" style="--label-size: 11px"><tspan x="111.50">보행 중</tspan><tspan x="111.50" dy="11">558명</tspan></text>
+                <text class="national-slice-label national-slice-label-pedestrian" transform="translate(-25 -5)" x="111.50" y="133.04" style="--label-size: 11px"><tspan x="111.50">보행 중</tspan><tspan x="111.50" dy="11">558명</tspan></text>
                 <text class="national-slice-label" x="110.26" y="34.86" style="--label-size: 11px"><tspan x="110.26">이륜차</tspan><tspan x="110.26" dy="11">230명</tspan></text>
                 <text class="national-slice-label" x="167.16" y="38.36" style="--label-size: 11px"><tspan x="167.16">승용차</tspan><tspan x="167.16" dy="11">135명</tspan></text>
                 <text class="national-slice-label" x="199.91" y="68.95" style="--label-size: 11px"><tspan x="199.91">자전거</tspan><tspan x="199.91" dy="11">129명</tspan></text>
                 <text class="national-slice-label" x="192.63" y="102.71" style="--label-size: 11px"><tspan x="192.63">그 외</tspan><tspan x="192.63" dy="11">206명</tspan></text>
-                <text class="national-donut-total" x="126" y="90">1,258<tspan>명</tspan></text>
+                <text class="national-donut-total" x="126" y="99">1,258<tspan>명</tspan></text>
             </svg>
             <p class="oecd-sr">65세 이상 사망자 합계 1,258명</p>
             <ul class="oecd-sr" role="list">
@@ -931,12 +932,12 @@ html { scroll-snap-type: y mandatory }
                 <path d="M 169.86 146.02 L 137.16 109.49 L 137.16 130.49 L 169.86 167.02 Z" fill="var(--side-1)"/>
                 <path d="M 32.87 39.22 L 81.83 65.60 L 81.83 86.60 L 32.87 60.22 Z" fill="var(--side-1)"/>
                 <path d="M 169.86 146.02 A 104 73 0 0 1 32.87 39.22 L 81.83 65.60 A 42 30 0 0 0 137.16 109.49 Z" fill="var(--slice-1)" class="national-donut-surface" stroke="var(--edge-1)"/>
-                <text class="national-slice-label" x="111.50" y="133.04" style="--label-size: 11px"><tspan x="111.50">보행 중</tspan><tspan x="111.50" dy="11">550명</tspan></text>
+                <text class="national-slice-label national-slice-label-pedestrian" transform="translate(-25 -5)" x="111.50" y="133.04" style="--label-size: 11px"><tspan x="111.50">보행 중</tspan><tspan x="111.50" dy="11">550명</tspan></text>
                 <text class="national-slice-label" x="102.27" y="36.46" style="--label-size: 11px"><tspan x="102.27">이륜차</tspan><tspan x="102.27" dy="11">194명</tspan></text>
                 <text class="national-slice-label" x="157.68" y="37.99" style="--label-size: 11px"><tspan x="157.68">승용차</tspan><tspan x="157.68" dy="11">172명</tspan></text>
                 <text class="national-slice-label" x="201.68" y="68.00" style="--label-size: 11px"><tspan x="201.68">자전거</tspan><tspan x="201.68" dy="11">113명</tspan></text>
                 <text class="national-slice-label" x="193.27" y="101.55" style="--label-size: 11px"><tspan x="193.27">그 외</tspan><tspan x="193.27" dy="11">211명</tspan></text>
-                <text class="national-donut-total" x="126" y="90">1,240<tspan>명</tspan></text>
+                <text class="national-donut-total" x="126" y="99">1,240<tspan>명</tspan></text>
             </svg>
             <p class="oecd-sr">65세 이상 사망자 합계 1,240명</p>
             <ul class="oecd-sr" role="list">
