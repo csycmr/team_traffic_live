@@ -776,13 +776,14 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 #district-risk .zone-data-table .district-rate { color: var(--mint); font-weight: 700 }
 #district-risk .district-bar-column { width: 44% }
 #district-risk .district-average-label { color: #ffdf8b; margin-inline-start: .7em; font-size: .85em }
-#district-risk .zone-data-table tbody td:last-child { position: relative }
-#district-risk .zone-data-table tbody td:last-child::after {
+#district-risk .zone-data-table tbody { position: relative }
+#district-risk .zone-data-table tbody::after {
   content: "";
   position: absolute;
   inset-block: 0;
-  inset-inline-start: calc(7px + (100% - 14px) * .4308);
-  border-inline-start: 2px dashed #ffdf8b;
+  left: var(--district-average-x, 75%);
+  width: 2px;
+  background: repeating-linear-gradient(to bottom, #ffdf8b 0 5px, transparent 5px 10px);
   z-index: 1;
   pointer-events: none;
 }
@@ -1932,7 +1933,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
           <thead><tr>
             <th scope="col">자치구</th><th scope="col">65세 이상 인구</th><th scope="col">고령 보행자 사고</th>
             <th scope="col">사고다발지역</th><th scope="col">노인보호구역</th><th scope="col">경계 중첩</th><th scope="col">1만 명당 사고</th>
-            <th scope="col" class="district-bar-column">사고율 비교 <span class="district-average-label">┆ 서울 전체 10.77건</span></th>
+            <th scope="col" class="district-bar-column">사고율 비교 <span class="district-average-label">┆ 서울시 평균 10.77</span></th>
           </tr></thead>
           <tbody>
             <tr>
@@ -3765,6 +3766,24 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
     chart.classList.add('chart-awaiting');
     chartObserver.observe(chart);
   }
+}
+</script>
+<script>
+{
+  const districtRows = document.querySelector("#district-risk .zone-data-table tbody");
+  const firstTrack = districtRows.querySelector(".district-track");
+
+  const positionAverage = () => {
+    const track = firstTrack.getBoundingClientRect();
+    const rows = districtRows.getBoundingClientRect();
+    const offset = track.left - rows.left + track.width * 0.4308;
+    districtRows.style.setProperty("--district-average-x", offset + "px");
+  };
+
+  positionAverage();
+  const districtChartObserver = new ResizeObserver(positionAverage);
+  districtChartObserver.observe(firstTrack);
+  districtChartObserver.observe(districtRows);
 }
 </script>
 </body>
