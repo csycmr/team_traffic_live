@@ -766,6 +766,24 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 .overlap-legend span:last-child { color: #75b9ff }
 .overlap-map { height: clamp(300px, 54svh, 550px); border-radius: 8px; overflow: hidden; border: 1px solid var(--line) }
 .overlap-note { margin-top: 8px; font-size: 12px; line-height: 1.5 }
+#district-risk .district-layout {
+  --district-row-height: clamp(19px, 2.5svh, 30px);
+  display: grid;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+  gap: clamp(12px, 1.5vw, 20px);
+}
+#district-risk .district-layout > section { min-width: 0 }
+#district-risk .district-layout .district-rank { gap: 0; margin: 0 }
+#district-risk .district-rank li { min-height: var(--district-row-height) }
+#district-risk .zone-data-table { display: table; width: 100%; margin-top: 0; font-size: 12px }
+#district-risk .district-table-scroll { overflow-x: auto }
+#district-risk .zone-data-table :is(th, td) { padding: 0 5px; font-variant-numeric: tabular-nums }
+#district-risk .zone-data-table tbody tr { height: var(--district-row-height) }
+#district-risk .zone-data-table thead th { padding-block: 5px; white-space: normal }
+#district-risk .zone-data-table th:first-child { text-align: left }
+@media (max-width: 850px) {
+  #district-risk .district-layout { grid-template-columns: minmax(0, 1fr) }
+}
 </style>
 <link rel="stylesheet" href="./assets/oecd-rankings.css">
 <link rel="stylesheet" href="./assets/national-fatalities.css">
@@ -1617,8 +1635,9 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
       <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
     </nav>
   </header>
-  <div class="oecd-content">
-    <section class="audit-diagnosis" aria-labelledby="district-risk-title">
+  <div class="oecd-content district-layout">
+    <section class="audit-diagnosis" aria-labelledby="district-chart-title">
+      <h3 id="district-chart-title">자치구별 고령 보행자 사고율</h3>
       <p class="audit-chart-caption">2025년 서울 25개 자치구 · 65세 이상 거주인구 1만 명당 고령 보행자 사고(건)</p>
       <ol class="district-rank" aria-label="서울 자치구별 고령 보행자 사고율 순위">
             <li><span>중구</span><span class="district-track"><span style="--rate:88.33%"></span></span><strong>22.08</strong></li>
@@ -1647,7 +1666,10 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
             <li><span>광진구</span><span class="district-track"><span style="--rate:29.31%"></span></span><strong>7.33</strong></li>
             <li><span>도봉구</span><span class="district-track"><span style="--rate:19.40%"></span></span><strong>4.85</strong></li>
       </ol>
-      <details><summary>서울 자치구별 원자료 지표</summary>
+    </section>
+    <section class="audit-diagnosis" aria-labelledby="district-table-title">
+      <h3 id="district-table-title">서울 자치구별 원자료 지표</h3>
+      <div class="district-table-scroll" tabindex="0" role="region" aria-labelledby="district-table-title">
         <table class="zone-data-table">
           <thead><tr><th scope="col">자치구</th><th scope="col">65세 이상 인구</th><th scope="col">고령 보행자 사고</th><th scope="col">1만 명당 사고</th><th scope="col">사고다발지역</th><th scope="col">경계 중첩</th></tr></thead>
           <tbody><tr><th scope="row">중구</th><td>27,623</td><td>61</td><td>22.08</td><td>2</td><td>1</td></tr>
@@ -1676,7 +1698,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 <tr><th scope="row">광진구</th><td>62,783</td><td>46</td><td>7.33</td><td>0</td><td>0</td></tr>
 <tr><th scope="row">도봉구</th><td>78,335</td><td>38</td><td>4.85</td><td>0</td><td>0</td></tr></tbody>
         </table>
-      </details>
+      </div>
       <p class="muted overlap-note">출처 · <a href="https://github.com/csy04x2/elder_accident/blob/main/data/processed/01_%EC%9E%90%EC%B9%98%EA%B5%AC%EC%97%B0%EB%8F%84_%ED%8C%A8%EB%84%90.csv">팀 집계표</a></p>
     </section>
   </div>
