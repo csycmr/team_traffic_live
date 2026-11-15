@@ -456,7 +456,7 @@ section.story-screen {
   width: min(calc(100% - 2 * clamp(14px, 4vw, 60px)), 1280px);
 }
 .story-header .oecd-title {
-  font-size: clamp(18px, 2.5vw, 26px);
+  font-size: clamp(23px, 2.5vw, 26px);
   letter-spacing: -.06em;
 }
 .story-header .national-period { margin: 0 }
@@ -533,10 +533,6 @@ section.story-screen {
   border: 1px solid var(--line);
   border-radius: 12px;
   background: #111e2c;
-}
-#audit-video .audit-heading {
-  font-size: clamp(19px, 2.6vw, 27px);
-  margin-bottom: 12px;
 }
 .audit-chart-caption { margin-bottom: 14px; color: var(--muted); font-size: 13px }
 .audit-diagnosis .metric-groups { gap: clamp(12px, 2vw, 28px) }
@@ -673,9 +669,6 @@ section.story-screen {
 #audit-video .oecd-top-charts { grid-template-columns: repeat(4, minmax(215px, 1fr)); align-items: stretch }
 .oecd-top-charts .oecd-chart { min-width: 0 }
 #audit-video .oecd-top-charts .oecd-chart-header { border-bottom: 0; padding-bottom: 0; margin-bottom: 4px }
-#audit-video .oecd-top-charts .oecd-chart-header h3 {
-  font-size: clamp(12.75px, 2.175vh, 19.5px);
-}
 .oecd-top-charts .oecd-column-measure strong { font-size: 10px }
 @media (min-width: 761px) {
   #audit-video { padding-bottom: 12px }
@@ -717,7 +710,8 @@ section.story-screen {
 .zone-panel .panel-title h3,
 .zone-panel .zone-panel-title,
 .story-screen .audit-heading,
-.story-screen .oecd-content h3 {
+.story-screen .oecd-content h3,
+.story-screen .national-donut figcaption {
   font-family: "Paperlogy", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
 }
 #today,
@@ -727,6 +721,16 @@ section.story-screen {
 }
 .zone-panel .zone-panel-title {
   margin-bottom: 12px;
+}
+.story-screen .audit-heading {
+  font-size: 21px;
+  line-height: 1.2;
+}
+.story-screen .audit-trend .audit-heading,
+.story-screen .oecd-content h3,
+.story-screen .national-donut figcaption {
+  font-size: 17px;
+  line-height: 1.2;
 }
 .zone-panel .panel-title h3 {
   font-size: 17px;
