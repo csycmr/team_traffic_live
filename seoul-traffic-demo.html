@@ -660,8 +660,8 @@ html { scroll-snap-type: y mandatory }
   html { scroll-snap-type: y proximity }
 }
 
-.national-population { margin: 18px 0 0; padding-top: 9px; border-top: 1px solid var(--line) }
-.national-population figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 3px 12px; font-size: 14px }
+.national-population { margin: 0; padding-top: 9px; border-top: 1px solid var(--line) }
+.national-population figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 3px 12px }
 .national-population figcaption span { color: var(--muted); font-size: 11px }
 .national-population svg { display: block; width: 100%; height: auto; margin-top: 3px }
 .national-population line { stroke: var(--line) }
@@ -671,7 +671,7 @@ html { scroll-snap-type: y mandatory }
 .national-population .population-tick { text-anchor: end }
 .national-population .population-value { fill: var(--mint); font-weight: 700 }
 .national-population .oecd-sources { margin-top: 1px }
-#national-fatalities .national-plot { height: clamp(170px, 26svh, 275px) }
+#national-fatalities .national-plot { height: clamp(170px, 26svh, 275px); margin-bottom: 52px }
 </style>
 </head>
 <body>
@@ -853,7 +853,7 @@ html { scroll-snap-type: y mandatory }
           </ol>
         </div>
         <figure class="national-population" aria-labelledby="national-population-title">
-          <figcaption id="national-population-title"><strong>전국 65세 이상 주민등록인구 추이</strong><span>단위 만 명</span></figcaption>
+          <figcaption id="national-population-title"><h3>전국 65세 이상 주민등록인구 추이</h3><span>단위 만 명</span></figcaption>
           <svg viewBox="0 0 520 113" role="img" aria-label="2022년 12월 말 9,267,290명, 2023년 12월 말 9,730,411명, 2024년 12월 말 10,256,782명, 2025년 12월 말 10,840,822명, 2026년 10월 말 11,350,255명">
             <line x1="42" x2="510" y1="85" y2="85"/><text class="population-tick" x="36" y="89">900</text>
             <line x1="42" x2="510" y1="59.5" y2="59.5"/><text class="population-tick" x="36" y="63.5">1,000</text>
