@@ -987,6 +987,32 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 @media(max-width:960px) {
   .child-precedent .child-data-grid { margin-block: 18px }
 }
+
+#zone-overlap .audit-diagnosis {
+  display: grid;
+  grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+  grid-template-rows: auto auto auto auto 1fr;
+  gap: 14px 22px;
+  min-height: calc(100svh - 170px);
+}
+#zone-overlap .audit-diagnosis > :not(.overlap-map) { grid-column: 1; margin-block: 0 }
+#zone-overlap .overlap-counts { grid-template-columns: 1fr; gap: 12px }
+#zone-overlap .overlap-counts .stat { padding: 14px }
+#zone-overlap .overlap-counts dd { font-size: 30px }
+#zone-overlap .overlap-legend { flex-direction: column; gap: 8px }
+#zone-overlap .overlap-note { align-self: end }
+#zone-overlap .overlap-map {
+  grid-column: 2;
+  grid-row: 1 / 6;
+  height: 100%;
+  min-height: 550px;
+}
+@media(max-width:760px) {
+  #zone-overlap .audit-diagnosis { display: flex; flex-direction: column; min-height: 0 }
+  #zone-overlap .overlap-counts { grid-template-columns: repeat(3, minmax(0, 1fr)) }
+  #zone-overlap .overlap-counts .stat { padding: 8px }
+  #zone-overlap .overlap-map { min-height: 420px; height: 60svh }
+}
 </style>
 <link rel="stylesheet" href="./assets/oecd-rankings.css">
 <link rel="stylesheet" href="./assets/national-fatalities.css">
@@ -3213,7 +3239,7 @@ async function showZoneOverlapMap() {
       }),
     ]);
     const map = new kakao.maps.Map(container, { center: new kakao.maps.LatLng(37.555, 126.993), level: 8, scrollwheel: true });
-    map.setMaxLevel(8);
+    map.setMaxLevel(10);
     showSeoulBoundaries(map, "#193557").catch(error => {
       console.error("서울 경계 로드 실패", error);
     });
