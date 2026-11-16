@@ -8,12 +8,17 @@ from pathlib import Path
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlencode
 from urllib.request import urlopen
+from xml.etree import ElementTree as ET
+
+from dotenv import load_dotenv
 
 from flask import Flask, jsonify, send_from_directory
+import pandas as pd
 
 ROOT = Path(__file__).resolve().parent
 DATA = ROOT / "data"
 ITS_URL = "https://openapi.its.go.kr:9443/cctvInfo"
+load_dotenv(dotenv_path=ROOT / ".env")
 app = Flask(__name__, static_folder=None)
 
 
@@ -141,6 +146,128 @@ def cctv():
         seoul_count=len(seoul_cameras),
         cameras=seoul_cameras,
     )
+
+
+@app.get("/api/statistics/elderly")
+def elderly_statistics():
+    """2025년 서울 고령 보행자 교통사고 통계 제공."""
+
+    csv_path = DATA / "01_자치구연도_패널.csv"
+
+    try:
+        df = pd.read_csv(csv_path)
+
+        # 2025년 자료만 선택
+        data_2025 = df[df["사고연도"] == 2025]
+
+        # 데이터 유효성 검사
+        if data_2025["자치구명"].nunique() != 25:
+            return jsonify(
+                error="2025년 서울 25개 자치구 자료를 확인할 수 없어."
+            ), 500
+
+        # 사고·사망·부상 통계 합산
+        columns = {
+            "accidents": "고령보행자_사고건수",
+            "deaths": "고령보행자_사망자수",
+            "injuries": "고령보행자_부상자수",
+        }
+
+        if data_2025[list(columns.values())].isna().any().any():
+            return jsonify(
+                error="사고 통계에 누락된 값이 있어."
+            ), 500
+
+        totals = {
+            key: int(data_2025[column].sum())
+            for key, column in columns.items()
+        }
+
+        return jsonify(
+            year=2025,
+            region="서울",
+            districts=25,
+            **totals,
+        )
+
+    except (OSError, ValueError, KeyError) as error:
+        return jsonify(error=str(error)), 500
+
+
+@app.get("/api/citydata")
+def citydata():
+    """서울시 실시간 도시데이터를 기존 뉴스룸 JSON 형식으로 제공."""
+    from flask import request
+    from urllib.parse import quote
+
+    place = request.args.get("place", "gwanghwamun")
+
+    if place != "gwanghwamun":
+        return jsonify(error="지원하지 않는 지역이야."), 400
+
+    api_key = os.getenv("SEOUL_CITYDATA_API_KEY")
+
+    if not api_key:
+        return jsonify(error="서울시 API 인증키가 설정되지 않았어."), 500
+
+    area_name = "\uad11\ud654\ubb38\u00b7\ub355\uc218\uad81"
+    encoded_area = quote(area_name)
+
+    url = (
+        "http://openapi.seoul.go.kr:8088/"
+        f"{api_key}/xml/citydata/1/5/{encoded_area}"
+    )
+
+    try:
+        with urlopen(url, timeout=15) as response:
+            xml_data = response.read()
+
+        root = ET.fromstring(xml_data)
+
+        result_code = root.findtext(".//RESULT.CODE")
+
+        if result_code != "INFO-000":
+            return jsonify(error="서울시 도시데이터 조회 실패"), 502
+
+        population = root.find(".//LIVE_PPLTN_STTS/LIVE_PPLTN_STTS")
+
+        if population is None:
+            return jsonify(error="실시간 인구 데이터가 없어."), 502
+
+        def read_number(tag):
+            value = population.findtext(tag)
+            return int(value) if value and value.isdigit() else None
+
+        crowd = {
+            "status": population.findtext("AREA_CONGEST_LVL"),
+            "minPeople": read_number("AREA_PPLTN_MIN"),
+            "maxPeople": read_number("AREA_PPLTN_MAX"),
+            "updatedAt": population.findtext("PPLTN_TIME"),
+        }
+
+        return jsonify(
+            area={
+                "place": place,
+                "name": area_name,
+            },
+            crowd=crowd,
+            traffic={
+                "status": None,
+                "averageSpeedKmh": None,
+                "updatedAt": None,
+                "slowSegments": [],
+            },
+            weather={
+                "temperatureC": None,
+                "humidityPercent": None,
+                "precipitationType": None,
+            },
+            incidents=[],
+        )
+
+    except (OSError, ET.ParseError, ValueError) as error:
+        app.logger.error("서울시 도시데이터 조회 실패: %s", type(error).__name__)
+        return jsonify(error="서울시 도시데이터를 가져오지 못했어."), 502
 
 
 if __name__ == "__main__":

@@ -1221,7 +1221,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
         <dl class="stat">
           <dt>고령 보행자 사고수</dt>
           <dd>
-            <strong>2,060</strong><small>건</small>
+            <strong id="elderly-accidents">2,060</strong><small>건</small>
             <div class="stat-change">전년 대비 +97건</div>
           </dd>
         </dl>
@@ -1229,7 +1229,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
         <dl class="stat">
           <dt>고령 보행사고 사망자수</dt>
           <dd>
-            <strong>82</strong><small>명</small>
+            <strong id="elderly-deaths">82</strong><small>명</small>
             <div class="stat-change">전년 대비 +14명</div>
           </dd>
         </dl>
@@ -3839,5 +3839,44 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
   districtChartObserver.observe(districtRows);
 }
 </script>
+
+<script>
+  async function updateElderlyStatistics() {
+    try {
+      const response = await fetch("/api/statistics/elderly");
+
+      if (!response.ok) {
+        throw new Error(`API 요청 실패: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      const accidentsElement = document.getElementById(
+        "elderly-accidents"
+      );
+
+      const deathsElement = document.getElementById(
+        "elderly-deaths"
+      );
+
+      if (accidentsElement) {
+        accidentsElement.textContent =
+          data.accidents.toLocaleString("ko-KR");
+      }
+
+      if (deathsElement) {
+        deathsElement.textContent =
+          data.deaths.toLocaleString("ko-KR");
+      }
+
+      console.log("고령 보행자 통계 API 연결 성공:", data);
+    } catch (error) {
+      console.error("고령 보행자 통계 연결 실패:", error);
+    }
+  }
+
+  updateElderlyStatistics();
+</script>
+
 </body>
 </html>
