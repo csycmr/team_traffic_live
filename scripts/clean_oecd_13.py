@@ -2,7 +2,7 @@
 13_OECD_교통사고_2019-2023.csv 전처리·정제 스크립트
 
 원본: 한국도로교통공단 《OECD 회원국 교통사고 비교》 2021~2025년판에서 옮긴 long 형식 표
-출력 (기본 data/clean/):
+출력 (기본 data/):
   13_OECD_전판본_정제.csv      모든 판본의 수치 행을 정제한 것 (추적용, 원본 행 1:1)
   13_OECD_정제.csv             국가·연도·지표·연령층·사고시상태별 1행 (최신 판본 우선)
   13_OECD_고령지표_wide.csv    2019~2023년 국가×연도 고령(65세 이상) 핵심 지표 + 순위
@@ -17,8 +17,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-SRC = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("data/13_OECD_교통사고_2019-2023.csv")
-OUT = Path(sys.argv[2]) if len(sys.argv) > 2 else Path("data/clean")
+SRC = Path(sys.argv[1]) if len(sys.argv) > 1 else Path("data/raw/13_OECD_교통사고_2019-2023.csv")
+OUT = Path(sys.argv[2]) if len(sys.argv) > 2 else Path("data")
 OUT.mkdir(parents=True, exist_ok=True)
 
 # ---------------------------------------------------------------- 국가 사전
