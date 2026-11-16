@@ -1128,14 +1128,14 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 #district-risk .zone-data-table .district-name-end,
 #district-change .risk-change-table .district-name-end { text-align: right; white-space: nowrap; font-weight: 700 }
 /* Full country series for the corrected 65+ total traffic-fatality rate. */
-.oecd-annual-charts { display: grid; gap: 8px }
+.oecd-annual-charts { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(215px, 1fr); grid-template-rows: 1fr; gap: 8px; overflow-x: auto; overscroll-behavior-inline: contain }
 .oecd-annual-chart { min-width: 0 }
 .oecd-annual-chart .oecd-chart-header { margin-bottom: 2px }
 .oecd-annual-chart .oecd-vertical-scroll { overflow-x: auto; overscroll-behavior-inline: contain }
 .oecd-annual-chart .oecd-vertical-plot {
   --oecd-bar-height: clamp(72px, 9svh, 112px);
   --oecd-plot-top: 20px;
-  min-width: max(100%, calc(var(--oecd-country-count) * 29px + 34px));
+  min-width: 100%;
 }
 .oecd-annual-chart .oecd-vertical-group ol {
   grid-template-columns: repeat(var(--oecd-country-count), minmax(0, 1fr));
@@ -1150,7 +1150,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
 }
 @media (max-width: 760px) {
   .oecd-annual-chart .oecd-vertical-plot {
-    min-width: max(100%, calc(var(--oecd-country-count) * 27px + 34px));
+    min-width: 100%;
   }
 }
 </style>
@@ -1375,12 +1375,12 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
     </div>
         <section class="audit-pedestrian" aria-labelledby="oecd-senior-title">
       <h2 class="audit-heading" id="oecd-senior-title">OECD 65세 이상 교통사고 사망률</h2>
-      <p class="oecd-unit">65세 이상 인구 10만 명당 교통사고 사망자 수 · 관측연도 2020~2023년 · 연도별 값이 확인되는 국가 전체 · 공통 눈금 0~30명</p>
+      <p class="oecd-unit">65세 이상 인구 10만 명당 교통사고 사망자 수 · 관측연도 2020~2023년 · 연도별 자료 수록 국가 중 상위 10개국 · 공통 눈금 0~30명</p>
       <div class="oecd-annual-charts">
-      <article class="oecd-chart oecd-annual-chart" style="--oecd-country-count: 29" aria-labelledby="oecd-rate-2020">
-        <header class="oecd-chart-header"><h3 id="oecd-rate-2020">2020년</h3><span>자료 있는 29개국</span></header>
-        <div class="oecd-vertical-scroll" tabindex="0" role="region" aria-label="2020년 국가별 65세 이상 사망률 그래프">
-          <div class="oecd-vertical-plot" style="--oecd-country-count: 29">
+      <article class="oecd-chart oecd-annual-chart" style="--oecd-country-count: 10" aria-labelledby="oecd-rate-2020">
+        <header class="oecd-chart-header"><h3 id="oecd-rate-2020">2020년</h3><span>자료 있는 29개국 · 1~10위</span></header>
+        <div class="oecd-vertical-scroll" tabindex="0" role="region" aria-label="2020년 65세 이상 사망률 상위 10개국 그래프">
+          <div class="oecd-vertical-plot" style="--oecd-country-count: 10">
             <div class="oecd-vertical-axis" aria-hidden="true">
                 <div class="oecd-vertical-tick" style="--level: 0.000000%"><span>0</span></div>
                 <div class="oecd-vertical-tick" style="--level: 33.333333%"><span>10</span></div>
@@ -1388,7 +1388,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
                 <div class="oecd-vertical-tick" style="--level: 100.000000%"><span>30</span></div>
             </div>
             <div class="oecd-vertical-group">
-              <ol role="list" aria-label="2020년 국가별 사망률 순위" style="--oecd-country-count: 29">
+              <ol role="list" aria-label="2020년 65세 이상 사망률 상위 10개국 순위" style="--oecd-country-count: 10">
                   <li class="oecd-column oecd-korea" title="대한민국 · 1위 · 16.5명">
                     <span class="oecd-sr">대한민국 · 1위 · 16.5명/65세 이상 인구 10만 명</span>
                     <div class="oecd-column-measure" aria-hidden="true" style="--level: 55.000000%"><span class="oecd-column-bar"></span><strong>16.5</strong></div>
@@ -1449,129 +1449,15 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
                     <span class="oecd-column-rank" aria-hidden="true">10</span>
                     <span class="oecd-column-country" aria-hidden="true">그리스</span>
                   </li>
-                  <li class="oecd-column" title="스위스 · 공동 10위 · 6.0명">
-                    <span class="oecd-sr">스위스 · 공동 10위 · 6.0명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 20.000000%"><span class="oecd-column-bar"></span><strong>6.0</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">10</span>
-                    <span class="oecd-column-country" aria-hidden="true">스위스</span>
-                  </li>
-                  <li class="oecd-column" title="헝가리 · 12위 · 5.7명">
-                    <span class="oecd-sr">헝가리 · 12위 · 5.7명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 19.000000%"><span class="oecd-column-bar"></span><strong>5.7</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">12</span>
-                    <span class="oecd-column-country" aria-hidden="true">헝가리</span>
-                  </li>
-                  <li class="oecd-column" title="캐나다 · 공동 13위 · 5.5명">
-                    <span class="oecd-sr">캐나다 · 공동 13위 · 5.5명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 18.333333%"><span class="oecd-column-bar"></span><strong>5.5</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">13</span>
-                    <span class="oecd-column-country" aria-hidden="true">캐나다</span>
-                  </li>
-                  <li class="oecd-column" title="핀란드 · 공동 13위 · 5.5명">
-                    <span class="oecd-sr">핀란드 · 공동 13위 · 5.5명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 18.333333%"><span class="oecd-column-bar"></span><strong>5.5</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">13</span>
-                    <span class="oecd-column-country" aria-hidden="true">핀란드</span>
-                  </li>
-                  <li class="oecd-column" title="룩셈부르크 · 공동 15위 · 5.4명">
-                    <span class="oecd-sr">룩셈부르크 · 공동 15위 · 5.4명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 18.000000%"><span class="oecd-column-bar"></span><strong>5.4</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">15</span>
-                    <span class="oecd-column-country" aria-hidden="true">룩셈부르크</span>
-                  </li>
-                  <li class="oecd-column" title="이탈리아 · 공동 15위 · 5.4명">
-                    <span class="oecd-sr">이탈리아 · 공동 15위 · 5.4명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 18.000000%"><span class="oecd-column-bar"></span><strong>5.4</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">15</span>
-                    <span class="oecd-column-country" aria-hidden="true">이탈리아</span>
-                  </li>
-                  <li class="oecd-column" title="벨기에 · 공동 17위 · 5.3명">
-                    <span class="oecd-sr">벨기에 · 공동 17위 · 5.3명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 17.666667%"><span class="oecd-column-bar"></span><strong>5.3</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">17</span>
-                    <span class="oecd-column-country" aria-hidden="true">벨기에</span>
-                  </li>
-                  <li class="oecd-column" title="일본 · 공동 17위 · 5.3명">
-                    <span class="oecd-sr">일본 · 공동 17위 · 5.3명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 17.666667%"><span class="oecd-column-bar"></span><strong>5.3</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">17</span>
-                    <span class="oecd-column-country" aria-hidden="true">일본</span>
-                  </li>
-                  <li class="oecd-column" title="호주 · 19위 · 5.0명">
-                    <span class="oecd-sr">호주 · 19위 · 5.0명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.666667%"><span class="oecd-column-bar"></span><strong>5.0</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">19</span>
-                    <span class="oecd-column-country" aria-hidden="true">호주</span>
-                  </li>
-                  <li class="oecd-column" title="덴마크 · 공동 20위 · 4.9명">
-                    <span class="oecd-sr">덴마크 · 공동 20위 · 4.9명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.333333%"><span class="oecd-column-bar"></span><strong>4.9</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">20</span>
-                    <span class="oecd-column-country" aria-hidden="true">덴마크</span>
-                  </li>
-                  <li class="oecd-column" title="독일 · 공동 20위 · 4.9명">
-                    <span class="oecd-sr">독일 · 공동 20위 · 4.9명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.333333%"><span class="oecd-column-bar"></span><strong>4.9</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">20</span>
-                    <span class="oecd-column-country" aria-hidden="true">독일</span>
-                  </li>
-                  <li class="oecd-column" title="프랑스 · 22위 · 4.7명">
-                    <span class="oecd-sr">프랑스 · 22위 · 4.7명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 15.666667%"><span class="oecd-column-bar"></span><strong>4.7</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">22</span>
-                    <span class="oecd-column-country" aria-hidden="true">프랑스</span>
-                  </li>
-                  <li class="oecd-column" title="아일랜드 · 23위 · 4.4명">
-                    <span class="oecd-sr">아일랜드 · 23위 · 4.4명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 14.666667%"><span class="oecd-column-bar"></span><strong>4.4</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">23</span>
-                    <span class="oecd-column-country" aria-hidden="true">아일랜드</span>
-                  </li>
-                  <li class="oecd-column" title="스페인 · 24위 · 3.9명">
-                    <span class="oecd-sr">스페인 · 24위 · 3.9명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 13.000000%"><span class="oecd-column-bar"></span><strong>3.9</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">24</span>
-                    <span class="oecd-column-country" aria-hidden="true">스페인</span>
-                  </li>
-                  <li class="oecd-column" title="슬로베니아 · 25위 · 3.8명">
-                    <span class="oecd-sr">슬로베니아 · 25위 · 3.8명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 12.666667%"><span class="oecd-column-bar"></span><strong>3.8</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">25</span>
-                    <span class="oecd-column-country" aria-hidden="true">슬로베니아</span>
-                  </li>
-                  <li class="oecd-column" title="스웨덴 · 26위 · 3.3명">
-                    <span class="oecd-sr">스웨덴 · 26위 · 3.3명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 11.000000%"><span class="oecd-column-bar"></span><strong>3.3</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">26</span>
-                    <span class="oecd-column-country" aria-hidden="true">스웨덴</span>
-                  </li>
-                  <li class="oecd-column" title="영국 · 27위 · 2.9명">
-                    <span class="oecd-sr">영국 · 27위 · 2.9명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 9.666667%"><span class="oecd-column-bar"></span><strong>2.9</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">27</span>
-                    <span class="oecd-column-country" aria-hidden="true">영국</span>
-                  </li>
-                  <li class="oecd-column" title="노르웨이 · 28위 · 2.2명">
-                    <span class="oecd-sr">노르웨이 · 28위 · 2.2명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 7.333333%"><span class="oecd-column-bar"></span><strong>2.2</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">28</span>
-                    <span class="oecd-column-country" aria-hidden="true">노르웨이</span>
-                  </li>
-                  <li class="oecd-column" title="아이슬란드 · 29위 · 1.9명">
-                    <span class="oecd-sr">아이슬란드 · 29위 · 1.9명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 6.333333%"><span class="oecd-column-bar"></span><strong>1.9</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">29</span>
-                    <span class="oecd-column-country" aria-hidden="true">아이슬란드</span>
-                  </li>
               </ol>
             </div>
           </div>
         </div>
       </article>
-      <article class="oecd-chart oecd-annual-chart" style="--oecd-country-count: 32" aria-labelledby="oecd-rate-2021">
-        <header class="oecd-chart-header"><h3 id="oecd-rate-2021">2021년</h3><span>자료 있는 32개국</span></header>
-        <div class="oecd-vertical-scroll" tabindex="0" role="region" aria-label="2021년 국가별 65세 이상 사망률 그래프">
-          <div class="oecd-vertical-plot" style="--oecd-country-count: 32">
+      <article class="oecd-chart oecd-annual-chart" style="--oecd-country-count: 10" aria-labelledby="oecd-rate-2021">
+        <header class="oecd-chart-header"><h3 id="oecd-rate-2021">2021년</h3><span>자료 있는 32개국 · 1~10위</span></header>
+        <div class="oecd-vertical-scroll" tabindex="0" role="region" aria-label="2021년 65세 이상 사망률 상위 10개국 그래프">
+          <div class="oecd-vertical-plot" style="--oecd-country-count: 10">
             <div class="oecd-vertical-axis" aria-hidden="true">
                 <div class="oecd-vertical-tick" style="--level: 0.000000%"><span>0</span></div>
                 <div class="oecd-vertical-tick" style="--level: 33.333333%"><span>10</span></div>
@@ -1579,7 +1465,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
                 <div class="oecd-vertical-tick" style="--level: 100.000000%"><span>30</span></div>
             </div>
             <div class="oecd-vertical-group">
-              <ol role="list" aria-label="2021년 국가별 사망률 순위" style="--oecd-country-count: 32">
+              <ol role="list" aria-label="2021년 65세 이상 사망률 상위 10개국 순위" style="--oecd-country-count: 10">
                   <li class="oecd-column" title="콜롬비아 · 1위 · 21.7명">
                     <span class="oecd-sr">콜롬비아 · 1위 · 21.7명/65세 이상 인구 10만 명</span>
                     <div class="oecd-column-measure" aria-hidden="true" style="--level: 72.333333%"><span class="oecd-column-bar"></span><strong>21.7</strong></div>
@@ -1640,147 +1526,15 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
                     <span class="oecd-column-rank" aria-hidden="true">10</span>
                     <span class="oecd-column-country" aria-hidden="true">폴란드</span>
                   </li>
-                  <li class="oecd-column" title="헝가리 · 공동 10위 · 6.6명">
-                    <span class="oecd-sr">헝가리 · 공동 10위 · 6.6명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 22.000000%"><span class="oecd-column-bar"></span><strong>6.6</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">10</span>
-                    <span class="oecd-column-country" aria-hidden="true">헝가리</span>
-                  </li>
-                  <li class="oecd-column" title="그리스 · 12위 · 6.5명">
-                    <span class="oecd-sr">그리스 · 12위 · 6.5명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 21.666667%"><span class="oecd-column-bar"></span><strong>6.5</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">12</span>
-                    <span class="oecd-column-country" aria-hidden="true">그리스</span>
-                  </li>
-                  <li class="oecd-column" title="벨기에 · 13위 · 6.4명">
-                    <span class="oecd-sr">벨기에 · 13위 · 6.4명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 21.333333%"><span class="oecd-column-bar"></span><strong>6.4</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">13</span>
-                    <span class="oecd-column-country" aria-hidden="true">벨기에</span>
-                  </li>
-                  <li class="oecd-column" title="슬로베니아 · 공동 14위 · 6.2명">
-                    <span class="oecd-sr">슬로베니아 · 공동 14위 · 6.2명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 20.666667%"><span class="oecd-column-bar"></span><strong>6.2</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">14</span>
-                    <span class="oecd-column-country" aria-hidden="true">슬로베니아</span>
-                  </li>
-                  <li class="oecd-column" title="이탈리아 · 공동 14위 · 6.2명">
-                    <span class="oecd-sr">이탈리아 · 공동 14위 · 6.2명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 20.666667%"><span class="oecd-column-bar"></span><strong>6.2</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">14</span>
-                    <span class="oecd-column-country" aria-hidden="true">이탈리아</span>
-                  </li>
-                  <li class="oecd-column" title="뉴질랜드 · 16위 · 6.1명">
-                    <span class="oecd-sr">뉴질랜드 · 16위 · 6.1명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 20.333333%"><span class="oecd-column-bar"></span><strong>6.1</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">16</span>
-                    <span class="oecd-column-country" aria-hidden="true">뉴질랜드</span>
-                  </li>
-                  <li class="oecd-column" title="핀란드 · 공동 17위 · 5.8명">
-                    <span class="oecd-sr">핀란드 · 공동 17위 · 5.8명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 19.333333%"><span class="oecd-column-bar"></span><strong>5.8</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">17</span>
-                    <span class="oecd-column-country" aria-hidden="true">핀란드</span>
-                  </li>
-                  <li class="oecd-column" title="호주 · 공동 17위 · 5.8명">
-                    <span class="oecd-sr">호주 · 공동 17위 · 5.8명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 19.333333%"><span class="oecd-column-bar"></span><strong>5.8</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">17</span>
-                    <span class="oecd-column-country" aria-hidden="true">호주</span>
-                  </li>
-                  <li class="oecd-column" title="오스트리아 · 19위 · 5.7명">
-                    <span class="oecd-sr">오스트리아 · 19위 · 5.7명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 19.000000%"><span class="oecd-column-bar"></span><strong>5.7</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">19</span>
-                    <span class="oecd-column-country" aria-hidden="true">오스트리아</span>
-                  </li>
-                  <li class="oecd-column" title="프랑스 · 20위 · 5.6명">
-                    <span class="oecd-sr">프랑스 · 20위 · 5.6명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 18.666667%"><span class="oecd-column-bar"></span><strong>5.6</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">20</span>
-                    <span class="oecd-column-country" aria-hidden="true">프랑스</span>
-                  </li>
-                  <li class="oecd-column" title="캐나다 · 21위 · 5.5명">
-                    <span class="oecd-sr">캐나다 · 21위 · 5.5명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 18.333333%"><span class="oecd-column-bar"></span><strong>5.5</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">21</span>
-                    <span class="oecd-column-country" aria-hidden="true">캐나다</span>
-                  </li>
-                  <li class="oecd-column" title="리투아니아 · 22위 · 5.4명">
-                    <span class="oecd-sr">리투아니아 · 22위 · 5.4명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 18.000000%"><span class="oecd-column-bar"></span><strong>5.4</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">22</span>
-                    <span class="oecd-column-country" aria-hidden="true">리투아니아</span>
-                  </li>
-                  <li class="oecd-column" title="스위스 · 공동 23위 · 5.2명">
-                    <span class="oecd-sr">스위스 · 공동 23위 · 5.2명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 17.333333%"><span class="oecd-column-bar"></span><strong>5.2</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">23</span>
-                    <span class="oecd-column-country" aria-hidden="true">스위스</span>
-                  </li>
-                  <li class="oecd-column" title="일본 · 공동 23위 · 5.2명">
-                    <span class="oecd-sr">일본 · 공동 23위 · 5.2명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 17.333333%"><span class="oecd-column-bar"></span><strong>5.2</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">23</span>
-                    <span class="oecd-column-country" aria-hidden="true">일본</span>
-                  </li>
-                  <li class="oecd-column" title="독일 · 25위 · 4.7명">
-                    <span class="oecd-sr">독일 · 25위 · 4.7명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 15.666667%"><span class="oecd-column-bar"></span><strong>4.7</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">25</span>
-                    <span class="oecd-column-country" aria-hidden="true">독일</span>
-                  </li>
-                  <li class="oecd-column" title="아일랜드 · 26위 · 3.9명">
-                    <span class="oecd-sr">아일랜드 · 26위 · 3.9명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 13.000000%"><span class="oecd-column-bar"></span><strong>3.9</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">26</span>
-                    <span class="oecd-column-country" aria-hidden="true">아일랜드</span>
-                  </li>
-                  <li class="oecd-column" title="스페인 · 27위 · 3.7명">
-                    <span class="oecd-sr">스페인 · 27위 · 3.7명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 12.333333%"><span class="oecd-column-bar"></span><strong>3.7</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">27</span>
-                    <span class="oecd-column-country" aria-hidden="true">스페인</span>
-                  </li>
-                  <li class="oecd-column" title="스웨덴 · 28위 · 3.6명">
-                    <span class="oecd-sr">스웨덴 · 28위 · 3.6명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 12.000000%"><span class="oecd-column-bar"></span><strong>3.6</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">28</span>
-                    <span class="oecd-column-country" aria-hidden="true">스웨덴</span>
-                  </li>
-                  <li class="oecd-column" title="덴마크 · 29위 · 3.5명">
-                    <span class="oecd-sr">덴마크 · 29위 · 3.5명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 11.666667%"><span class="oecd-column-bar"></span><strong>3.5</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">29</span>
-                    <span class="oecd-column-country" aria-hidden="true">덴마크</span>
-                  </li>
-                  <li class="oecd-column" title="영국 · 30위 · 2.9명">
-                    <span class="oecd-sr">영국 · 30위 · 2.9명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 9.666667%"><span class="oecd-column-bar"></span><strong>2.9</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">30</span>
-                    <span class="oecd-column-country" aria-hidden="true">영국</span>
-                  </li>
-                  <li class="oecd-column" title="룩셈부르크 · 31위 · 2.1명">
-                    <span class="oecd-sr">룩셈부르크 · 31위 · 2.1명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 7.000000%"><span class="oecd-column-bar"></span><strong>2.1</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">31</span>
-                    <span class="oecd-column-country" aria-hidden="true">룩셈부르크</span>
-                  </li>
-                  <li class="oecd-column" title="노르웨이 · 32위 · 1.8명">
-                    <span class="oecd-sr">노르웨이 · 32위 · 1.8명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 6.000000%"><span class="oecd-column-bar"></span><strong>1.8</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">32</span>
-                    <span class="oecd-column-country" aria-hidden="true">노르웨이</span>
-                  </li>
               </ol>
             </div>
           </div>
         </div>
       </article>
-      <article class="oecd-chart oecd-annual-chart" style="--oecd-country-count: 32" aria-labelledby="oecd-rate-2022">
-        <header class="oecd-chart-header"><h3 id="oecd-rate-2022">2022년</h3><span>자료 있는 32개국</span></header>
-        <div class="oecd-vertical-scroll" tabindex="0" role="region" aria-label="2022년 국가별 65세 이상 사망률 그래프">
-          <div class="oecd-vertical-plot" style="--oecd-country-count: 32">
+      <article class="oecd-chart oecd-annual-chart" style="--oecd-country-count: 10" aria-labelledby="oecd-rate-2022">
+        <header class="oecd-chart-header"><h3 id="oecd-rate-2022">2022년</h3><span>자료 있는 32개국 · 1~10위</span></header>
+        <div class="oecd-vertical-scroll" tabindex="0" role="region" aria-label="2022년 65세 이상 사망률 상위 10개국 그래프">
+          <div class="oecd-vertical-plot" style="--oecd-country-count: 10">
             <div class="oecd-vertical-axis" aria-hidden="true">
                 <div class="oecd-vertical-tick" style="--level: 0.000000%"><span>0</span></div>
                 <div class="oecd-vertical-tick" style="--level: 33.333333%"><span>10</span></div>
@@ -1788,7 +1542,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
                 <div class="oecd-vertical-tick" style="--level: 100.000000%"><span>30</span></div>
             </div>
             <div class="oecd-vertical-group">
-              <ol role="list" aria-label="2022년 국가별 사망률 순위" style="--oecd-country-count: 32">
+              <ol role="list" aria-label="2022년 65세 이상 사망률 상위 10개국 순위" style="--oecd-country-count: 10">
                   <li class="oecd-column" title="콜롬비아 · 1위 · 23.7명">
                     <span class="oecd-sr">콜롬비아 · 1위 · 23.7명/65세 이상 인구 10만 명</span>
                     <div class="oecd-column-measure" aria-hidden="true" style="--level: 79.000000%"><span class="oecd-column-bar"></span><strong>23.7</strong></div>
@@ -1849,147 +1603,15 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
                     <span class="oecd-column-rank" aria-hidden="true">10</span>
                     <span class="oecd-column-country" aria-hidden="true">헝가리</span>
                   </li>
-                  <li class="oecd-column" title="체코 · 11위 · 7.3명">
-                    <span class="oecd-sr">체코 · 11위 · 7.3명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 24.333333%"><span class="oecd-column-bar"></span><strong>7.3</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">11</span>
-                    <span class="oecd-column-country" aria-hidden="true">체코</span>
-                  </li>
-                  <li class="oecd-column" title="슬로베니아 · 공동 12위 · 6.9명">
-                    <span class="oecd-sr">슬로베니아 · 공동 12위 · 6.9명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 23.000000%"><span class="oecd-column-bar"></span><strong>6.9</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">12</span>
-                    <span class="oecd-column-country" aria-hidden="true">슬로베니아</span>
-                  </li>
-                  <li class="oecd-column" title="아일랜드 · 공동 12위 · 6.9명">
-                    <span class="oecd-sr">아일랜드 · 공동 12위 · 6.9명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 23.000000%"><span class="oecd-column-bar"></span><strong>6.9</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">12</span>
-                    <span class="oecd-column-country" aria-hidden="true">아일랜드</span>
-                  </li>
-                  <li class="oecd-column" title="이탈리아 · 공동 14위 · 6.8명">
-                    <span class="oecd-sr">이탈리아 · 공동 14위 · 6.8명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 22.666667%"><span class="oecd-column-bar"></span><strong>6.8</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">14</span>
-                    <span class="oecd-column-country" aria-hidden="true">이탈리아</span>
-                  </li>
-                  <li class="oecd-column" title="포르투갈 · 공동 14위 · 6.8명">
-                    <span class="oecd-sr">포르투갈 · 공동 14위 · 6.8명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 22.666667%"><span class="oecd-column-bar"></span><strong>6.8</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">14</span>
-                    <span class="oecd-column-country" aria-hidden="true">포르투갈</span>
-                  </li>
-                  <li class="oecd-column" title="오스트리아 · 16위 · 6.7명">
-                    <span class="oecd-sr">오스트리아 · 16위 · 6.7명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 22.333333%"><span class="oecd-column-bar"></span><strong>6.7</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">16</span>
-                    <span class="oecd-column-country" aria-hidden="true">오스트리아</span>
-                  </li>
-                  <li class="oecd-column" title="이스라엘 · 17위 · 6.4명">
-                    <span class="oecd-sr">이스라엘 · 17위 · 6.4명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 21.333333%"><span class="oecd-column-bar"></span><strong>6.4</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">17</span>
-                    <span class="oecd-column-country" aria-hidden="true">이스라엘</span>
-                  </li>
-                  <li class="oecd-column" title="폴란드 · 18위 · 6.2명">
-                    <span class="oecd-sr">폴란드 · 18위 · 6.2명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 20.666667%"><span class="oecd-column-bar"></span><strong>6.2</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">18</span>
-                    <span class="oecd-column-country" aria-hidden="true">폴란드</span>
-                  </li>
-                  <li class="oecd-column" title="벨기에 · 공동 19위 · 6.1명">
-                    <span class="oecd-sr">벨기에 · 공동 19위 · 6.1명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 20.333333%"><span class="oecd-column-bar"></span><strong>6.1</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">19</span>
-                    <span class="oecd-column-country" aria-hidden="true">벨기에</span>
-                  </li>
-                  <li class="oecd-column" title="프랑스 · 공동 19위 · 6.1명">
-                    <span class="oecd-sr">프랑스 · 공동 19위 · 6.1명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 20.333333%"><span class="oecd-column-bar"></span><strong>6.1</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">19</span>
-                    <span class="oecd-column-country" aria-hidden="true">프랑스</span>
-                  </li>
-                  <li class="oecd-column" title="독일 · 21위 · 5.5명">
-                    <span class="oecd-sr">독일 · 21위 · 5.5명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 18.333333%"><span class="oecd-column-bar"></span><strong>5.5</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">21</span>
-                    <span class="oecd-column-country" aria-hidden="true">독일</span>
-                  </li>
-                  <li class="oecd-column" title="스위스 · 공동 22위 · 5.4명">
-                    <span class="oecd-sr">스위스 · 공동 22위 · 5.4명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 18.000000%"><span class="oecd-column-bar"></span><strong>5.4</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">22</span>
-                    <span class="oecd-column-country" aria-hidden="true">스위스</span>
-                  </li>
-                  <li class="oecd-column" title="호주 · 공동 22위 · 5.4명">
-                    <span class="oecd-sr">호주 · 공동 22위 · 5.4명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 18.000000%"><span class="oecd-column-bar"></span><strong>5.4</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">22</span>
-                    <span class="oecd-column-country" aria-hidden="true">호주</span>
-                  </li>
-                  <li class="oecd-column" title="일본 · 24위 · 5.3명">
-                    <span class="oecd-sr">일본 · 24위 · 5.3명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 17.666667%"><span class="oecd-column-bar"></span><strong>5.3</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">24</span>
-                    <span class="oecd-column-country" aria-hidden="true">일본</span>
-                  </li>
-                  <li class="oecd-column" title="아이슬란드 · 25위 · 5.2명">
-                    <span class="oecd-sr">아이슬란드 · 25위 · 5.2명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 17.333333%"><span class="oecd-column-bar"></span><strong>5.2</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">25</span>
-                    <span class="oecd-column-country" aria-hidden="true">아이슬란드</span>
-                  </li>
-                  <li class="oecd-column" title="스페인 · 26위 · 4.9명">
-                    <span class="oecd-sr">스페인 · 26위 · 4.9명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.333333%"><span class="oecd-column-bar"></span><strong>4.9</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">26</span>
-                    <span class="oecd-column-country" aria-hidden="true">스페인</span>
-                  </li>
-                  <li class="oecd-column" title="덴마크 · 공동 27위 · 4.4명">
-                    <span class="oecd-sr">덴마크 · 공동 27위 · 4.4명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 14.666667%"><span class="oecd-column-bar"></span><strong>4.4</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">27</span>
-                    <span class="oecd-column-country" aria-hidden="true">덴마크</span>
-                  </li>
-                  <li class="oecd-column" title="핀란드 · 공동 27위 · 4.4명">
-                    <span class="oecd-sr">핀란드 · 공동 27위 · 4.4명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 14.666667%"><span class="oecd-column-bar"></span><strong>4.4</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">27</span>
-                    <span class="oecd-column-country" aria-hidden="true">핀란드</span>
-                  </li>
-                  <li class="oecd-column" title="리투아니아 · 29위 · 4.2명">
-                    <span class="oecd-sr">리투아니아 · 29위 · 4.2명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 14.000000%"><span class="oecd-column-bar"></span><strong>4.2</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">29</span>
-                    <span class="oecd-column-country" aria-hidden="true">리투아니아</span>
-                  </li>
-                  <li class="oecd-column" title="노르웨이 · 공동 30위 · 3.8명">
-                    <span class="oecd-sr">노르웨이 · 공동 30위 · 3.8명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 12.666667%"><span class="oecd-column-bar"></span><strong>3.8</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">30</span>
-                    <span class="oecd-column-country" aria-hidden="true">노르웨이</span>
-                  </li>
-                  <li class="oecd-column" title="스웨덴 · 공동 30위 · 3.8명">
-                    <span class="oecd-sr">스웨덴 · 공동 30위 · 3.8명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 12.666667%"><span class="oecd-column-bar"></span><strong>3.8</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">30</span>
-                    <span class="oecd-column-country" aria-hidden="true">스웨덴</span>
-                  </li>
-                  <li class="oecd-column" title="영국 · 공동 30위 · 3.8명">
-                    <span class="oecd-sr">영국 · 공동 30위 · 3.8명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 12.666667%"><span class="oecd-column-bar"></span><strong>3.8</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">30</span>
-                    <span class="oecd-column-country" aria-hidden="true">영국</span>
-                  </li>
               </ol>
             </div>
           </div>
         </div>
       </article>
-      <article class="oecd-chart oecd-annual-chart" style="--oecd-country-count: 35" aria-labelledby="oecd-rate-2023">
-        <header class="oecd-chart-header"><h3 id="oecd-rate-2023">2023년</h3><span>자료 있는 35개국</span></header>
-        <div class="oecd-vertical-scroll" tabindex="0" role="region" aria-label="2023년 국가별 65세 이상 사망률 그래프">
-          <div class="oecd-vertical-plot" style="--oecd-country-count: 35">
+      <article class="oecd-chart oecd-annual-chart" style="--oecd-country-count: 10" aria-labelledby="oecd-rate-2023">
+        <header class="oecd-chart-header"><h3 id="oecd-rate-2023">2023년</h3><span>자료 있는 35개국 · 1~10위</span></header>
+        <div class="oecd-vertical-scroll" tabindex="0" role="region" aria-label="2023년 65세 이상 사망률 상위 10개국 그래프">
+          <div class="oecd-vertical-plot" style="--oecd-country-count: 10">
             <div class="oecd-vertical-axis" aria-hidden="true">
                 <div class="oecd-vertical-tick" style="--level: 0.000000%"><span>0</span></div>
                 <div class="oecd-vertical-tick" style="--level: 33.333333%"><span>10</span></div>
@@ -1997,7 +1619,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
                 <div class="oecd-vertical-tick" style="--level: 100.000000%"><span>30</span></div>
             </div>
             <div class="oecd-vertical-group">
-              <ol role="list" aria-label="2023년 국가별 사망률 순위" style="--oecd-country-count: 35">
+              <ol role="list" aria-label="2023년 65세 이상 사망률 상위 10개국 순위" style="--oecd-country-count: 10">
                   <li class="oecd-column" title="콜롬비아 · 1위 · 25.1명">
                     <span class="oecd-sr">콜롬비아 · 1위 · 25.1명/65세 이상 인구 10만 명</span>
                     <div class="oecd-column-measure" aria-hidden="true" style="--level: 83.666667%"><span class="oecd-column-bar"></span><strong>25.1</strong></div>
@@ -2058,156 +1680,6 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
                     <span class="oecd-column-rank" aria-hidden="true">10</span>
                     <span class="oecd-column-country" aria-hidden="true">이탈리아</span>
                   </li>
-                  <li class="oecd-column" title="슬로베니아 · 11위 · 6.9명">
-                    <span class="oecd-sr">슬로베니아 · 11위 · 6.9명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 23.000000%"><span class="oecd-column-bar"></span><strong>6.9</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">11</span>
-                    <span class="oecd-column-country" aria-hidden="true">슬로베니아</span>
-                  </li>
-                  <li class="oecd-column" title="슬로바키아 · 공동 12위 · 6.7명">
-                    <span class="oecd-sr">슬로바키아 · 공동 12위 · 6.7명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 22.333333%"><span class="oecd-column-bar"></span><strong>6.7</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">12</span>
-                    <span class="oecd-column-country" aria-hidden="true">슬로바키아</span>
-                  </li>
-                  <li class="oecd-column" title="체코 · 공동 12위 · 6.7명">
-                    <span class="oecd-sr">체코 · 공동 12위 · 6.7명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 22.333333%"><span class="oecd-column-bar"></span><strong>6.7</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">12</span>
-                    <span class="oecd-column-country" aria-hidden="true">체코</span>
-                  </li>
-                  <li class="oecd-column" title="오스트리아 · 공동 14위 · 6.6명">
-                    <span class="oecd-sr">오스트리아 · 공동 14위 · 6.6명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 22.000000%"><span class="oecd-column-bar"></span><strong>6.6</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">14</span>
-                    <span class="oecd-column-country" aria-hidden="true">오스트리아</span>
-                  </li>
-                  <li class="oecd-column" title="이스라엘 · 공동 14위 · 6.6명">
-                    <span class="oecd-sr">이스라엘 · 공동 14위 · 6.6명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 22.000000%"><span class="oecd-column-bar"></span><strong>6.6</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">14</span>
-                    <span class="oecd-column-country" aria-hidden="true">이스라엘</span>
-                  </li>
-                  <li class="oecd-column" title="폴란드 · 공동 16위 · 6.3명">
-                    <span class="oecd-sr">폴란드 · 공동 16위 · 6.3명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 21.000000%"><span class="oecd-column-bar"></span><strong>6.3</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">16</span>
-                    <span class="oecd-column-country" aria-hidden="true">폴란드</span>
-                  </li>
-                  <li class="oecd-column" title="호주 · 공동 16위 · 6.3명">
-                    <span class="oecd-sr">호주 · 공동 16위 · 6.3명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 21.000000%"><span class="oecd-column-bar"></span><strong>6.3</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">16</span>
-                    <span class="oecd-column-country" aria-hidden="true">호주</span>
-                  </li>
-                  <li class="oecd-column" title="헝가리 · 18위 · 6.2명">
-                    <span class="oecd-sr">헝가리 · 18위 · 6.2명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 20.666667%"><span class="oecd-column-bar"></span><strong>6.2</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">18</span>
-                    <span class="oecd-column-country" aria-hidden="true">헝가리</span>
-                  </li>
-                  <li class="oecd-column" title="프랑스 · 19위 · 6.1명">
-                    <span class="oecd-sr">프랑스 · 19위 · 6.1명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 20.333333%"><span class="oecd-column-bar"></span><strong>6.1</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">19</span>
-                    <span class="oecd-column-country" aria-hidden="true">프랑스</span>
-                  </li>
-                  <li class="oecd-column" title="캐나다 · 20위 · 5.9명">
-                    <span class="oecd-sr">캐나다 · 20위 · 5.9명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 19.666667%"><span class="oecd-column-bar"></span><strong>5.9</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">20</span>
-                    <span class="oecd-column-country" aria-hidden="true">캐나다</span>
-                  </li>
-                  <li class="oecd-column" title="리투아니아 · 공동 21위 · 5.8명">
-                    <span class="oecd-sr">리투아니아 · 공동 21위 · 5.8명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 19.333333%"><span class="oecd-column-bar"></span><strong>5.8</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">21</span>
-                    <span class="oecd-column-country" aria-hidden="true">리투아니아</span>
-                  </li>
-                  <li class="oecd-column" title="벨기에 · 공동 21위 · 5.8명">
-                    <span class="oecd-sr">벨기에 · 공동 21위 · 5.8명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 19.333333%"><span class="oecd-column-bar"></span><strong>5.8</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">21</span>
-                    <span class="oecd-column-country" aria-hidden="true">벨기에</span>
-                  </li>
-                  <li class="oecd-column" title="독일 · 23위 · 5.6명">
-                    <span class="oecd-sr">독일 · 23위 · 5.6명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 18.666667%"><span class="oecd-column-bar"></span><strong>5.6</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">23</span>
-                    <span class="oecd-column-country" aria-hidden="true">독일</span>
-                  </li>
-                  <li class="oecd-column" title="덴마크 · 24위 · 5.5명">
-                    <span class="oecd-sr">덴마크 · 24위 · 5.5명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 18.333333%"><span class="oecd-column-bar"></span><strong>5.5</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">24</span>
-                    <span class="oecd-column-country" aria-hidden="true">덴마크</span>
-                  </li>
-                  <li class="oecd-column" title="에스토니아 · 25위 · 5.2명">
-                    <span class="oecd-sr">에스토니아 · 25위 · 5.2명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 17.333333%"><span class="oecd-column-bar"></span><strong>5.2</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">25</span>
-                    <span class="oecd-column-country" aria-hidden="true">에스토니아</span>
-                  </li>
-                  <li class="oecd-column" title="아일랜드 · 공동 26위 · 5.1명">
-                    <span class="oecd-sr">아일랜드 · 공동 26위 · 5.1명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 17.000000%"><span class="oecd-column-bar"></span><strong>5.1</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">26</span>
-                    <span class="oecd-column-country" aria-hidden="true">아일랜드</span>
-                  </li>
-                  <li class="oecd-column" title="일본 · 공동 26위 · 5.1명">
-                    <span class="oecd-sr">일본 · 공동 26위 · 5.1명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 17.000000%"><span class="oecd-column-bar"></span><strong>5.1</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">26</span>
-                    <span class="oecd-column-country" aria-hidden="true">일본</span>
-                  </li>
-                  <li class="oecd-column" title="스위스 · 28위 · 5.0명">
-                    <span class="oecd-sr">스위스 · 28위 · 5.0명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.666667%"><span class="oecd-column-bar"></span><strong>5.0</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">28</span>
-                    <span class="oecd-column-country" aria-hidden="true">스위스</span>
-                  </li>
-                  <li class="oecd-column" title="핀란드 · 29위 · 4.8명">
-                    <span class="oecd-sr">핀란드 · 29위 · 4.8명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 16.000000%"><span class="oecd-column-bar"></span><strong>4.8</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">29</span>
-                    <span class="oecd-column-country" aria-hidden="true">핀란드</span>
-                  </li>
-                  <li class="oecd-column" title="스페인 · 30위 · 4.7명">
-                    <span class="oecd-sr">스페인 · 30위 · 4.7명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 15.666667%"><span class="oecd-column-bar"></span><strong>4.7</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">30</span>
-                    <span class="oecd-column-country" aria-hidden="true">스페인</span>
-                  </li>
-                  <li class="oecd-column" title="스웨덴 · 31위 · 3.9명">
-                    <span class="oecd-sr">스웨덴 · 31위 · 3.9명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 13.000000%"><span class="oecd-column-bar"></span><strong>3.9</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">31</span>
-                    <span class="oecd-column-country" aria-hidden="true">스웨덴</span>
-                  </li>
-                  <li class="oecd-column" title="영국 · 32위 · 3.5명">
-                    <span class="oecd-sr">영국 · 32위 · 3.5명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 11.666667%"><span class="oecd-column-bar"></span><strong>3.5</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">32</span>
-                    <span class="oecd-column-country" aria-hidden="true">영국</span>
-                  </li>
-                  <li class="oecd-column" title="아이슬란드 · 33위 · 3.4명">
-                    <span class="oecd-sr">아이슬란드 · 33위 · 3.4명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 11.333333%"><span class="oecd-column-bar"></span><strong>3.4</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">33</span>
-                    <span class="oecd-column-country" aria-hidden="true">아이슬란드</span>
-                  </li>
-                  <li class="oecd-column" title="룩셈부르크 · 34위 · 3.0명">
-                    <span class="oecd-sr">룩셈부르크 · 34위 · 3.0명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 10.000000%"><span class="oecd-column-bar"></span><strong>3.0</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">34</span>
-                    <span class="oecd-column-country" aria-hidden="true">룩셈부르크</span>
-                  </li>
-                  <li class="oecd-column" title="노르웨이 · 35위 · 2.2명">
-                    <span class="oecd-sr">노르웨이 · 35위 · 2.2명/65세 이상 인구 10만 명</span>
-                    <div class="oecd-column-measure" aria-hidden="true" style="--level: 7.333333%"><span class="oecd-column-bar"></span><strong>2.2</strong></div>
-                    <span class="oecd-column-rank" aria-hidden="true">35</span>
-                    <span class="oecd-column-country" aria-hidden="true">노르웨이</span>
-                  </li>
               </ol>
             </div>
           </div>
@@ -2216,7 +1688,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
       </div>
       <div class="oecd-sources">
         <p>한국도로교통공단 《OECD 회원국 교통사고 비교》 2022~2025년판 · <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/13_OECD_%EA%B3%A0%EB%A0%B9%EC%A7%80%ED%91%9C_wide.csv">연도별 정제 데이터</a> · <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/raw/13_OECD_%EA%B5%90%ED%86%B5%EC%82%AC%EA%B3%A0_2019-2023.csv">원본 CSV</a></p>
-        <p>자료가 있는 국가만 표시했어. 국가 수는 2020년 29개국, 2021년 32개국, 2022년 32개국, 2023년 35개국이야. 2023년 대한민국은 13.1명으로 자료 수록 35개국 중 5위야.</p>
+        <p>각 연도 자료 수록 국가 전체를 기준으로 순위를 매기고, 그래프에는 상위 10개국을 표시했어. 국가 수는 2020년 29개국, 2021년 32개국, 2022년 32개국, 2023년 35개국이야. 2023년 대한민국은 13.1명으로 자료 수록 35개국 중 5위야.</p>
       </div>
     </section>
   </div>
