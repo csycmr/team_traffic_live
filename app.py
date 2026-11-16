@@ -1,5 +1,6 @@
 """Serve the traffic dashboard and its Seoul CCTV feed."""
 
+import time
 import json
 import math
 import os
@@ -21,6 +22,12 @@ ITS_URL = "https://openapi.its.go.kr:9443/cctvInfo"
 load_dotenv(dotenv_path=ROOT / ".env")
 app = Flask(__name__, static_folder=None)
 
+CITYDATA_CACHE = {
+    "expires_at": 0.0,
+    "payload": None,
+}
+
+CITYDATA_CACHE_SECONDS = 60
 
 @lru_cache(maxsize=1)
 def seoul_boundary():
@@ -205,6 +212,14 @@ def citydata():
     if place != "gwanghwamun":
         return jsonify(error="지원하지 않는 지역이야."), 400
 
+    now = time.monotonic()
+
+    if (
+        CITYDATA_CACHE["payload"] is not None
+        and now < CITYDATA_CACHE["expires_at"]
+    ):
+        return jsonify(CITYDATA_CACHE["payload"])
+
     api_key = os.getenv("SEOUL_CITYDATA_API_KEY")
 
     if not api_key:
@@ -245,7 +260,31 @@ def citydata():
             "updatedAt": population.findtext("PPLTN_TIME"),
         }
 
-        return jsonify(
+        weather_data = root.find(".//WEATHER_STTS/WEATHER_STTS")
+
+        def read_weather_number(tag):
+            if weather_data is None:
+                return None
+
+            value = weather_data.findtext(tag)
+
+            try:
+                return float(value) if value else None
+            except ValueError:
+                return None
+
+
+        weather = {
+            "temperatureC": read_weather_number("TEMP"),
+            "humidityPercent": read_weather_number("HUMIDITY"),
+            "precipitationType": (
+                weather_data.findtext("PRECPT_TYPE")
+                if weather_data is not None
+                else None
+            ),
+        }
+
+        payload = dict(
             area={
                 "place": place,
                 "name": area_name,
@@ -257,13 +296,14 @@ def citydata():
                 "updatedAt": None,
                 "slowSegments": [],
             },
-            weather={
-                "temperatureC": None,
-                "humidityPercent": None,
-                "precipitationType": None,
-            },
+            weather=weather,
             incidents=[],
         )
+        
+        CITYDATA_CACHE["payload"] = payload
+        CITYDATA_CACHE["expires_at"] = time.monotonic() + CITYDATA_CACHE_SECONDS
+
+        return jsonify(payload)
 
     except (OSError, ET.ParseError, ValueError) as error:
         app.logger.error("서울시 도시데이터 조회 실패: %s", type(error).__name__)
