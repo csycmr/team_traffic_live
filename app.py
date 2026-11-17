@@ -118,6 +118,47 @@ def newsroom_facts():
     except (OSError, ValueError, KeyError) as error:
         return jsonify(error=str(error)), 400
 
+from newsroom.article_draft import (
+    load_idea_context,
+    generate_draft,
+    save_draft,
+)
+
+
+@app.post("/api/newsroom/drafts")
+def newsroom_create_draft():
+    from flask import request
+
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return jsonify(error="JSON 입력이 필요합니다."), 400
+
+    engine = None
+
+    try:
+        idea_id = int(payload["idea_id"])
+        engine = engine_from_env()
+
+        context = load_idea_context(engine, idea_id)
+        draft = generate_draft(context)
+
+        result = save_draft(
+            engine,
+            context,
+            draft.title,
+            draft.content,
+        )
+
+        return jsonify(result), 201
+
+    except (ValueError, KeyError, TypeError) as error:
+        return jsonify(error=str(error)), 400
+    except Exception:
+        app.logger.exception("기사 초안 생성 실패")
+        return jsonify(error="기사 초안 생성 중 오류가 발생했습니다."), 500
+    finally:
+        if engine is not None:
+            engine.dispose()
 
 from newsroom.recommendation import (
     search_sources,
@@ -481,3 +522,66 @@ def citydata():
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5000)
+
+from newsroom.article_draft import load_draft
+
+
+@app.get("/api/newsroom/drafts/<int:article_id>")
+def newsroom_get_draft(article_id):
+    engine = engine_from_env()
+    try:
+        draft = load_draft(engine, article_id)
+        return jsonify(draft)
+    except ValueError as error:
+        return jsonify(error=str(error)), 404
+    finally:
+        engine.dispose()
+
+
+@app.put("/api/newsroom/drafts/<int:article_id>")
+def newsroom_update_draft(article_id):
+    from flask import request
+
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return jsonify(error="JSON 입력이 필요합니다."), 400
+
+    engine = None
+    try:
+        engine = engine_from_env()
+        existing = load_draft(engine, article_id)
+
+        if existing["status"] != "검토대기":
+            return jsonify(error="검토대기 기사만 수정할 수 있습니다."), 409
+
+        context = load_idea_context(engine, existing["story_idea_id"])
+
+        # 기존 원고와 비교해 다른 화면의 수정 내용을 보호한다.
+        old_title = payload["old_title"]
+        old_content = payload["old_content"]
+
+        if (existing["title"] != old_title or
+                existing["content"] != old_content):
+            return jsonify(error="기사 내용이 변경됐습니다. 다시 불러오세요."), 409
+
+        saved_id = save_draft(
+            engine,
+            context,
+            payload["title"],
+            payload["content"],
+            existing=existing,
+        )
+
+        return jsonify(
+            id=saved_id,
+            saved=True,
+            draft=load_draft(engine, saved_id),
+        )
+
+    except (KeyError, ValueError, TypeError) as error:
+        return jsonify(error=str(error)), 400
+    except RuntimeError as error:
+        return jsonify(error=str(error)), 409
+    finally:
+        if engine is not None:
+            engine.dispose()
