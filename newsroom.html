@@ -1,0 +1,459 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>기사 작성 | 서울 교통안전 라이브</title>
+  <link rel="stylesheet" href="/assets/newsroom-nav.css">
+
+  <style>
+    :root {
+      font-family: "Pretendard", "Noto Sans KR", sans-serif;
+      background: #ffffff;
+      color: #f0f5fb;
+      --mint: #70edc8;
+      --line: #2a394b;
+      --muted: #a5b5c8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+  margin: 0;
+  background: #ffffff;
+}
+
+    .workspace-header {
+      padding: 24px 5%;
+      border-bottom: 1px solid var(--line);
+      background: #0e1723;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      font-size: 12px;
+      letter-spacing: .12em;
+      color: var(--mint);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(23px, 3vw, 32px);
+    }
+
+    .description {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .workspace {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 36px 5% 120px;
+    }
+
+    .workspace-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .workspace-nav button {
+      padding: 11px 17px;
+      background: #152231;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: #d7e5f0;
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+    }
+
+    .workspace-nav button.active {
+      color: #0b121d;
+      background: var(--mint);
+      border-color: var(--mint);
+      font-weight: 700;
+    }
+
+    .workspace-card {
+      padding: 32px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #111e2c;
+      min-height: 350px;
+    }
+
+    .workspace-card h2 {
+      margin: 0 0 16px;
+      font-size: 22px;
+    }
+
+    .workspace-card p {
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    @media (max-width: 768px) {
+      .workspace-card { padding: 22px; }
+    }
+
+    /* Reporting Gap Finder's list/detail hierarchy, in team traffic colors. */
+    #recResults[hidden], #recMetrics[hidden], #recLimitations[hidden] { display:none!important; }
+    .workspace-card:has(#recApp:not([hidden])) { background:#f7faf9; border-color:#dce5e4; color:#172b39; }
+    .workspace-card:has(#recApp:not([hidden])) > h2 { color:#172b39; }
+    .rec-layout { display:grid; grid-template-columns:minmax(250px, .85fr) minmax(0, 1.4fr); gap:16px; align-items:start; margin-top:22px; }
+    .rec-pane { min-width:0; padding:20px; border:1px solid #dce5e4; border-radius:12px; background:#fff; color:#142737; }
+    .rec-pane h3 { margin:0 0 12px; font-size:16px; letter-spacing:-.03em; }
+    .rec-pane p { color:#293d48; }
+    .rec-muted { color:#657481 !important; font-size:13px; line-height:1.6; }
+    .rec-fields { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+    .rec-field { display:block; color:#263c49; font-size:13px; font-weight:700; }
+    .rec-field input, .rec-field textarea, .rec-field select { display:block; width:100%; min-width:0; margin-top:6px; padding:10px 11px; border-radius:7px; border:1px solid #cbd7d8; background:#fff; color:#172b39; font:inherit; font-weight:400; }
+    .rec-field textarea { min-height:88px; resize:vertical; }
+    .rec-wide { grid-column:1 / -1; }
+    .rec-sources { display:flex; flex-wrap:wrap; gap:12px; padding:10px 0 4px; }
+    .rec-sources label { font-size:13px; color:#243a46; }
+    .rec-actions { display:flex; align-items:center; gap:12px; flex-wrap:wrap; margin-top:17px; }
+    .rec-btn { border:1px solid #176b5c; border-radius:8px; padding:11px 16px; color:white; background:#176b5c; font:inherit; font-size:13px; font-weight:700; cursor:pointer; }
+    .rec-btn:hover:not(:disabled) { background:#115346; }
+    .rec-btn:disabled { opacity:.45; cursor:not-allowed; }
+    .rec-btn.secondary { background:white; color:#176b5c; }
+    .rec-btn.secondary:hover:not(:disabled) { background:#edf7f3; }
+    .rec-status { margin:12px 0 0 !important; color:#35665d !important; font-size:13px; white-space:pre-wrap; }
+    .rec-status.error { color:#a22d37 !important; }
+    .rec-list { display:grid; gap:8px; }
+    .rec-choice { width:100%; border:1px solid #dce5e4; border-radius:9px; padding:13px; text-align:left; background:#fff; color:#243a46; font:inherit; cursor:pointer; }
+    .rec-choice[aria-pressed="true"] { border-color:#176b5c; background:#edf7f3; box-shadow:inset 3px 0 #176b5c; }
+    .rec-choice strong { display:block; font-size:14px; line-height:1.55; }
+    .rec-choice small { display:block; margin-top:7px; color:#657481; }
+    .rec-detail { display:grid; gap:14px; }
+    .rec-detail section { border-bottom:1px solid #e5ebeb; padding-bottom:13px; }
+    .rec-detail section:last-child { border:0; padding-bottom:0; }
+    .rec-detail h4 { margin:0 0 8px; color:#176b5c; font-size:13px; }
+    .rec-detail p, .rec-detail li { margin:0; color:#293d48; font-size:13px; line-height:1.75; white-space:pre-wrap; overflow-wrap:anywhere; }
+    .rec-detail ul { margin:0; padding-left:19px; }
+    .rec-detail a { color:#126e8a; text-decoration:underline; word-break:break-all; }
+    .rec-footnote { background:#f1f6f5; padding:12px 14px; border-radius:8px; color:#526b6b; font-size:12px; line-height:1.6; }
+    .rec-pill { display:inline-block; padding:4px 8px; border-radius:99px; background:#e8f4ef; color:#176b5c; font-size:11px; font-weight:700; }
+    .rec-metrics { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:10px; margin-top:18px; }
+    .rec-metric { background:#eff5f3; border:1px solid #dce7e2; border-radius:9px; padding:12px; }
+    .rec-metric small { display:block; color:#5e7178; font-size:11px; }
+    .rec-metric strong { display:block; margin-top:4px; font-size:20px; color:#153d3b; }
+    .rec-pane :focus-visible { outline:2px solid #176b5c; outline-offset:2px; }
+    #recApp[hidden] { display:none!important; }
+    @media(max-width:860px) { .rec-layout { grid-template-columns:1fr; } .rec-metrics { grid-template-columns:repeat(3,1fr); } }
+    @media(max-width:540px) { .rec-fields { grid-template-columns:1fr; } .rec-metrics { grid-template-columns:1fr; } .rec-pane { padding:15px; } }
+
+  </style>
+</head>
+
+<body>
+  <header class="workspace-header">
+    <p class="eyebrow">SEOUL TRAFFIC NEWSROOM</p>
+    <h1>AI 기사 제작 워크스페이스</h1>
+    <p class="description">
+      데이터 분석부터 기사 작성, 사실 검수, 편집장 승인까지
+    </p>
+  </header>
+
+  <main class="workspace">
+    <nav class="workspace-nav" aria-label="기사 제작 단계">
+      <button class="active" data-step="0">기사거리 추천</button>
+      <button data-step="1">기사 초안</button>
+      <button data-step="2">자동 사실 검수</button>
+      <button data-step="3">편집장 승인</button>
+      <button data-step="4">승인 기사</button>
+    </nav>
+
+    <section class="workspace-card" aria-live="polite">
+      <h2 id="stepTitle">기사거리 추천</h2>
+      <p id="stepDescription">
+        고령 보행자 사고 데이터를 기반으로
+        취재 가치가 있는 기사거리를 발굴합니다.
+      </p>
+
+      <div id="recApp">
+        <div class="rec-layout">
+          <section class="rec-pane" aria-label="취재 조건 입력">
+            <h3>취재 조건 설정</h3>
+            <p class="rec-muted">사고 분석을 선택하고 최근 정책·보도에서 취재 단서를 찾습니다.</p>
+            <form id="recommendationForm">
+              <div class="rec-fields">
+                <label class="rec-field">분석 지역
+                  <select id="recDistrict" required>
+                    <option>동대문구</option><option>서울 전체</option>
+                    <option>강남구</option><option>강동구</option><option>강북구</option><option>강서구</option><option>관악구</option><option>광진구</option><option>구로구</option><option>금천구</option><option>노원구</option><option>도봉구</option><option>동작구</option><option>마포구</option><option>서대문구</option><option>서초구</option><option>성동구</option><option>성북구</option><option>송파구</option><option>양천구</option><option>영등포구</option><option>용산구</option><option>은평구</option><option>종로구</option><option>중구</option><option>중랑구</option>
+                  </select>
+                </label>
+                <label class="rec-field">분석 연도
+                  <select id="recYear"><option value="2025">2025년</option><option value="2024">2024년</option><option value="2023">2023년</option><option value="2022">2022년</option></select>
+                </label>
+                <label class="rec-field">보도 검색 기간
+                  <select id="recDays"><option value="30">최근 30일</option><option value="90">최근 90일</option><option value="365">최근 1년</option></select>
+                </label>
+                <label class="rec-field">검색 키워드
+                  <input id="recKeyword" maxlength="80" placeholder="예: 노인보호구역">
+                </label>
+                <div class="rec-field rec-wide">검색 자료 유형
+                  <div class="rec-sources">
+                    <label><input type="checkbox" name="recCategory" value="정책" checked> 정책</label>
+                    <label><input type="checkbox" name="recCategory" value="보도자료" checked> 보도자료</label>
+                    <label><input type="checkbox" name="recCategory" value="언론" checked> 언론</label>
+                  </div>
+                </div>
+                <label class="rec-field rec-wide">참고할 원문 URL (선택)
+                  <input id="recUrl" type="url" maxlength="2000" placeholder="https://...">
+                </label>
+                <label class="rec-field rec-wide">기자 취재 메모 (선택)
+                  <textarea id="recMemo" maxlength="3000" placeholder="확인하고 싶은 쟁점이나 현장에서 확보한 단서를 적어주세요."></textarea>
+                </label>
+              </div>
+              <div class="rec-actions"><button type="submit" class="rec-btn" id="recRun">AI 기사거리 추천</button><span class="rec-muted">API 사용료가 발생할 수 있습니다.</span></div>
+            </form>
+            <p id="recStatus" class="rec-status" role="status" aria-live="polite"></p>
+          </section>
+          <section class="rec-pane" aria-label="분석 결과">
+            <h3>분석 기준</h3>
+            <p class="rec-muted" id="recFactsIntro">추천을 실행하면 사용된 통계와 해석상의 한계를 여기서 확인할 수 있습니다.</p>
+            <div id="recMetrics" class="rec-metrics" hidden></div>
+            <div id="recLimitations" class="rec-footnote" hidden></div>
+          </section>
+        </div>
+        <div class="rec-layout" id="recResults" hidden>
+          <section class="rec-pane" aria-label="추천 기사거리 목록">
+            <h3>추천 기사거리 <span id="recCount" class="rec-pill">0건</span></h3>
+            <div id="recChoices" class="rec-list"></div>
+          </section>
+          <section class="rec-pane" aria-label="추천 기사거리 상세">
+            <h3>기사거리 상세</h3>
+            <div id="recDetail" class="rec-detail"></div>
+            <div class="rec-actions"><button id="recSave" class="rec-btn" type="button" disabled>이 기사거리 MySQL에 저장</button></div>
+            <p class="rec-status" id="recSaveStatus" role="status" aria-live="polite"></p>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <a
+    href="/"
+    class="newsroom-fab"
+    id="backToBriefing"
+    aria-label="브리핑으로"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <path d="M14 2v6h6"/>
+      <path d="M7 17v-3"/>
+      <path d="M11 17v-6"/>
+      <path d="M15 17v-4"/>
+    </svg>
+    <span class="newsroom-fab-label">브리핑으로</span>
+  </a>
+
+  <script>
+    const steps = [
+      ["기사거리 추천", "고령 보행자 사고 데이터를 기반으로 취재 가치가 있는 기사거리를 발굴합니다."],
+      ["기사 초안", "선택한 기사거리와 확인된 근거를 바탕으로 기사 초안을 작성합니다."],
+      ["자동 사실 검수", "기사의 통계, 연도, 출처, 인과관계 표현을 검토합니다."],
+      ["편집장 승인", "기자 체크리스트와 검수 결과를 확인해 승인 또는 보류합니다."],
+      ["승인 기사", "최종 승인된 기사를 조회합니다."]
+    ];
+
+    document.querySelectorAll(".workspace-nav button").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".workspace-nav button")
+          .forEach(item => item.classList.remove("active"));
+
+        button.classList.add("active");
+
+        const [title, description] = steps[Number(button.dataset.step)];
+        document.getElementById("stepTitle").textContent = title;
+        document.getElementById("stepDescription").textContent = description;
+      });
+    });
+
+    document.getElementById("backToBriefing")
+      .addEventListener("click", () => {
+        sessionStorage.setItem("restoreBriefing", "1");
+      });
+  </script>
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  let recommendation = null;
+  let selectedIndex = -1;
+  let savedIndices = new Set();
+  const app = $("recApp");
+  const form = $("recommendationForm");
+  const status = $("recStatus");
+  const saveStatus = $("recSaveStatus");
+  const button = $("recRun");
+  const save = $("recSave");
+  const results = $("recResults");
+
+  // Existing 5-step menu remains intact; show recommendation UI only on step 0.
+  document.querySelectorAll(".workspace-nav button").forEach(nav => {
+    nav.addEventListener("click", () => {
+      app.hidden = nav.dataset.step !== "0";
+    });
+  });
+
+  function el(tag, text, className) {
+    const node = document.createElement(tag);
+    if (text != null) node.textContent = String(text);
+    if (className) node.className = className;
+    return node;
+  }
+  function section(parent, title, content) {
+    const s = el("section");
+    s.append(el("h4", title));
+    if (Array.isArray(content)) {
+      if (content.length) {
+        const ul = el("ul");
+        content.forEach(x => ul.append(el("li", x)));
+        s.append(ul);
+      } else s.append(el("p", "연결된 항목 없음"));
+    } else s.append(el("p", content || "정보 없음"));
+    parent.append(s);
+  }
+  async function api(url, payload) {
+    const response = await fetch(url, {
+      method: "POST", headers: {"Content-Type":"application/json"},
+      body: JSON.stringify(payload)
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || `요청 실패 (HTTP ${response.status})`);
+    return data;
+  }
+  function showFacts(facts) {
+    $("recFactsIntro").textContent = `${facts.accident_year}년 · ${facts.region} · Fact Sheet 계산 상태: ${facts.calculation_status}`;
+    const metrics = $("recMetrics");
+    metrics.replaceChildren();
+    [
+      ["고령 보행자 사고", facts.accidents, "건"],
+      ["65세 이상 주민", facts.elderly_residents, "명"],
+      ["사고다발지역 폴리곤", facts.hotspot_polygons, "개"]
+    ].forEach(([label, value, unit]) => {
+      const card = el("div", null, "rec-metric");
+      card.append(el("small", label), el("strong", value == null ? "자료 없음" : `${Number(value).toLocaleString("ko-KR")}${unit}`));
+      metrics.append(card);
+    });
+    metrics.hidden = false;
+    const notes = $("recLimitations");
+    notes.textContent = "해석상 주의: " + (facts.limitations || []).join(" · ");
+    notes.hidden = false;
+    notes.style.marginTop = "12px";
+  }
+  function showDetail(index) {
+    selectedIndex = index;
+    const idea = recommendation.ideas[index];
+    document.querySelectorAll(".rec-choice").forEach((node, i) => {
+      node.setAttribute("aria-pressed", String(i === index));
+    });
+    const detail = $("recDetail");
+    detail.replaceChildren();
+    detail.append(el("span", "원문·추가 취재 검증 필요", "rec-pill"));
+    section(detail, "기사 가제", idea.title);
+    section(detail, "취재 방향", idea.angle);
+    section(detail, "뉴스 가치 (AI 제안·추가 확인 필요)", idea.news_value);
+    section(detail, "관련 통계와 한계", idea.evidence);
+    section(detail, "추가 취재 질문", idea.reporting_gaps || []);
+    const links = el("section");
+    links.append(el("h4", "연결된 정책·보도 검색 결과"));
+    const sources = recommendation.search.sources || [];
+    const selected = sources.filter(source => (idea.source_ids || []).includes(source.id));
+    if (!selected.length) links.append(el("p", "연결된 검색 결과 없음"));
+    selected.forEach(source => {
+      const p = el("p");
+      const a = el("a", source.title || source.source_url);
+      try {
+        const url = new URL(source.source_url);
+        if (url.protocol === "https:" || url.protocol === "http:") {
+          a.href = url.href; a.target = "_blank"; a.rel = "noopener noreferrer";
+        }
+      } catch (_) { /* invalid URL: display as plain title */ }
+      p.append(a, el("span", ` · ${source.source_org || "발행처 미확인"} · 원문 미검증`, "rec-muted"));
+      links.append(p);
+    });
+    detail.append(links);
+    save.disabled = savedIndices.has(index);
+    save.textContent = savedIndices.has(index) ? "저장 완료" : "이 기사거리 MySQL에 저장";
+    saveStatus.textContent = "";
+  }
+  function showResults(data) {
+    recommendation = data;
+    selectedIndex = -1;
+    savedIndices = new Set();
+    showFacts(data.facts);
+    $("recCount").textContent = `${data.count}건`;
+    const list = $("recChoices");
+    list.replaceChildren();
+    results.hidden = false;
+    if (!data.ideas.length) {
+      list.append(el("p", "이번 조건에서 추천할 후보가 없습니다. 검색 조건이나 기자 메모를 조정해 다시 실행해 주세요.", "rec-muted"));
+      $("recDetail").replaceChildren(el("p", "선택할 후보가 없습니다.", "rec-muted"));
+      save.disabled = true;
+    } else {
+      data.ideas.forEach((idea, i) => {
+        const b = el("button", null, "rec-choice");
+        b.type = "button";
+        b.setAttribute("aria-pressed", "false");
+        b.append(el("strong", idea.title), el("small", `후보 ${i+1} · ${idea.readiness === "NEEDS_REPORTING" ? "추가 취재 필요" : idea.readiness}`));
+        b.addEventListener("click", () => showDetail(i));
+        list.append(b);
+      });
+      showDetail(0);
+    }
+    if (data.search?.errors?.length) status.textContent += "\n일부 검색 실패: " + data.search.errors.join(" · ");
+    results.scrollIntoView({behavior:"smooth", block:"start"});
+  }
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const categories = Array.from(form.querySelectorAll('input[name="recCategory"]:checked'), x => x.value);
+    if (!categories.length) { status.textContent = "검색 자료 유형을 하나 이상 선택해 주세요."; status.classList.add("error"); return; }
+    button.disabled = true;
+    status.classList.remove("error");
+    status.textContent = "관련 보도 검색 및 AI 기사거리 추천을 실행하는 중입니다…";
+    results.hidden = true;
+    recommendation = null;
+    try {
+      const data = await api("/api/newsroom/recommend", {
+        year:Number($("recYear").value), district:$("recDistrict").value,
+        days:Number($("recDays").value), categories,
+        keyword:$("recKeyword").value.trim(), url:$("recUrl").value.trim(), memo:$("recMemo").value.trim()
+      });
+      status.textContent = `검색 ${data.search.sources.length}건 · 추천 ${data.count}건 (검색 제목·메타데이터는 검증된 사실이 아닙니다)`;
+      showResults(data);
+    } catch (err) {
+      status.classList.add("error");
+      status.textContent = err.message;
+    } finally { button.disabled = false; }
+  });
+  save.addEventListener("click", async () => {
+    if (!recommendation || selectedIndex < 0 || savedIndices.has(selectedIndex)) return;
+    const index = selectedIndex;
+    save.disabled = true;
+    saveStatus.classList.remove("error");
+    saveStatus.textContent = "선택한 기사거리 저장 중…";
+    try {
+      const data = await api("/api/newsroom/ideas", {recommendation, selected_index:index});
+      savedIndices.add(index);
+      save.textContent = "저장 완료";
+      saveStatus.textContent = `MySQL 저장 성공 · 기사거리 ID ${data.id} · 추가 취재 필요`;
+    } catch (err) {
+      save.disabled = false;
+      saveStatus.classList.add("error");
+      saveStatus.textContent = err.message;
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
