@@ -90,6 +90,175 @@ def fetch_cameras(key, outer_ring):
         raise ValueError("CCTV 목록 형식을 확인할 수 없어.")
     return cameras
 
+from newsroom.data import dataset_state, load_data
+from newsroom.recommendation import fact_sheet
+
+
+@app.get("/api/newsroom/facts")
+def newsroom_facts():
+    from flask import request
+
+    year = request.args.get("year", default=2025, type=int)
+    district = request.args.get("district", default="동대문구")
+
+    try:
+        state = dataset_state()
+
+        if state["missing"]:
+            return jsonify(error="분석 데이터가 누락됐습니다."), 503
+
+        data = load_data(state["directory"], state["versions"])
+        facts = fact_sheet(data["panel"], data["links"], year, district)
+
+        if facts["calculation_status"] != "CHECKED":
+            return jsonify(error="확인 가능한 Fact Sheet가 없습니다."), 422
+
+        return jsonify(facts)
+
+    except (OSError, ValueError, KeyError) as error:
+        return jsonify(error=str(error)), 400
+
+
+from newsroom.recommendation import (
+    search_sources,
+    recommend,
+    validate_hint_url,
+)
+
+from newsroom.persistence import engine_from_env, save_idea
+
+
+@app.post("/api/newsroom/ideas")
+def newsroom_save_idea():
+    from flask import request
+
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return jsonify(error="JSON 입력이 필요합니다."), 400
+
+    try:
+        recommendation = payload["recommendation"]
+        index = payload["selected_index"]
+
+        if not isinstance(recommendation, dict):
+            raise ValueError("추천 결과 형식이 잘못됐습니다.")
+        if type(index) is not int:
+            raise ValueError("선택 번호가 올바르지 않습니다.")
+
+        ideas = recommendation["ideas"]
+        sources = recommendation["search"]["sources"]
+        submitted_facts = recommendation["facts"]
+
+        if not isinstance(ideas, list) or not isinstance(sources, list):
+            raise ValueError("추천 후보 또는 출처 형식이 잘못됐습니다.")
+        if not isinstance(submitted_facts, dict):
+            raise ValueError("Fact Sheet 형식이 잘못됐습니다.")
+        if index < 0 or index >= len(ideas):
+            raise ValueError("선택한 후보가 없습니다.")
+
+        # 저장 전 서버에서 원본 CSV로 Fact Sheet를 다시 계산한다.
+        state = dataset_state()
+        if state["missing"]:
+            return jsonify(error="분석 데이터가 누락됐습니다."), 503
+
+        data = load_data(state["directory"], state["versions"])
+        facts = fact_sheet(
+            data["panel"],
+            data["links"],
+            int(submitted_facts["accident_year"]),
+            str(submitted_facts["region"]),
+        )
+
+        if facts["calculation_status"] != "CHECKED":
+            raise ValueError("Fact Sheet를 확인할 수 없습니다.")
+
+        if facts != submitted_facts:
+            raise ValueError("추천 당시 Fact Sheet와 현재 데이터가 다릅니다.")
+
+        idea = ideas[index]
+        if not isinstance(idea, dict):
+            raise ValueError("기사거리 형식이 잘못됐습니다.")
+
+        # 기자가 원문을 직접 대조하지 않았으므로 VERIFIED로 저장하지 않는다.
+        engine = engine_from_env()
+        try:
+            idea_id = save_idea(
+                engine,
+                facts,
+                idea,
+                sources,
+                verified_excerpts={},
+            )
+        finally:
+            engine.dispose()
+
+        return jsonify(
+            id=idea_id,
+            title=idea["title"],
+            readiness="NEEDS_REPORTING",
+            saved=True,
+        ), 201
+
+    except (KeyError, ValueError, TypeError, IndexError) as error:
+        return jsonify(error=str(error)), 400
+    except Exception:
+        app.logger.exception("기사거리 저장 실패")
+        return jsonify(error="기사거리 저장 중 오류가 발생했습니다."), 500
+
+@app.post("/api/newsroom/recommend")
+def newsroom_recommend():
+    from flask import request
+
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return jsonify(error="JSON 입력이 필요합니다."), 400
+
+    try:
+        year = int(payload.get("year", 2025))
+        district = str(payload.get("district", "동대문구"))
+        days = int(payload.get("days", 30))
+        categories = payload.get(
+            "categories", ["정책", "보도자료", "언론"]
+        )
+        keyword = str(payload.get("keyword", "")).strip()
+        url = validate_hint_url(str(payload.get("url", "")))
+        memo = str(payload.get("memo", "")).strip()
+
+        if not isinstance(categories, list) or not all(
+            isinstance(c, str) for c in categories
+        ):
+            return jsonify(error="검색 유형 형식이 잘못됐습니다."), 400
+
+        state = dataset_state()
+        if state["missing"]:
+            return jsonify(error="분석 CSV가 누락됐습니다."), 503
+
+        data = load_data(state["directory"], state["versions"])
+        panel = data["panel"]
+
+        valid_districts = set(panel["자치구명"].dropna())
+        if district != "서울 전체" and district not in valid_districts:
+            return jsonify(error="지원하지 않는 자치구입니다."), 400
+
+        facts = fact_sheet(data["panel"], data["links"], year, district)
+        if facts["calculation_status"] != "CHECKED":
+            return jsonify(error="Fact Sheet를 확인할 수 없습니다."), 422
+
+        search = search_sources(days, categories, keyword)
+        ideas = recommend(facts, search, keyword, url, memo)
+
+        return jsonify(
+            facts=facts,
+            search=search,
+            ideas=ideas,
+            count=len(ideas),
+        )
+
+    except (ValueError, TypeError) as error:
+        return jsonify(error=str(error)), 400
+    except Exception:
+        app.logger.exception("기사거리 추천 실패")
+        return jsonify(error="기사거리 추천 중 오류가 발생했습니다."), 502
 
 @app.get("/")
 def dashboard():
