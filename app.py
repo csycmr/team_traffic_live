@@ -4,16 +4,17 @@ import time
 import json
 import math
 import os
+import re
 from functools import lru_cache
 from pathlib import Path
 from urllib.error import HTTPError, URLError
-from urllib.parse import urlencode
+from urllib.parse import quote, urlencode
 from urllib.request import urlopen
 from xml.etree import ElementTree as ET
 
 from dotenv import load_dotenv
 
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, Response, jsonify, send_from_directory
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent
@@ -303,7 +304,18 @@ def newsroom_recommend():
 
 @app.get("/")
 def dashboard():
-    return send_from_directory(ROOT, "seoul-traffic-demo.html")
+    kakao_key = os.getenv("KAKAO_MAP_JS_KEY", "").strip()
+    if not kakao_key:
+        return send_from_directory(ROOT, "seoul-traffic-demo.html")
+
+    html = (ROOT / "seoul-traffic-demo.html").read_text(encoding="utf-8")
+    html = re.sub(
+        r"(https://dapi\.kakao\.com/v2/maps/sdk\.js\?appkey=)[^&\"]+",
+        lambda match: match[1] + quote(kakao_key, safe=""),
+        html,
+        count=1,
+    )
+    return Response(html, mimetype="text/html")
 
 
 @app.get("/data/<path:filename>")
