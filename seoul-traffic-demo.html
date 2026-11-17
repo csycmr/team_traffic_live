@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>서울 교통안전 라이브</title>
+<link rel="stylesheet" href="/assets/newsroom-nav.css">
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/static/woff2/Pretendard-Bold.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="https://cdn.jsdelivr.net/gh/Freesentation/paperlogy@8ef35f53b318c7ca914c52b1b382b9a8bad07a61/woff2/Paperlogy-7Bold.woff2" as="font" type="font/woff2" crossorigin>
 <style>
@@ -3956,116 +3957,43 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
   updateElderlyStatistics();
 </script>
 
-<div class="newsroom-demo-actions" role="group" aria-label="팀 시연 도구">
-  <button type="button" aria-haspopup="dialog" aria-controls="newsroom-demo-editor">기사 생성</button>
-  <button type="button" aria-haspopup="dialog" aria-controls="newsroom-demo-chat">챗봇</button>
-</div>
-
-<dialog id="newsroom-demo-editor" class="newsroom-demo" aria-labelledby="newsroom-demo-editor-title">
-  <header>
-    <h2 id="newsroom-demo-editor-title">기사 편집실 · 시연</h2>
-    <form method="dialog"><button type="submit">닫기</button></form>
-  </header>
-  <p>현재 화면 · <strong id="newsroom-demo-topic"></strong></p>
-  <label>기사 제목 <input id="newsroom-demo-headline" type="text"></label>
-  <label>기사 초안 <textarea id="newsroom-demo-draft"></textarea></label>
-  <p>예시 검수 항목 · 원자료, 기준 연도, 집계 단위</p>
-  <label><input type="checkbox" id="newsroom-demo-review"> 팩트체크·편집검수 완료</label>
-  <button type="button" id="newsroom-demo-approve" disabled>승인 시연</button>
-  <p id="newsroom-demo-status" role="status"></p>
-</dialog>
-
-<dialog id="newsroom-demo-chat" class="newsroom-demo" aria-labelledby="newsroom-demo-chat-title">
-  <header>
-    <h2 id="newsroom-demo-chat-title">팩트시트 Q&A · 시연</h2>
-    <form method="dialog"><button type="submit">닫기</button></form>
-  </header>
-  <p>미리 준비한 예시 답변을 보여줘.</p>
-  <div id="newsroom-demo-log" role="log" aria-label="대화">
-    <p><strong>챗봇</strong> · 아래 예시 질문을 눌러봐.</p>
-  </div>
-  <button type="button" id="newsroom-demo-example">자치구 사고율은 어떻게 비교해?</button>
-  <form id="newsroom-demo-question">
-    <label>질문 <input type="text" name="question" required maxlength="300" autocomplete="off"></label>
-    <button type="submit">보내기</button>
-  </form>
-</dialog>
+<a
+  href="/newsroom"
+  class="newsroom-fab"
+  id="openNewsroom"
+  aria-label="기사 작성"
+>
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M12 5l7 7"/>
+    <path d="M4 20l4.5-1.2L20 7.3a2.2 2.2 0 0 0-3.3-3.3L5.2 15.5 4 20z"/>
+  </svg>
+  <span class="newsroom-fab-label">기사 작성</span>
+</a>
 
 <script>
-  (() => {
-    const editor = document.getElementById("newsroom-demo-editor");
-    const chat = document.getElementById("newsroom-demo-chat");
-    const review = document.getElementById("newsroom-demo-review");
-    const approve = document.getElementById("newsroom-demo-approve");
-    const status = document.getElementById("newsroom-demo-status");
-    const log = document.getElementById("newsroom-demo-log");
-    const questionForm = document.getElementById("newsroom-demo-question");
-    const example = document.getElementById("newsroom-demo-example");
-    let lastTopic;
+  document.getElementById("openNewsroom")
+    .addEventListener("click", () => {
+      sessionStorage.setItem(
+        "briefingScrollY",
+        String(window.scrollY)
+      );
+    });
 
-    function prepareEditor() {
-      const activeScreen = document.elementsFromPoint(innerWidth / 2, innerHeight / 2)
-        .map(element => element.closest(".story-screen, .traffic-screen"))
-        .find(Boolean);
-      const heading = activeScreen?.getAttribute("aria-labelledby");
-      const topic = (heading && document.getElementById(heading)?.textContent.trim())
-        || "오늘의 서울 교통";
-      document.getElementById("newsroom-demo-topic").textContent = topic;
-      if (topic === lastTopic) return;
-
-      document.getElementById("newsroom-demo-headline").value = topic + " · 예시 기사";
-      document.getElementById("newsroom-demo-draft").value =
-        "‘" + topic + "’ 화면에서 다루는 교통안전 지표를 살펴본다. "
-        + "기사에 수치를 넣기 전에 원자료에서 집계 대상과 기간을 확인한다.";
-      lastTopic = topic;
-      review.checked = false;
-      approve.disabled = true;
-      status.textContent = "";
+  window.addEventListener("load", () => {
+    if (sessionStorage.getItem("restoreBriefing") !== "1") {
+      return;
     }
 
-    document.querySelectorAll(".newsroom-demo-actions button").forEach(button => {
-      button.addEventListener("click", () => {
-        const dialog = document.getElementById(button.getAttribute("aria-controls"));
-        if (dialog === editor) prepareEditor();
-        dialog.showModal();
-      });
-    });
+    sessionStorage.removeItem("restoreBriefing");
 
-    review.addEventListener("change", () => {
-      approve.disabled = !review.checked;
-      status.textContent = "";
-    });
-    approve.addEventListener("click", () => {
-      status.textContent = "시연용 승인 완료";
-    });
+    const position = Number(
+      sessionStorage.getItem("briefingScrollY") || 0
+    );
 
-    function addMessage(speaker, message) {
-      const line = document.createElement("p");
-      const label = document.createElement("strong");
-      label.textContent = speaker;
-      line.append(label, " · " + message);
-      log.append(line);
-    }
-
-    function answer(question) {
-      addMessage("나", question);
-      if (/사고율|자치구/.test(question)) {
-        addMessage("챗봇", "예시 답변 · 같은 연도의 고령 보행사고 건수를 자치구별 고령인구로 나눈 뒤 1만을 곱해 비교해. 참고 화면은 ‘어디가 위험한가?’야.");
-      } else {
-        addMessage("챗봇", "이 시연에서는 자치구 사고율 비교 질문에 답할 수 있어.");
-      }
-      log.scrollTop = log.scrollHeight;
-    }
-
-    example.addEventListener("click", () => answer(example.textContent));
-    questionForm.addEventListener("submit", event => {
-      event.preventDefault();
-      const question = questionForm.elements.question.value.trim();
-      if (!question) return;
-      answer(question);
-      questionForm.reset();
+    requestAnimationFrame(() => {
+      window.scrollTo(0, position);
     });
-  })();
+  });
 </script>
 
 </body>

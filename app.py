@@ -315,6 +315,9 @@ def dashboard_data(filename):
 def dashboard_asset(filename):
     return send_from_directory(ROOT / "assets", filename)
 
+@app.get("/newsroom")
+def newsroom_page():
+    return send_from_directory(ROOT, "newsroom.html")
 
 @app.get("/api/cctv")
 def cctv():

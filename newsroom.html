@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>기사 작성 | 서울 교통안전 라이브</title>
+  <link rel="stylesheet" href="/assets/newsroom-nav.css">
+
+  <style>
+    :root {
+      font-family: "Pretendard", "Noto Sans KR", sans-serif;
+      background: #ffffff;
+      color: #f0f5fb;
+      --mint: #70edc8;
+      --line: #2a394b;
+      --muted: #a5b5c8;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+  margin: 0;
+  background: #ffffff;
+}
+
+    .workspace-header {
+      padding: 24px 5%;
+      border-bottom: 1px solid var(--line);
+      background: #0e1723;
+    }
+
+    .eyebrow {
+      margin: 0 0 8px;
+      font-size: 12px;
+      letter-spacing: .12em;
+      color: var(--mint);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(23px, 3vw, 32px);
+    }
+
+    .description {
+      margin: 10px 0 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .workspace {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 36px 5% 120px;
+    }
+
+    .workspace-nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+
+    .workspace-nav button {
+      padding: 11px 17px;
+      background: #152231;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      color: #d7e5f0;
+      cursor: pointer;
+      font: inherit;
+      font-size: 13px;
+    }
+
+    .workspace-nav button.active {
+      color: #0b121d;
+      background: var(--mint);
+      border-color: var(--mint);
+      font-weight: 700;
+    }
+
+    .workspace-card {
+      padding: 32px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #111e2c;
+      min-height: 350px;
+    }
+
+    .workspace-card h2 {
+      margin: 0 0 16px;
+      font-size: 22px;
+    }
+
+    .workspace-card p {
+      color: var(--muted);
+      line-height: 1.8;
+    }
+
+    @media (max-width: 768px) {
+      .workspace-card { padding: 22px; }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="workspace-header">
+    <p class="eyebrow">SEOUL TRAFFIC NEWSROOM</p>
+    <h1>AI 기사 제작 워크스페이스</h1>
+    <p class="description">
+      데이터 분석부터 기사 작성, 사실 검수, 편집장 승인까지
+    </p>
+  </header>
+
+  <main class="workspace">
+    <nav class="workspace-nav" aria-label="기사 제작 단계">
+      <button class="active" data-step="0">기사거리 추천</button>
+      <button data-step="1">기사 초안</button>
+      <button data-step="2">자동 사실 검수</button>
+      <button data-step="3">편집장 승인</button>
+      <button data-step="4">승인 기사</button>
+    </nav>
+
+    <section class="workspace-card" aria-live="polite">
+      <h2 id="stepTitle">기사거리 추천</h2>
+      <p id="stepDescription">
+        고령 보행자 사고 데이터를 기반으로
+        취재 가치가 있는 기사거리를 발굴합니다.
+      </p>
+    </section>
+  </main>
+
+  <a
+    href="/"
+    class="newsroom-fab"
+    id="backToBriefing"
+    aria-label="브리핑으로"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+      <path d="M14 2v6h6"/>
+      <path d="M7 17v-3"/>
+      <path d="M11 17v-6"/>
+      <path d="M15 17v-4"/>
+    </svg>
+    <span class="newsroom-fab-label">브리핑으로</span>
+  </a>
+
+  <script>
+    const steps = [
+      ["기사거리 추천", "고령 보행자 사고 데이터를 기반으로 취재 가치가 있는 기사거리를 발굴합니다."],
+      ["기사 초안", "선택한 기사거리와 확인된 근거를 바탕으로 기사 초안을 작성합니다."],
+      ["자동 사실 검수", "기사의 통계, 연도, 출처, 인과관계 표현을 검토합니다."],
+      ["편집장 승인", "기자 체크리스트와 검수 결과를 확인해 승인 또는 보류합니다."],
+      ["승인 기사", "최종 승인된 기사를 조회합니다."]
+    ];
+
+    document.querySelectorAll(".workspace-nav button").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".workspace-nav button")
+          .forEach(item => item.classList.remove("active"));
+
+        button.classList.add("active");
+
+        const [title, description] = steps[Number(button.dataset.step)];
+        document.getElementById("stepTitle").textContent = title;
+        document.getElementById("stepDescription").textContent = description;
+      });
+    });
+
+    document.getElementById("backToBriefing")
+      .addEventListener("click", () => {
+        sessionStorage.setItem("restoreBriefing", "1");
+      });
+  </script>
+</body>
+</html>

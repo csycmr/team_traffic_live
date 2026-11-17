@@ -1,0 +1,65 @@
+.newsroom-fab {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 9999;
+  width: 58px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #70edc8;
+  border-radius: 50%;
+  background: #102133;
+  color: #70edc8;
+  text-decoration: none;
+  box-shadow: 0 5px 18px rgba(0,0,0,.2);
+  transition: transform .2s, background .2s;
+}
+
+.newsroom-fab:hover {
+  transform: translateY(-2px);
+  background: #193348;
+}
+
+.newsroom-fab svg {
+  width: 27px;
+  height: 27px;
+  flex: 0 0 27px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.newsroom-fab-label {
+  position: absolute;
+  right: 70px;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 8px 12px;
+  border: 1px solid #385a60;
+  border-radius: 8px;
+  background: #102133;
+  color: white;
+  font-size: 13px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.newsroom-fab:hover .newsroom-fab-label,
+.newsroom-fab:focus-visible .newsroom-fab-label {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .newsroom-fab {
+    right: 16px;
+    bottom: 16px;
+    width: 52px;
+    height: 52px;
+  }
+  .newsroom-fab-label { display: none; }
+}
