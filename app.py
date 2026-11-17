@@ -665,5 +665,47 @@ def newsroom_editor_decision(article_id):
         if engine is not None:
             engine.dispose()
 
+from newsroom.publication import approved_articles, approved_article
+
+
+@app.get("/api/newsroom/articles")
+def newsroom_public_articles():
+    engine = None
+    try:
+        engine = engine_from_env()
+        articles = approved_articles(engine)
+
+        return jsonify(
+            articles=articles,
+            count=len(articles),
+        )
+
+    except Exception:
+        app.logger.exception("승인 기사 목록 조회 실패")
+        return jsonify(error="승인 기사 목록을 불러오지 못했습니다."), 500
+    finally:
+        if engine is not None:
+            engine.dispose()
+
+
+@app.get("/api/newsroom/articles/<int:article_id>")
+def newsroom_public_article(article_id):
+    engine = None
+    try:
+        engine = engine_from_env()
+        article = approved_article(engine, article_id)
+
+        if article is None:
+            return jsonify(error="공개된 기사를 찾을 수 없습니다."), 404
+
+        return jsonify(article)
+
+    except Exception:
+        app.logger.exception("승인 기사 상세 조회 실패")
+        return jsonify(error="기사를 불러오지 못했습니다."), 500
+    finally:
+        if engine is not None:
+            engine.dispose()
+
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5001)
