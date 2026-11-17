@@ -44,6 +44,8 @@ py -3.14 -m venv .venv
 
 터미널에 `Running on http://127.0.0.1:5000`이 보이면 [로컬 대시보드](http://127.0.0.1:5000/)를 엽니다. 로컬 카카오맵을 쓰려면 카카오 JavaScript SDK 허용 도메인에 `http://127.0.0.1:5000`을 등록해야 합니다. 서버 종료는 `Ctrl+C`입니다.
 
+로컬에서 다른 카카오 JavaScript 키를 쓰려면 저장소 루트의 `.env`에 `KAKAO_MAP_JS_KEY=발급받은_JavaScript_키`를 추가하고 Flask를 재시작합니다. 해당 키의 JavaScript SDK 도메인에 브라우저에서 실제로 쓰는 주소를 등록합니다. 5001 포트라면 `http://127.0.0.1:5001`입니다.
+
 ### 3. CCTV 목록 API 확인
 
 CCTV 목록까지 조회하려면 서버를 종료한 뒤 같은 PowerShell에서 아래 명령을 실행하고, 국가교통정보센터 CCTV 인증키를 입력합니다.
