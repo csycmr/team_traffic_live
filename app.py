@@ -519,10 +519,6 @@ def citydata():
         app.logger.error("서울시 도시데이터 조회 실패: %s", type(error).__name__)
         return jsonify(error="서울시 도시데이터를 가져오지 못했어."), 502
 
-
-if __name__ == "__main__":
-    app.run(host="127.0.0.1", port=5000)
-
 from newsroom.article_draft import load_draft
 
 
@@ -585,3 +581,89 @@ def newsroom_update_draft(article_id):
     finally:
         if engine is not None:
             engine.dispose()
+
+from newsroom.review import validate
+
+
+@app.post("/api/newsroom/drafts/<int:article_id>/validate")
+def newsroom_validate_draft(article_id):
+    engine = None
+
+    try:
+        engine = engine_from_env()
+        result = validate(engine, article_id)
+
+        return jsonify(
+            article_id=article_id,
+            **result,
+        )
+
+    except ValueError as error:
+        return jsonify(error=str(error)), 409
+
+    except Exception:
+        app.logger.exception("기사 자동 검수 실패")
+        return jsonify(
+            error="자동 검수 중 오류가 발생했습니다."
+        ), 500
+
+    finally:
+        if engine is not None:
+            engine.dispose()
+
+from newsroom.review import decide, CHECKS
+
+
+@app.get("/api/newsroom/editor/checklist")
+def newsroom_editor_checklist():
+    return jsonify(checks=CHECKS)
+
+
+@app.post("/api/newsroom/drafts/<int:article_id>/decision")
+def newsroom_editor_decision(article_id):
+    from flask import request
+
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        return jsonify(error="JSON 입력이 필요합니다."), 400
+
+    engine = None
+    try:
+        action = payload["action"]
+        if action not in ("approve", "hold"):
+            return jsonify(error="approve 또는 hold를 선택하세요."), 400
+
+        checks = payload["checks"]
+        if not isinstance(checks, list) or len(checks) != 4 or not all(
+            type(value) is bool for value in checks
+        ):
+            return jsonify(error="체크리스트 4개를 확인하세요."), 400
+
+        engine = engine_from_env()
+        status = decide(
+            engine=engine,
+            id=article_id,
+            reviewer=payload["reviewer"],
+            password=payload["password"],
+            checks=checks,
+            approve=(action == "approve"),
+            note=payload.get("note", ""),
+        )
+
+        return jsonify(
+            article_id=article_id,
+            status=status,
+            saved=True,
+        )
+
+    except (KeyError, ValueError, TypeError) as error:
+        return jsonify(error=str(error)), 400
+    except Exception:
+        app.logger.exception("편집장 승인·보류 실패")
+        return jsonify(error="편집장 결정 처리 중 오류가 발생했습니다."), 500
+    finally:
+        if engine is not None:
+            engine.dispose()
+
+if __name__ == "__main__":
+    app.run(host="127.0.0.1", port=5001)
