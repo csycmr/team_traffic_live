@@ -1223,6 +1223,18 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
   .change-map { height: auto }
   .change-table-scroll { max-height: none }
 }
+
+.designation-charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-block: 14px }
+.designation-card { margin: 0; padding: clamp(10px, 1.4vw, 20px); border: 1px solid var(--line); border-radius: 8px; background: #101e2c }
+.designation-card figcaption { font: 700 18px/1.3 Paperlogy, sans-serif }
+.designation-card svg { width: 100%; display: block; max-height: 49svh }
+.designation-card svg text { fill: #d3dfeb; font: 600 12px Pretendard, sans-serif }
+.designation-card circle[tabindex] { cursor: pointer }
+.designation-card circle:focus-visible { outline: none; stroke: white; stroke-width: 2 }
+.designation-card output { display: block; color: #c8d6e2; font-size: 13px }
+@media (orientation: portrait), (max-width: 680px) {
+  .designation-charts { grid-template-columns: 1fr }
+}
 </style>
 <link rel="stylesheet" href="./assets/oecd-rankings.css">
 <link rel="stylesheet" href="./assets/national-fatalities.css">
@@ -1291,7 +1303,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
 <header class="traffic-header">
   <div class="brand">
     <span class="brand-icon" aria-hidden="true">↗</span>
-    <div><div class="eyebrow">SEOUL TRAFFIC NEWSROOM</div><h1>서울 교통안전 라이브</h1></div>
+    <div><div class="eyebrow">서울 교통안전 라이브</div><h1>지금 서울의 교통 상황은?</h1></div>
   </div>
   <div class="header-meta"><a class="traffic-jump" href="#audit-video">국정감사와 교통사고 <span aria-hidden="true">↓</span></a><button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button></div>
 </header>
@@ -1408,7 +1420,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
   <header class="traffic-header story-header">
     <div class="brand">
       <span class="brand-icon" aria-hidden="true">↗</span>
-      <div><h2 class="oecd-title" id="audit-title">2020 국정감사, 그 이후</h2></div>
+      <div><h2 class="oecd-title" id="audit-title">2020 행정안전부 국정감사, 그 이후</h2></div>
     </div>
     <nav class="header-meta" aria-label="국정감사와 교통사고 화면 이동">
       <a class="traffic-jump" href="#traffic-live"><span aria-hidden="true">↑</span> 서울 교통 현황</a>
@@ -1959,7 +1971,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
   <header class="traffic-header story-header">
     <div class="brand">
       <span class="brand-icon" aria-hidden="true">↗</span>
-      <h2 class="oecd-title" id="district-risk-title">어디가 위험한가?</h2>
+      <h2 class="oecd-title" id="district-risk-title">고령인구 1만 명당 보행사고, 어느 구에서 많았나?</h2>
     </div>
     <nav class="header-meta" aria-label="어디가 위험한가? 화면 이동">
       <a class="traffic-jump" href="#national-fatalities"><span aria-hidden="true">↑</span> 전국 사망자 추이</a>
@@ -2131,7 +2143,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
 </section>
 <section class="oecd-screen story-screen" id="zone-before-after" aria-labelledby="zone-before-after-title">
   <header class="traffic-header story-header">
-    <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="zone-before-after-title">노인보호구역 지정 전후 사고 비교</h2></div>
+    <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="zone-before-after-title">노인보호구역 지정 전후, 자치구의 고령 보행사고는 어떻게 변했나?</h2></div>
     <nav class="header-meta" aria-label="지정 전후 사고 비교 화면 이동">
       <a class="traffic-jump" href="#district-change"><span aria-hidden="true">↑</span> 자치구별 증감 지도</a>
       <a class="traffic-jump" href="#district-comparison">동대문·도봉 비교 <span aria-hidden="true">↓</span></a>
@@ -2142,21 +2154,26 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
     <section class="audit-diagnosis">
       <h3 class="audit-heading">—</h3>
       <p class="audit-chart-caption">—</p>
-      <div class="risk-change-scroll" tabindex="0" role="region" aria-label="노인보호구역 지정 전후 비교표">
-        <table class="risk-change-table">
-          <thead><tr><th scope="col">자치구</th><th scope="col">지정연도</th><th scope="col">지정 구역 수</th><th scope="col">사고 건수 전 → 지정 → 후</th><th scope="col">증감(건)</th><th scope="col">사고율 전 → 지정 → 후</th></tr></thead>
-          <tbody></tbody>
-        </table>
+      <div class="designation-charts">
+        <figure class="designation-card" data-year="2023">
+          <figcaption>2023년 지정 · 4개 자치구</figcaption>
+          <svg viewBox="0 0 418 276" role="group" aria-label="2022~2024년 자치구별 고령 보행사고 건수"></svg>
+          <output>점을 선택하면 자치구·연도·사고 건수가 표시돼.</output>
+        </figure>
+        <figure class="designation-card" data-year="2024">
+          <figcaption>2024년 지정 · 5개 자치구</figcaption>
+          <svg viewBox="0 0 418 276" role="group" aria-label="2023~2025년 자치구별 고령 보행사고 건수"></svg>
+          <output>점을 선택하면 자치구·연도·사고 건수가 표시돼.</output>
+        </figure>
       </div>
-      <p class="muted policy-source">각 수치는 전년도 → 지정연도 → 이듬해 순입니다. 증감은 전년도와 이듬해의 차이입니다. 구역 수는 2025년 명단 기준입니다.</p>
-      <p class="muted policy-source">사고율은 자치구의 65세 이상 인구 1만 명당 고령 보행자 사고 건수입니다. 보호구역 주변 사고와 지정 효과를 확인하려면 사고 위치 자료와 비교 지역이 필요합니다.</p>
+      <p class="muted policy-source">각 선은 자치구 전체의 고령 보행사고 건수입니다. 보호구역 지정의 효과를 판단하려면 지정 구간 주변의 사고 변화를 별도로 확인해야 합니다.</p>
       <p class="muted policy-source">출처 · <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/04_보호구역_마스터.csv">팀 보호구역 명단</a> · <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/01_%EC%9E%90%EC%B9%98%EA%B5%AC%EC%97%B0%EB%8F%84_%ED%8C%A8%EB%84%90.csv">자치구·연도별 사고 자료</a></p>
     </section>
   </div>
 </section>
 <section class="oecd-screen story-screen" id="district-comparison" aria-labelledby="district-comparison-title">
   <header class="traffic-header story-header">
-    <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="district-comparison-title">동대문구·도봉구는 서울 전체와 어떻게 다른가?</h2></div>
+    <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="district-comparison-title">동대문구와 도봉구의 사고율, 서울 평균과 얼마나 다를까?</h2></div>
     <nav class="header-meta" aria-label="동대문구·도봉구는 서울 전체와 어떻게 다른가? 화면 이동">
       <a class="traffic-jump" href="#zone-before-after"><span aria-hidden="true">↑</span> 지정 전후 비교</a>
       <a class="traffic-jump" href="#zone-overlap">보호구역 중첩 지도 <span aria-hidden="true">↓</span></a>
@@ -2234,7 +2251,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
   <header class="traffic-header story-header">
     <div class="brand">
       <span class="brand-icon" aria-hidden="true">↗</span>
-      <h2 class="oecd-title" id="zone-overlap-title">어디를 우선 검토해야 하는가?</h2>
+      <h2 class="oecd-title" id="zone-overlap-title">고령 보행사고 다발지역, 노인보호구역과 얼마나 겹칠까?</h2>
     </div>
     <nav class="header-meta" aria-label="어디를 우선 검토해야 하는가? 화면 이동">
       <a class="traffic-jump" href="#district-comparison"><span aria-hidden="true">↑</span> 동대문·도봉 비교</a>
@@ -2259,7 +2276,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
 </section>
 <section class="oecd-screen story-screen" id="zone-review" aria-labelledby="zone-review-title">
   <header class="traffic-header story-header">
-    <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="zone-review-title">어디를 우선 검토해야 하는가? <span class="review-title-note">현장 검토 자료</span></h2></div>
+    <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="zone-review-title">보호구역 밖 사고다발지역, 어디부터 살펴볼까?</h2></div>
     <nav class="header-meta" aria-label="현장 검토 자료 화면 이동">
       <a class="traffic-jump" href="#zone-overlap"><span aria-hidden="true">↑</span> 보호구역 중첩 지도</a>
       <a class="traffic-jump" href="#school-zone-precedent">어린이보호구역 선례 <span aria-hidden="true">↓</span></a>
@@ -2305,7 +2322,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
 </section>
 <section class="oecd-screen story-screen" id="school-zone-precedent" aria-labelledby="school-zone-title">
   <header class="traffic-header story-header">
-    <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="school-zone-title">어린이보호구역 선례</h2></div>
+    <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="school-zone-title">어린이보호구역은 어떻게 달라졌나?</h2></div>
     <nav class="header-meta" aria-label="어린이보호구역 선례 화면 이동">
       <a class="traffic-jump" href="#zone-review"><span aria-hidden="true">↑</span> 현장 검토 자료</a>
       <a class="traffic-jump" href="#zone-budget">예산 비교 <span aria-hidden="true">↓</span></a>
@@ -2397,7 +2414,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
 </section>
 <section class="oecd-screen story-screen" id="zone-budget" aria-labelledby="zone-budget-title">
   <header class="traffic-header story-header">
-    <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="zone-budget-title">서울시 보호구역 개선 예산</h2></div>
+    <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="zone-budget-title">서울의 보호구역 개선 예산, 어디에 얼마나 편성됐나?</h2></div>
     <nav class="header-meta" aria-label="보호구역 예산 화면 이동">
       <a class="traffic-jump" href="#school-zone-precedent"><span aria-hidden="true">↑</span> 어린이보호구역 선례</a>
       <a class="traffic-jump" href="#school-zone-fines">과태료 비교 <span aria-hidden="true">↓</span></a>
@@ -2426,7 +2443,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
 </section>
 <section class="oecd-screen story-screen" id="school-zone-fines" aria-labelledby="school-fines-title">
   <header class="traffic-header story-header">
-    <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="school-fines-title">어린이·노인보호구역 과태료 비교</h2></div>
+    <div class="brand"><span class="brand-icon" aria-hidden="true">↗</span><h2 class="oecd-title" id="school-fines-title">같은 위반, 어린이·노인보호구역의 과태료는 어떻게 다를까?</h2></div>
     <nav class="header-meta" aria-label="어린이·노인보호구역 과태료 비교 화면 이동">
       <a class="traffic-jump" href="#zone-budget"><span aria-hidden="true">↑</span> 예산 비교</a>
       <a class="traffic-jump" href="#policy-alternatives">노인보호구역 개선안 <span aria-hidden="true">↓</span></a>
@@ -2498,7 +2515,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
   <header class="traffic-header story-header">
     <div class="brand">
       <span class="brand-icon" aria-hidden="true">↗</span>
-      <h2 class="oecd-title" id="policy-title">노인보호구역 개선안</h2>
+      <h2 class="oecd-title" id="policy-title">고령 보행자의 길, 어떻게 더 안전하게 만들까?</h2>
     </div>
     <nav class="header-meta" aria-label="대안 화면 이동">
       <a class="traffic-jump" href="#school-zone-fines"><span aria-hidden="true">↑</span> 과태료 비교</a>
@@ -4259,6 +4276,68 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
 
   loadElderlyPopulation();
 
+  function drawDesignationChart(card, year, rows, ceiling, colors) {
+    const svg = card.querySelector("svg");
+    const report = card.querySelector("output");
+    const years = [year - 1, year, year + 1];
+    const xs = [44, 189, 334];
+    const y = value => 235 - value / ceiling * 205;
+    const element = (tag, attributes, text) => {
+      const node = document.createElementNS("http://www.w3.org/2000/svg", tag);
+      for (const [name, value] of Object.entries(attributes)) node.setAttribute(name, value);
+      if (text !== undefined) node.textContent = text;
+      svg.append(node);
+      return node;
+    };
+    const line = (x1, y1, x2, y2, stroke, dash = "") =>
+      element("line", { x1, y1, x2, y2, stroke, "stroke-dasharray": dash });
+    svg.replaceChildren();
+    for (let tick = 0; tick <= ceiling; tick += 40) {
+      line(xs[0], y(tick), xs[2], y(tick), "#344759");
+      element("text", { x: 34, y: y(tick) + 4, "text-anchor": "end" }, tick);
+    }
+    line(xs[1], 21, xs[1], 235, "#c2ceda", "4 4");
+    years.forEach((date, index) => {
+      element("text", { x: xs[index], y: 260, "text-anchor": "middle" },
+        date + (date === year ? "년 지정" : "년"));
+    });
+
+    const points = new Map();
+    let previousLabel = -Infinity;
+    for (const row of [...rows].sort((a, b) => b.accidents_after - a.accidents_after)) {
+      const values = [row.accidents_before, row.accidents_at, row.accidents_after];
+      const color = colors.get(row.district);
+      element("polyline", {
+        points: values.map((value, index) => xs[index] + "," + y(value)).join(" "),
+        fill: "none", stroke: color, "stroke-width": 2.6
+      });
+      const end = y(values[2]);
+      const label = Math.max(end, previousLabel + 17);
+      previousLabel = label;
+      line(xs[2] + 4, end, 347, label, color);
+      element("text", { x: 351, y: label + 4, style: "fill:" + color }, row.district);
+      values.forEach((value, index) => {
+        const key = index + "/" + value;
+        if (!points.has(key)) points.set(key, { index, value, names: [], color });
+        points.get(key).names.push(row.district);
+      });
+    }
+    for (const { index, value, names, color } of points.values()) {
+      const description = years[index] + "년 · " + names.join("·") + " · " + value + "건";
+      element("circle", { cx: xs[index], cy: y(value), r: 3.8, fill: color });
+      const hit = element("circle", { cx: xs[index], cy: y(value), r: 8,
+        fill: "transparent", tabindex: 0, role: "button", "aria-label": description });
+      const display = () => { report.textContent = description; };
+      hit.onpointerenter = hit.onfocus = hit.onclick = display;
+      hit.onkeydown = event => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          display();
+        }
+      };
+    }
+  }
+
   async function loadZoneBeforeAfter() {
     try {
       const response = await fetch(
@@ -4271,25 +4350,23 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
 
       const data = await response.json();
       const section = document.querySelector("#zone-before-after");
-      const body = section && section.querySelector(".risk-change-table tbody");
-      const heading = section && section.querySelector(".audit-heading");
-      const caption = section && section.querySelector(".audit-chart-caption");
-
-      if (!body || !heading || !caption || !Array.isArray(data.cases) || data.cases.length === 0) {
-        throw new Error("지정 전후 표나 API 값을 확인해 줘.");
+      const cards = section.querySelectorAll(".designation-card");
+      const palette = ["#7dc9ff", "#ffb275", "#7be0c2", "#d7abff", "#ffe080", "#f590a7", "#b7d970"];
+      const districts = [...new Set(data.cases.map(row => row.district))];
+      const colors = new Map(districts.map((name, i) => [name, palette[i % palette.length]]));
+      const peak = Math.max(...data.cases.flatMap(row =>
+        [row.accidents_before, row.accidents_at, row.accidents_after]));
+      const ceiling = Math.max(40, Math.ceil(peak / 40) * 40);
+      for (const card of cards) {
+        const year = Number(card.dataset.year);
+        const rows = data.cases.filter(row => row.designated_year === year);
+        drawDesignationChart(card, year, rows, ceiling, colors);
       }
-
-      // 기존 표처럼 음수는 유니코드 마이너스(−)로, 0은 부호 없이 보여 준다.
-      const signed = (value) => (value === 0 ? "0" : `${value > 0 ? "+" : "−"}${Math.abs(value)}`);
-      const escapeHtml = (text) =>
-        String(text).replace(/[&<>"']/g, (char) => (
-          { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]
-        ));
-
-      body.innerHTML = data.cases.map((row) => `
-            <tr><th scope="row">${escapeHtml(row.district)}</th><td>${row.designated_year}</td><td>${row.zones}곳</td><td>${row.accidents_before} → ${row.accidents_at} → ${row.accidents_after}</td><td>${signed(row.accidents_change)}</td><td>${row.rate_before.toFixed(2)} → ${row.rate_at.toFixed(2)} → ${row.rate_after.toFixed(2)}</td></tr>`).join("");
-      heading.textContent = `${data.districts}개 자치구 · ${data.cases.length}개 지정 사례`;
-      caption.textContent = `자치구 전체 사고 건수 기준 · 증가 ${data.increased}개 · 감소 ${data.decreased}개 · 동일 ${data.unchanged}개`;
+      section.querySelector(".audit-heading").textContent =
+        data.districts + "개 자치구 · " + data.cases.length + "개 지정 사례";
+      section.querySelector(".audit-chart-caption").textContent =
+        "지정 전년도와 이듬해 비교 · 증가 " + data.increased + "개 · 감소 " + data.decreased +
+        "개 · 동일 " + data.unchanged + "개 · 단위 건";
 
       console.info("노인보호구역 지정 전후 API 연결 완료", data.cases.length);
     } catch (error) {
