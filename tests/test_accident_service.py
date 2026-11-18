@@ -5,7 +5,7 @@ from app.services import accident_service
 from app.services.data_files import (
     ACCIDENT_TREND_FILE,
     CHILD_SUMMARY_FILE,
-    OECD_FILE,
+    NATIONAL_DEATHS_FILE,
 )
 
 CHILD_HEADER = "자료구분,지역,사고연도,연령범위,사고건수,사망자수,부상자수"
@@ -160,23 +160,55 @@ def test_district_rates_weighted_average_matches_card(real_data_dir):
 
 
 def test_national_deaths_real_data(real_data_dir):
-    """화면 막대: 전체 3,081→2,549명, 65세 이상은 OECD 2020~2023만."""
+    """화면 막대: 전체 3,081→2,549명, 65세 이상 1,342→1,378명, 도넛은 2020~2023만."""
     years = accident_service.national_deaths(real_data_dir).years
     assert [row.year for row in years] == [2020, 2021, 2022, 2023, 2024, 2025]
     assert [row.total_deaths for row in years] == [3081, 2916, 2735, 2551, 2521, 2549]
-    assert [row.elderly_deaths for row in years[:4]] == [1342, 1295, 1258, 1240]
-    assert [row.elderly_share_percent for row in years[:4]] == [43.6, 44.4, 46.0, 48.6]
-    assert all(
-        row.elderly_deaths is None and row.elderly_share_percent is None
-        for row in years[4:]
+    assert [row.elderly_deaths for row in years] == [1342, 1295, 1258, 1240, 1299, 1378]
+    assert [row.elderly_share_percent for row in years] == [43.6, 44.4, 46.0, 48.6, 51.5, 54.1]
+    first = years[0].elderly_by_mode
+    assert (first.pedestrian, first.two_wheeler, first.car, first.bicycle, first.other) == (
+        628, 274, 131, 122, 187,
     )
+    assert all(row.elderly_by_mode is not None for row in years[:4])
+    assert all(row.elderly_by_mode is None for row in years[4:])
 
 
-def test_national_deaths_total_mismatch_is_error(write_csv, tmp_path):
+NATIONAL_HEADER = (
+    "연도,전체_사망자수,65세이상_사망자수,65세이상_비중(%),65세이상_보행중,"
+    "65세이상_이륜차,65세이상_승용차,65세이상_자전거,65세이상_그외(차감)"
+)
+
+
+def _national_dir(tmp_path, row):
     taas = "연도,시도,시군구,사고건수,사망자수,부상자수\n"
     taas += "2020,합계,합계,10,100,15\n2020,서울,합계,4,1,5"
-    oecd = "국가,연도,전체_사망자수,65세이상_사망자수\n대한민국,2020,99,40"
     (tmp_path / ACCIDENT_TREND_FILE).write_text(taas, encoding="utf-8-sig")
-    (tmp_path / OECD_FILE).write_text(oecd, encoding="utf-8-sig")
+    (tmp_path / NATIONAL_DEATHS_FILE).write_text(
+        f"{NATIONAL_HEADER}\n{row}", encoding="utf-8-sig"
+    )
+    return tmp_path
+
+
+def test_national_deaths_total_mismatch_is_error(tmp_path):
+    data_dir = _national_dir(tmp_path, "2020,99,40,40.4,10,10,10,5,5")
     with pytest.raises(ServiceError, match="달라"):
-        accident_service.national_deaths(tmp_path)
+        accident_service.national_deaths(data_dir)
+
+
+def test_national_deaths_share_must_match_counts(tmp_path):
+    data_dir = _national_dir(tmp_path, "2020,100,40,50.0,10,10,10,5,5")
+    with pytest.raises(ServiceError, match="비중"):
+        accident_service.national_deaths(data_dir)
+
+
+def test_national_deaths_partial_modes_is_error(tmp_path):
+    data_dir = _national_dir(tmp_path, "2020,100,40,40.0,10,,10,5,15")
+    with pytest.raises(ServiceError, match="일부만"):
+        accident_service.national_deaths(data_dir)
+
+
+def test_national_deaths_empty_modes_are_null(tmp_path):
+    data_dir = _national_dir(tmp_path, "2020,100,40,40.0,,,,,")
+    only = accident_service.national_deaths(data_dir).years[0]
+    assert (only.elderly_deaths, only.elderly_by_mode) == (40, None)

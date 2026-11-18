@@ -33,13 +33,24 @@ class AccidentTrend(BaseModel):
     years: list[AccidentTrendYear]
 
 
+class ElderlyDeathsByMode(BaseModel):
+    """65세 이상 사망자의 사고 당시 상태(도넛 그래프). 그 외는 전체에서 뺀 값."""
+
+    pedestrian: int = Field(ge=0)
+    two_wheeler: int = Field(ge=0)
+    car: int = Field(ge=0)
+    bicycle: int = Field(ge=0)
+    other: int = Field(ge=0)
+
+
 class NationalDeathYear(BaseModel):
-    """전국 교통사고 사망자. 65세 이상 값은 OECD 자료가 있는 연도에만 채운다."""
+    """전국 교통사고 사망자(막대). 상태별 구분은 자료가 있는 연도(2020~2023)에만 채운다."""
 
     year: int
     total_deaths: int = Field(ge=0)
-    elderly_deaths: int | None = Field(default=None, ge=0)
-    elderly_share_percent: float | None = Field(default=None, ge=0, le=100)
+    elderly_deaths: int = Field(ge=0)
+    elderly_share_percent: float = Field(ge=0, le=100)
+    elderly_by_mode: ElderlyDeathsByMode | None = None
 
 
 class NationalDeaths(BaseModel):

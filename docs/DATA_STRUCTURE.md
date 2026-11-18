@@ -22,7 +22,7 @@
 | --- | --- | --- |
 | `GET /api/oecd/rankings` | `oecd_service.oecd_rankings` | `13_OECD_고령지표_wide.csv` |
 | `GET /api/traffic/accident-trend` | `accident_service.accident_trend` | `15_TAAS_시도시군구_교통사고_2020-2025.csv` |
-| `GET /api/traffic/national-deaths` | `accident_service.national_deaths` | `15_TAAS_시도시군구_교통사고_2020-2025.csv`(전체) + `13_OECD_고령지표_wide.csv`(65세 이상, 2020~2023만) |
+| `GET /api/traffic/national-deaths` | `accident_service.national_deaths` | `17_전국사망자_막대도넛.csv`(TAAS 합계와 대조) |
 | `GET /api/traffic/child-pedestrian` | `accident_service.child_pedestrian` | `10_어린이보호구역_교통안전_요약.csv` (보행자 교통사고 · 서울 · 2025 · 12세 이하, 정확히 1행) |
 | `GET /api/statistics/elderly` | `accident_service.elderly_pedestrian` | `01_자치구연도_패널.csv` (2025, 25개 자치구 합계) |
 | `GET /api/cctv` | `cctv_service.seoul_cctv` | ITS API + `08_서울_자치구_경계.geojson` |

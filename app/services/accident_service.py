@@ -15,7 +15,7 @@ from app.models import (
 )
 from app.services.data_files import (
     ACCIDENT_TREND_FILE,
-    OECD_FILE,
+    NATIONAL_DEATHS_FILE,
     CHILD_SUMMARY_FILE,
     PANEL_FILE,
     read_csv,
@@ -64,44 +64,66 @@ def accident_trend(data_dir: Path | str | None = None) -> AccidentTrend:
     )
 
 
-def national_deaths(data_dir: Path | str | None = None) -> NationalDeaths:
-    """전국 연도별 사망자. 전체는 TAAS, 65세 이상은 OECD(대한민국)에서 읽는다.
+NATIONAL_COLUMNS = {
+    "total": "전체_사망자수",
+    "elderly": "65세이상_사망자수",
+    "share": "65세이상_비중(%)",
+}
+MODE_COLUMNS = {
+    "pedestrian": "65세이상_보행중",
+    "two_wheeler": "65세이상_이륜차",
+    "car": "65세이상_승용차",
+    "bicycle": "65세이상_자전거",
+    "other": "65세이상_그외(차감)",
+}
 
-    OECD 자료에 없는 연도의 65세 이상 값은 null로 둔다(추정하지 않는다).
-    OECD의 전체 사망자가 TAAS와 다르면 자료가 어긋난 것이니 오류로 알린다.
+
+def national_deaths(data_dir: Path | str | None = None) -> NationalDeaths:
+    """17번 CSV(막대·도넛 통합)에서 전국 연도별 사망자와 65세 이상 비중을 읽는다.
+
+    전체 사망자는 TAAS 추이와, 비중과 '그 외'는 사망자 수에서 다시 계산한 값과 맞춰 본다.
+    상태별 구분은 일부 칸만 비어 있으면 자료 오류로 보고, 전부 비어 있으면 null로 둔다.
     """
 
-    trend = accident_trend(data_dir).years
-    oecd = read_csv(OECD_FILE, data_dir)
+    data = read_csv(NATIONAL_DEATHS_FILE, data_dir)
     require_columns(
-        oecd, OECD_FILE, ["국가", "연도", "전체_사망자수", "65세이상_사망자수"]
+        data,
+        NATIONAL_DEATHS_FILE,
+        ["연도", *NATIONAL_COLUMNS.values(), *MODE_COLUMNS.values()],
     )
-    korea = oecd[oecd["국가"].eq("대한민국")].set_index("연도")
+    taas = {row.year: row.nationwide_deaths for row in accident_trend(data_dir).years}
 
     years = []
-    for row in trend:
-        elderly = None
-        if row.year in korea.index:
-            record = korea.loc[row.year]
-            if pd.isna(record["65세이상_사망자수"]):
-                raise ServiceError(f"{row.year}년 OECD 65세 이상 사망자가 비어 있어.", 500)
-            if int(record["전체_사망자수"]) != row.nationwide_deaths:
-                raise ServiceError(
-                    f"{row.year}년 전체 사망자가 TAAS({row.nationwide_deaths})와 "
-                    f"OECD({int(record['전체_사망자수'])})에서 달라.",
-                    500,
-                )
-            elderly = int(record["65세이상_사망자수"])
+    for _, row in data.sort_values("연도").iterrows():
+        year = int(row["연도"])
+        if row[list(NATIONAL_COLUMNS.values())].isna().any():
+            raise ServiceError(f"{year}년 전국 사망자 값에 빈 칸이 있어.", 500)
+        total, elderly = int(row["전체_사망자수"]), int(row["65세이상_사망자수"])
+        if total != taas.get(year):
+            raise ServiceError(
+                f"{year}년 전체 사망자가 TAAS({taas.get(year)})와 {NATIONAL_DEATHS_FILE}({total})에서 달라.",
+                500,
+            )
+        share = round(elderly / total * 100, 1)
+        if abs(share - float(row["65세이상_비중(%)"])) > 0.05:
+            raise ServiceError(f"{year}년 65세 이상 비중이 사망자 수와 맞지 않아.", 500)
+
+        modes = row[list(MODE_COLUMNS.values())]
+        by_mode = None
+        if modes.notna().all():
+            by_mode = {key: int(row[column]) for key, column in MODE_COLUMNS.items()}
+            if sum(by_mode.values()) != elderly:
+                raise ServiceError(f"{year}년 65세 이상 상태별 합이 사망자 수와 달라.", 500)
+        elif modes.notna().any():
+            raise ServiceError(f"{year}년 65세 이상 상태별 값이 일부만 비어 있어.", 500)
+
         years.append(
             {
-                "year": row.year,
-                "total_deaths": row.nationwide_deaths,
+                "year": year,
+                "total_deaths": total,
                 "elderly_deaths": elderly,
-                "elderly_share_percent": (
-                    None
-                    if elderly is None
-                    else round(elderly / row.nationwide_deaths * 100, 1)
-                ),
+                "elderly_share_percent": share,
+                "elderly_by_mode": by_mode,
             }
         )
     return NationalDeaths(years=years)

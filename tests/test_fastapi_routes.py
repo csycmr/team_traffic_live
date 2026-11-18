@@ -74,5 +74,13 @@ def test_national_deaths_endpoint():
         "total_deaths": 3081,
         "elderly_deaths": 1342,
         "elderly_share_percent": 43.6,
+        "elderly_by_mode": {
+            "pedestrian": 628,
+            "two_wheeler": 274,
+            "car": 131,
+            "bicycle": 122,
+            "other": 187,
+        },
     }
-    assert years[-1]["elderly_deaths"] is None
+    assert years[-1]["elderly_deaths"] == 1378
+    assert years[-1]["elderly_by_mode"] is None
