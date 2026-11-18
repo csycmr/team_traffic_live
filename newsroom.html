@@ -231,6 +231,31 @@
 .ed-actions button:disabled{opacity:.45;cursor:not-allowed}
 @media(max-width:850px){.ed-grid{grid-template-columns:1fr}.ed-list{max-height:270px}}
 
+
+    /* Approved articles: RGF list/detail structure in team newsroom colours. */
+    #publishedApp[hidden] {display:none!important}
+    .workspace-card:has(#publishedApp:not([hidden])) {background:#f7faf9;border-color:#dce5e4;color:#172b39}
+    .workspace-card:has(#publishedApp:not([hidden])) > h2 {color:#172b39}
+    .published-grid {display:grid;grid-template-columns:minmax(240px,.8fr) minmax(0,1.4fr);gap:16px;align-items:start;margin-top:22px}
+    .published-panel {background:#fff;border:1px solid #dce5e4;border-radius:12px;padding:20px;min-width:0;color:#172b39}
+    .published-panel h3 {font-size:17px;margin:0 0 12px}
+    .published-panel p {font-size:13px;line-height:1.75;color:#536774}
+    .published-list {display:grid;gap:8px;max-height:65vh;overflow:auto}
+    .published-item {width:100%;text-align:left;border:1px solid #dce5e4;background:#fff;border-radius:9px;padding:12px;color:#1b3441;font:inherit;cursor:pointer}
+    .published-item[aria-pressed="true"] {border-color:#176b5c;background:#edf7f3;box-shadow:inset 3px 0 #176b5c}
+    .published-item strong {display:block;font-size:13px;line-height:1.6;overflow-wrap:anywhere}
+    .published-item small {display:block;color:#607582;font-size:11px;margin-top:6px}
+    .published-body {white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.85;font-size:14px;color:#1e3541;padding:17px;background:#f6f9f8;border-radius:9px}
+    .published-note {white-space:pre-wrap;color:#536774!important}
+    .published-evidence {margin-top:20px;border-top:1px solid #dce5e4;padding-top:16px}
+    .published-evidence h4 {color:#176b5c;font-size:14px}
+    .published-evidence-item {border:1px solid #dce5e4;border-radius:8px;padding:12px;margin:10px 0;background:#fbfdfc}
+    .published-evidence-item p {margin:5px 0;overflow-wrap:anywhere}
+    .published-evidence-item a {color:#126e8a;overflow-wrap:anywhere}
+    .published-action {border:1px solid #176b5c;border-radius:8px;background:white;color:#176b5c;padding:10px 14px;font-weight:700;cursor:pointer}
+    #publishedDetail[hidden] {display:none!important}
+    @media(max-width:850px) {.published-grid{grid-template-columns:1fr}.published-list{max-height:280px}}
+
   </style>
 </head>
 
@@ -396,6 +421,33 @@
               <div class="ed-actions"><button id="edApprove" type="button" disabled>최종 승인</button><button id="edHold" type="button" class="secondary" disabled>보류</button><button id="edToValidation" type="button" class="secondary">자동 검수로</button></div>
               <p id="edDecision" class="ed-status" role="status"></p>
             </div>
+          </section>
+        </div>
+      </div>
+
+
+      <div id="publishedApp" hidden>
+        <div class="published-grid">
+          <section class="published-panel" aria-label="승인 기사 목록">
+            <h3>승인 기사</h3>
+            <p>편집장 승인과 자동 검수를 통과한 기사만 조회합니다.</p>
+            <button type="button" id="publishedReload" class="published-action">목록 새로고침</button>
+            <p id="publishedListStatus" class="published-note" role="status"></p>
+            <div id="publishedList" class="published-list"></div>
+          </section>
+          <section class="published-panel" aria-label="승인 기사 상세">
+            <h3>기사 상세</h3>
+            <p id="publishedStatus" class="published-note" role="status">왼쪽에서 기사를 선택하세요.</p>
+            <article id="publishedDetail" hidden>
+              <h2 id="publishedTitle" style="color:#142737;line-height:1.45"></h2>
+              <p id="publishedMeta" class="published-note"></p>
+              <div id="publishedBody" class="published-body"></div>
+              <section class="published-evidence">
+                <h4>기사에 연결된 근거</h4>
+                <p>통계 근거와 대조된 출처 정보를 표시합니다. 자동 검수 PASS가 외부 사실의 전수 검증을 뜻하지는 않습니다.</p>
+                <div id="publishedEvidence"></div>
+              </section>
+            </article>
           </section>
         </div>
       </div>
@@ -1029,6 +1081,115 @@
   });
   document.querySelectorAll('.workspace-nav button').forEach(button=>{
     if(button!==nav)button.addEventListener('click',()=>{$('editorApp').hidden=true});
+  });
+})();
+</script>
+
+
+<script>
+(() => {
+  const $ = id => document.getElementById(id);
+  const app = $('publishedApp');
+  const list = $('publishedList');
+  const nav = document.querySelector('.workspace-nav button[data-step="4"]');
+  let currentId = null;
+  let requestVersion = 0;
+  async function get(path) {
+    const response = await fetch(path);
+    const result = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(result.error || `HTTP ${response.status}`);
+    return result;
+  }
+  function labelDate(value) {
+    if (!value) return '게시 시각 미확인';
+    const date = new Date(value);
+    return Number.isNaN(date.getTime()) ? String(value) : date.toLocaleString('ko-KR');
+  }
+  function text(tag, value) {
+    const node = document.createElement(tag);
+    node.textContent = value == null ? '' : String(value);
+    return node;
+  }
+  function evidenceLine(item) {
+    const box = document.createElement('div');
+    box.className = 'published-evidence-item';
+    if (item.evidence_role === 'STATISTIC') {
+      box.append(text('strong', '통계 근거 · ' + (item.location_label || '집계 기준 미표시')));
+      const facts = item.facts_json || {};
+      const summary = [facts.accident_year && `${facts.accident_year}년`, facts.region,
+        facts.accidents != null && `고령 보행자 사고 ${facts.accidents}건`].filter(Boolean).join(' · ');
+      box.append(text('p', summary || item.explanation || '연결된 분석 스냅샷'));
+    } else {
+      box.append(text('strong', item.source_title || '외부 출처'));
+      box.append(text('p', (item.source_org || '발행처 미확인') + ' · ' + (item.verification_status || '검증 상태 미확인')));
+      if (item.content_excerpt) box.append(text('p', item.content_excerpt));
+      if (item.source_url) {
+        try {
+          const url = new URL(item.source_url);
+          if (['http:', 'https:'].includes(url.protocol)) {
+            const link = text('a','원문 열기');
+            link.href = url.href; link.target = '_blank'; link.rel = 'noopener noreferrer';
+            box.append(link);
+          }
+        } catch (_) { /* invalid source URL: omit link */ }
+      }
+    }
+    return box;
+  }
+  async function choose(id) {
+    currentId = id;
+    const version = ++requestVersion;
+    $('publishedDetail').hidden = true;
+    $('publishedStatus').textContent = '승인 기사 불러오는 중…';
+    for (const button of list.querySelectorAll('button'))
+      button.setAttribute('aria-pressed', String(Number(button.dataset.id) === id));
+    try {
+      const article = await get(`/api/newsroom/articles/${id}`);
+      if (version !== requestVersion) return;
+      $('publishedTitle').textContent = article.title;
+      $('publishedBody').textContent = article.content;
+      $('publishedMeta').textContent = `기사 #${article.id} · 승인 · ${labelDate(article.published_at)} · 편집장 ${article.reviewed_by || '미기록'}`;
+      const target = $('publishedEvidence');
+      target.replaceChildren();
+      const items = Array.isArray(article.evidence) ? article.evidence : [];
+      if (!items.length) target.append(text('p','연결된 근거가 없습니다.'));
+      else items.forEach(item => target.append(evidenceLine(item)));
+      $('publishedDetail').hidden = false;
+      $('publishedStatus').textContent = '';
+      sessionStorage.setItem('newsroomPublishedArticleId', String(id));
+    } catch (error) {
+      if (version === requestVersion) $('publishedStatus').textContent = `상세 조회 실패: ${error.message}`;
+    }
+  }
+  async function load() {
+    $('publishedListStatus').textContent = '승인 기사 목록 불러오는 중…';
+    try {
+      const result = await get('/api/newsroom/articles');
+      list.replaceChildren();
+      const articles = result.articles || [];
+      $('publishedListStatus').textContent = `${articles.length}개 승인 기사`;
+      for (const article of articles) {
+        const button = document.createElement('button');
+        button.type = 'button'; button.className = 'published-item';
+        button.dataset.id = String(article.id);
+        button.setAttribute('aria-pressed','false');
+        button.append(text('strong', article.title),text('small', `기사 #${article.id} · ${labelDate(article.published_at)}`));
+        button.addEventListener('click', () => choose(article.id));
+        list.append(button);
+      }
+      if (!articles.length) {
+        currentId = null; $('publishedDetail').hidden = true;
+        $('publishedStatus').textContent = '승인된 기사가 없습니다. 편집장 승인 후 이 목록에 표시됩니다.';
+        return;
+      }
+      const preferred = Number(sessionStorage.getItem('newsroomPublishedArticleId'));
+      await choose(articles.find(item => item.id === preferred)?.id || articles[0].id);
+    } catch (error) { $('publishedListStatus').textContent = `목록 조회 실패: ${error.message}`; }
+  }
+  $('publishedReload').addEventListener('click', load);
+  nav.addEventListener('click', () => {app.hidden = false; load();});
+  document.querySelectorAll('.workspace-nav button').forEach(button => {
+    if (button !== nav) button.addEventListener('click', () => {app.hidden = true;});
   });
 })();
 </script>
