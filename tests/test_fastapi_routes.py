@@ -41,7 +41,9 @@ def test_oecd_rankings_endpoint():
 
 def test_elderly_endpoint_matches_flask_shape():
     body = client.get("/api/statistics/elderly").json()
-    assert set(body) == {"year", "region", "districts", "accidents", "deaths", "injuries"}
+    assert {"year", "region", "districts", "accidents", "deaths", "injuries"} <= set(body)
+    assert body["accidents_per_10k"] == 10.77
+    assert body["death_share_percent"] == 67.2
 
 
 def test_service_error_uses_error_key():

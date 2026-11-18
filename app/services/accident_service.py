@@ -71,7 +71,22 @@ ELDERLY_COLUMNS = {
     "accidents": "고령보행자_사고건수",
     "deaths": "고령보행자_사망자수",
     "injuries": "고령보행자_부상자수",
+    "population_65plus": "고령인구",
+    "all_pedestrian_deaths": "전체보행자_사망자수",
 }
+
+
+def _elderly_totals(data: pd.DataFrame, year: int) -> dict:
+    data_year = data[data["사고연도"] == year]
+
+    if data_year["자치구명"].nunique() != 25:
+        raise ServiceError(f"{year}년 서울 25개 자치구 자료를 확인할 수 없어.", 500)
+    if data_year[list(ELDERLY_COLUMNS.values())].isna().any().any():
+        raise ServiceError(f"{year}년 사고 통계에 누락된 값이 있어.", 500)
+
+    return {
+        key: int(data_year[column].sum()) for key, column in ELDERLY_COLUMNS.items()
+    }
 
 
 def elderly_pedestrian(
@@ -81,18 +96,23 @@ def elderly_pedestrian(
 
     try:
         data = read_csv(PANEL_FILE, data_dir)
-        data_year = data[data["사고연도"] == year]
-
-        if data_year["자치구명"].nunique() != 25:
-            raise ServiceError(f"{year}년 서울 25개 자치구 자료를 확인할 수 없어.", 500)
-        if data_year[list(ELDERLY_COLUMNS.values())].isna().any().any():
-            raise ServiceError("사고 통계에 누락된 값이 있어.", 500)
-
-        totals = {
-            key: int(data_year[column].sum())
-            for key, column in ELDERLY_COLUMNS.items()
-        }
+        current = _elderly_totals(data, year)
+        previous = _elderly_totals(data, year - 1)
     except KeyError as error:
         raise ServiceError(str(error), 500) from error
 
-    return ElderlyPedestrian(year=year, region="서울", districts=25, **totals)
+    return ElderlyPedestrian(
+        year=year,
+        region="서울",
+        districts=25,
+        **current,
+        accidents_per_10k=round(
+            current["accidents"] / current["population_65plus"] * 10000, 2
+        ),
+        death_share_percent=round(
+            current["deaths"] / current["all_pedestrian_deaths"] * 100, 1
+        ),
+        previous_year=year - 1,
+        accidents_change=current["accidents"] - previous["accidents"],
+        deaths_change=current["deaths"] - previous["deaths"],
+    )

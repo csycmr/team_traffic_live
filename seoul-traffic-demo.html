@@ -1302,16 +1302,16 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
         <dl class="stat">
           <dt>고령 보행자 사고수</dt>
           <dd>
-            <strong id="elderly-accidents">2,060</strong><small>건</small>
-            <div class="stat-change">전년 대비 +97건</div>
+            <strong id="elderly-accidents">—</strong><small>건</small>
+            <div class="stat-change" id="elderly-accidents-change">전년 대비 —건</div>
           </dd>
         </dl>
         <dl class="stat"><dt>어린이 보행자 사고수</dt><dd><strong id="child-pedestrian-accidents">—</strong><small>건</small></dd></dl>
         <dl class="stat">
           <dt>고령 보행사고 사망자수</dt>
           <dd>
-            <strong id="elderly-deaths">82</strong><small>명</small>
-            <div class="stat-change">전년 대비 +14명</div>
+            <strong id="elderly-deaths">—</strong><small>명</small>
+            <div class="stat-change" id="elderly-deaths-change">전년 대비 —명</div>
           </dd>
         </dl>
         <dl class="stat"><dt>어린이 보행사고 사망자수</dt><dd><strong id="child-pedestrian-deaths">—</strong><small>명</small></dd></dl>
@@ -1323,11 +1323,11 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
       <div class="board safety-board">
         <dl class="stat">
           <dt>고령인구 1만 명당</dt>
-          <dd><strong>10.77</strong><small>건</small></dd>
+          <dd><strong id="elderly-accident-rate">—</strong><small>건</small></dd>
         </dl>
         <dl class="stat">
           <dt>전체 보행 사망자 중 고령층</dt>
-          <dd><strong>67.2</strong><small>%</small></dd>
+          <dd><strong id="elderly-death-share">—</strong><small>%</small></dd>
         </dl>
       </div>
       <p class="muted panel-source">서울 · 65세 이상 · <a href="https://github.com/csy04x2/elder_accident/blob/main/data/processed/01_자치구연도_패널.csv">집계 자료</a></p>
@@ -2020,7 +2020,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
           <thead><tr>
             <th scope="col">자치구</th><th scope="col">65세 이상 인구</th><th scope="col">고령 보행자 사고</th>
             <th scope="col">사고다발지역</th><th scope="col">노인보호구역</th><th scope="col">경계 중첩</th><th scope="col">1만 명당 사고</th>
-            <th scope="col" class="district-bar-column">사고율 비교 <span class="district-average-label">서울시 평균 10.77</span></th>
+            <th scope="col" class="district-bar-column">사고율 비교 <span class="district-average-label" id="district-average-rate">서울시 평균 —</span></th>
           <th scope="col" class="district-name-end">자치구</th></tr></thead>
           <tbody>
             <tr>
@@ -2167,7 +2167,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
   <div class="oecd-content">
     <section class="audit-diagnosis">
       <h3 class="audit-heading">2025년 자치구별 사고율과 전년 변화</h3>
-      <p class="audit-chart-caption">서울 전체 고령인구 1만 명당 사고율 <strong>10.77건</strong> · 2024년 대비</p>
+      <p class="audit-chart-caption">서울 전체 고령인구 1만 명당 사고율 <strong id="elderly-rate-caption">—건</strong> · 2024년 대비</p>
       <div class="risk-change-scroll" tabindex="0" role="region" aria-label="서울 25개 자치구 사고율 및 순위 변화 표">
         <table class="risk-change-table">
           <thead><tr><th scope="col">자치구</th><th scope="col">순위</th><th scope="col">전년 순위</th><th scope="col">순위 변화<br>(상승 +)</th><th scope="col">사고율</th><th scope="col">서울 대비 격차</th><th scope="col">사고 증감(건)</th><th scope="col">사고 증감률(%)</th><th scope="col" class="district-name-end">자치구</th></tr></thead>
@@ -4159,6 +4159,52 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
   }
 
   loadChildPedestrian();
+
+  async function loadElderlyRates() {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/statistics/elderly"
+      );
+
+      if (!response.ok) {
+        throw new Error(`고령 보행사고 API 응답 오류: ${response.status}`);
+      }
+
+      const elderly = await response.json();
+      const numbers = [
+        elderly.accidents_per_10k,
+        elderly.death_share_percent,
+        elderly.accidents_change,
+        elderly.deaths_change
+      ];
+
+      if (!numbers.every(Number.isFinite)) {
+        throw new Error("고령 보행사고 API 값을 확인해 줘.");
+      }
+
+      const formatCount = new Intl.NumberFormat("ko-KR");
+      const formatChange = (value, unit) =>
+        `전년 대비 ${value > 0 ? "+" : value < 0 ? "−" : ""}${formatCount.format(Math.abs(value))}${unit}`;
+      const rate = elderly.accidents_per_10k.toFixed(2);
+      const setText = (id, text) => {
+        const element = document.getElementById(id);
+        if (element) element.textContent = text;
+      };
+
+      setText("elderly-accident-rate", rate);
+      setText("elderly-death-share", elderly.death_share_percent.toFixed(1));
+      setText("elderly-accidents-change", formatChange(elderly.accidents_change, "건"));
+      setText("elderly-deaths-change", formatChange(elderly.deaths_change, "명"));
+      setText("district-average-rate", `서울시 평균 ${rate}`);
+      setText("elderly-rate-caption", `${rate}건`);
+
+      console.info("고령 보행사고 사고율 API 연결 완료", elderly.year);
+    } catch (error) {
+      console.error("고령 보행사고 사고율을 불러오지 못했어.", error);
+    }
+  }
+
+  loadElderlyRates();
 </script>
 
 </body>

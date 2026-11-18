@@ -72,6 +72,21 @@ def test_elderly_pedestrian_real_data(real_data_dir):
     assert (elderly.districts, elderly.accidents, elderly.deaths) == (25, 2060, 82)
 
 
+def test_elderly_rates_and_year_change(real_data_dir):
+    """화면 카드: 1만 명당 10.77건, 전체 보행 사망자 중 67.2%, 전년 대비 +97건·+14명."""
+    elderly = accident_service.elderly_pedestrian(real_data_dir)
+    assert elderly.population_65plus == 1912751
+    assert elderly.accidents_per_10k == 10.77
+    assert (elderly.all_pedestrian_deaths, elderly.death_share_percent) == (122, 67.2)
+    assert elderly.previous_year == 2024
+    assert (elderly.accidents_change, elderly.deaths_change) == (97, 14)
+
+
+def test_elderly_pedestrian_needs_previous_year(real_data_dir):
+    with pytest.raises(ServiceError, match="25개 자치구"):
+        accident_service.elderly_pedestrian(real_data_dir, year=2019)
+
+
 def test_missing_file_is_service_error(tmp_path):
     with pytest.raises(ServiceError):
         accident_service.accident_trend(tmp_path)

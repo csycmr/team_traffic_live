@@ -41,7 +41,7 @@ class ChildPedestrian(BaseModel):
 
 
 class ElderlyPedestrian(BaseModel):
-    """서울 고령(65세 이상) 보행자 교통사고 자치구 합계."""
+    """서울 고령(65세 이상) 보행자 교통사고 자치구 합계와 사고율."""
 
     year: int
     region: str
@@ -49,3 +49,10 @@ class ElderlyPedestrian(BaseModel):
     accidents: int = Field(ge=0)
     deaths: int = Field(ge=0)
     injuries: int = Field(ge=0)
+    population_65plus: int = Field(gt=0)
+    accidents_per_10k: float = Field(ge=0)  # 고령인구 1만 명당 고령 보행자 사고(건)
+    all_pedestrian_deaths: int = Field(ge=0)
+    death_share_percent: float = Field(ge=0, le=100)  # 전체 보행 사망자 중 고령층(%)
+    previous_year: int
+    accidents_change: int  # 전년 대비 사고 증감(건)
+    deaths_change: int  # 전년 대비 사망 증감(명)
