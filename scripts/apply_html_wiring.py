@@ -12,7 +12,9 @@
   5. 서행·정체 목록 내부 스크롤 (실시간 교통 카드)
   6. 전국 65세 이상 주민등록인구 추이 → /api/statistics/elderly-population
   ... (7~16단계는 각 단계 이름 참고)
-  17. API로 채워지는 값을 HTML에서 비우기("—"만 남김) — 항상 마지막에 실행
+  17. API로 채워지는 값을 HTML에서 비우기("—"만 남김)
+  18. 예산 표 아래 설명 문장을 지금 계산 기준에 맞게 수정
+  19. 차트·그래프 아래 출처 표기·링크를 데이터 근거에 맞게 수정
 바뀐 내용이 있으면 원본을 <파일>.bak으로 한 번만 남긴다. 못 찾은 단계가 있으면 종료 코드 1로 끝난다.
 """
 
@@ -766,6 +768,92 @@ def step_clear_static(text):
     return text, ("apply" if text != original else "skip")
 
 
+BUDGET_NOTE_OLD = "1곳당 환산액은 연간 예산을 전년도 12월 말 지정 구역 수로 나눈 평균입니다."
+BUDGET_NOTE_NEW = (
+    "1곳당 환산액은 연간 예산을 지정 구역 수로 나눈 평균입니다. "
+    "어린이는 2025년 예산에 2025년 12월 31일, 2026년 예산에 2026년 6월 30일 기준 구역 수를, "
+    "노인·장애인은 2025년 명단 기준 구역 수를 썼습니다."
+)
+
+
+def step_budget_note(text):
+    """예산 표 아래 설명을 지금 계산 기준(기준일별 구역 수)에 맞게 고친다."""
+    return replace_exact(text, "2026년 6월 30일 기준 구역 수를", [(BUDGET_NOTE_OLD, BUDGET_NOTE_NEW)])
+
+
+REPO_DATA = "https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/"
+OLD_PANEL_RAW = "https://github.com/csy04x2/elder_accident/blob/main/data/processed/01_자치구연도_패널.csv"
+OLD_PANEL_ENC = (
+    "https://github.com/csy04x2/elder_accident/blob/main/data/processed/"
+    "01_%EC%9E%90%EC%B9%98%EA%B5%AC%EC%97%B0%EB%8F%84_%ED%8C%A8%EB%84%90.csv"
+)
+OLD_LINK_ENC = (
+    "https://github.com/csy04x2/elder_accident/blob/main/data/processed/"
+    "06_%EB%8B%A4%EB%B0%9C%EC%A7%80%EC%97%AD_%EB%B3%B4%ED%98%B8%EA%B5%AC%EC%97%AD_%EC%97%B0%EA%B2%B0.csv"
+)
+NEW_PANEL = REPO_DATA + "01_%EC%9E%90%EC%B9%98%EA%B5%AC%EC%97%B0%EB%8F%84_%ED%8C%A8%EB%84%90.csv"
+NEW_HOTSPOT = REPO_DATA + "03_%EB%8B%A4%EB%B0%9C%EC%A7%80%EC%97%AD_%EC%84%9C%EC%9A%B8.csv"
+NEW_LINK = REPO_DATA + "06_%EB%8B%A4%EB%B0%9C%EC%A7%80%EC%97%AD_%EB%B3%B4%ED%98%B8%EA%B5%AC%EC%97%AD_%EC%97%B0%EA%B2%B0.csv"
+NEW_TREND = REPO_DATA + "15_TAAS_%EC%8B%9C%EB%8F%84%EC%8B%9C%EA%B5%B0%EA%B5%AC_%EA%B5%90%ED%86%B5%EC%82%AC%EA%B3%A0_2020-2025.csv"
+NEW_DEATHS = REPO_DATA + "17_%EC%A0%84%EA%B5%AD%EC%82%AC%EB%A7%9D%EC%9E%90_%EB%A7%89%EB%8C%80%EB%8F%84%EB%84%9B.csv"
+OLD_MINSIK = "https://www.korea.kr/news/policyNewsView.do?newsId=148870845"
+NEW_MINSIK = "https://www.korea.kr/briefing/policyBriefingView.do?newsId=148873705"
+OLD_LAW_SEQ = "flSeq=133674929&amp;gubun="
+NEW_LAW_SEQ = "flSeq=150017271"
+
+
+def _a(url, label):
+    return f'<a href="{url}">{label}</a>'
+
+
+SOURCE_REPLACEMENTS = [
+    # 지도 패널·자치구 표·지정 전후·4년 비교: 본 저장소의 01번 자치구연도 패널
+    ('서울 · 65세 이상 · ' + _a(OLD_PANEL_RAW, "집계 자료"),
+     '서울 · 65세 이상 · ' + _a(NEW_PANEL, "집계 자료")),
+    ('overlap-note">출처 · ' + _a(OLD_PANEL_ENC, "팀 집계표"),
+     'overlap-note">출처 · ' + _a(NEW_PANEL, "자치구·연도 패널 (TAAS 집계)")),
+    ('policy-source">출처 · ' + _a(OLD_PANEL_ENC, "팀 자치구·연도 패널 원자료") + " · TAAS 사고 통계 및 인구 집계",
+     'policy-source">출처 · ' + _a(NEW_PANEL, "자치구·연도 패널 원자료") + " · TAAS 사고 통계 및 인구 집계"),
+    (_a(OLD_PANEL_RAW, "팀 자치구·연도별 사고 자료"),
+     _a(NEW_PANEL, "자치구·연도별 사고 자료")),
+    ('policy-source">출처 · ' + _a(OLD_PANEL_ENC, "팀 자치구·연도 패널 원자료") + "</p>",
+     'policy-source">출처 · ' + _a(NEW_PANEL, "자치구·연도 패널 원자료") + "</p>"),
+    # 구역 중첩: 숫자는 03·06번에서 온다
+    ("중첩 수치는 " + _a(OLD_PANEL_ENC, "팀 집계표") + "의 경계 비교 결과를 사용했어.",
+     "중첩 수치는 " + _a(NEW_HOTSPOT, "TAAS 사고다발지역 목록") + "과 "
+     + _a(NEW_LINK, "다발지역·보호구역 연결표") + "의 경계 비교 결과를 사용했어."),
+    # 구역 검토
+    ('review-source">출처 · ' + _a(OLD_LINK_ENC, "팀 집계표"),
+     'review-source">출처 · ' + _a(NEW_HOTSPOT, "TAAS 사고다발지역 목록") + " · "
+     + _a(NEW_LINK, "다발지역·보호구역 연결표")),
+    # 추세 차트: 데이터는 TAAS 집계(15번)
+    (' · <a href="https://news.seoul.go.kr/traffic/archives/335">서울시 2020~2024</a>'
+     ' · <a href="https://taas.koroad.or.kr/sta/acs/gus/selectSignguTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAG_SGT">TAAS 서울 2025</a>',
+     ' · <a href="https://taas.koroad.or.kr/sta/acs/gus/selectSignguTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAG_SGT">TAAS 서울</a>'
+     " · " + _a(NEW_TREND, "집계 자료 (2020~2025)")),
+    # 전국 사망자 막대
+    ("2024~2025년 막대그래프 · ",
+     "2024~2025년 막대그래프 · " + _a(NEW_DEATHS, "집계 자료") + " · "),
+    # 기간: 사망자 2020~2025, 65세 이상 인구 2022~2026
+    ('class="national-period">대한민국 · 2020~2026년<',
+     'class="national-period">대한민국 · 사망자 2020~2025년 · 인구 2022~2026년<'),
+    # 민식이법 타임라인 링크
+    ('href="' + OLD_MINSIK + '"', 'href="' + NEW_MINSIK + '"'),
+    # 단속카메라 라벨
+    (">서울시 분석</a>", ">서울시 보도자료(2023-12-01)</a>"),
+    # 예산 출처: 서울열린데이터광장
+    (">어린이 보호구역 지정 현황</a>", ">서울열린데이터광장 어린이 보호구역 지정 현황</a>"),
+    # 시행령 별표 7: 두 링크를 같은 파일로 통일
+    ('href="https://law.go.kr/flDownload.do?bylClsCd=110201&amp;' + OLD_LAW_SEQ + '"',
+     'href="https://www.law.go.kr/flDownload.do?bylClsCd=110201&amp;' + NEW_LAW_SEQ + '"'),
+]
+
+
+def step_source_links(text):
+    """차트·그래프 아래 출처 표기와 링크를 데이터 근거에 맞게 고친다."""
+    return replace_exact(text, "newsId=148873705", SOURCE_REPLACEMENTS)
+
+
 STEPS = [
     ("노인 교통사고율 카드", step_elderly),
     (
@@ -858,6 +946,14 @@ STEPS = [
     (
         "API 값 HTML에서 비우기",
         step_clear_static,
+    ),
+    (
+        "예산 표 설명 문장",
+        step_budget_note,
+    ),
+    (
+        "차트 아래 출처 링크",
+        step_source_links,
     ),
 ]
 
