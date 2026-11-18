@@ -1317,6 +1317,26 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
   .page-edges { --edge-size: 52px; --edge-small: 42px; left: 16px; bottom: 16px }
 }
 </style>
+<style>
+@media (prefers-reduced-motion: no-preference) {
+  .change-map.graph-waiting path { fill: #718092 !important }
+  .change-map.graph-visible path {
+    animation: district-fill-in 650ms ease-out var(--district-delay, 0ms) backwards;
+  }
+  @keyframes district-fill-in { from { fill: #718092 } }
+
+  .designation-card:is(.graph-waiting, .graph-visible) polyline { stroke-dasharray: 1 }
+  .designation-card.graph-waiting polyline { stroke-dashoffset: 1 }
+  .designation-card.graph-visible polyline { animation: designation-line-in 950ms linear both }
+  @keyframes designation-line-in { from { stroke-dashoffset: 1 } to { stroke-dashoffset: 0 } }
+
+  .designation-card.graph-waiting .designation-mark { opacity: 0 }
+  .designation-card.graph-visible .designation-mark {
+    animation: designation-mark-in 180ms ease-out var(--mark-delay, 950ms) backwards;
+  }
+  @keyframes designation-mark-in { from { opacity: 0 } to { opacity: 1 } }
+}
+</style>
 </head>
 <body>
   <div class="traffic-backdrop" aria-hidden="true">
@@ -4048,6 +4068,19 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
   loadElderlyRates();
 
 
+  function revealGraphWhenVisible(chart) {
+    if (!("IntersectionObserver" in window) ||
+        !window.matchMedia("(prefers-reduced-motion: no-preference)").matches) return;
+
+    chart.classList.add("graph-waiting");
+    const observer = new IntersectionObserver(entries => {
+      if (!entries.some(entry => entry.isIntersecting && entry.intersectionRatio >= 0.2)) return;
+      chart.classList.replace("graph-waiting", "graph-visible");
+      observer.disconnect();
+    }, { threshold: 0.2 });
+    observer.observe(chart);
+  }
+
   function drawChangeMap(districts) {
     const map = document.querySelector(".change-map");
     const rows = new Map(districts.map(row => [row.district, row]));
@@ -4111,7 +4144,8 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
       tip.style.left = Math.max(0, Math.min(x - tip.offsetWidth / 2, frame.width - tip.offsetWidth)) + "px";
       tip.style.top = (above >= 0 ? above : rect.bottom - frame.top + 8) + "px";
     }
-    for (const group of groups) {
+    for (const [index, group] of groups.entries()) {
+      group.style.setProperty("--district-delay", index * 18 + "ms");
       const row = rows.get(group.dataset.district);
       if (!row) continue;
       group.querySelector("path").style.fill = shade(row.accidents_change_percent);
@@ -4136,6 +4170,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
       if (!map.contains(event.target.closest("[data-district]"))) hide();
     });
     window.addEventListener("resize", hide);
+    revealGraphWhenVisible(map);
   }
 
   async function loadDistrictRates() {
@@ -4334,13 +4369,13 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
       const color = colors.get(row.district);
       element("polyline", {
         points: values.map((value, index) => xs[index] + "," + y(value)).join(" "),
-        fill: "none", stroke: color, "stroke-width": 2.6
+        fill: "none", stroke: color, "stroke-width": 2.6, pathLength: 1
       });
       const end = y(values[2]);
       const label = Math.max(end, previousLabel + 17);
       previousLabel = label;
-      line(xs[2] + 4, end, 347, label, color);
-      element("text", { x: 351, y: label + 4, style: "fill:" + color }, row.district);
+      line(xs[2] + 4, end, 347, label, color).classList.add("designation-mark");
+      element("text", { x: 351, y: label + 4, class: "designation-mark", style: "fill:" + color }, row.district);
       values.forEach((value, index) => {
         const key = index + "/" + value;
         if (!points.has(key)) points.set(key, { index, value, names: [], color });
@@ -4349,7 +4384,8 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
     }
     for (const { index, value, names, color } of points.values()) {
       const description = years[index] + "년 · " + names.join("·") + " · " + value + "건";
-      element("circle", { cx: xs[index], cy: y(value), r: 3.8, fill: color });
+      element("circle", { cx: xs[index], cy: y(value), r: 3.8, fill: color,
+        class: "designation-mark", style: "--mark-delay:" + index * 475 + "ms" });
       const hit = element("circle", { cx: xs[index], cy: y(value), r: 8,
         fill: "transparent", tabindex: 0, role: "button", "aria-label": description });
       const display = () => { report.textContent = description; };
@@ -4361,6 +4397,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
         }
       };
     }
+    revealGraphWhenVisible(card);
   }
 
   async function loadZoneBeforeAfter() {
