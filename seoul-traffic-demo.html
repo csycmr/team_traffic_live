@@ -480,6 +480,7 @@ section.story-screen {
 .citydata-incidents .feed-row { border-bottom: 0 }
 .slow-roads h3 { font-size: 17px; font-family: "Paperlogy", "Noto Sans KR", sans-serif }
 #slow-roads-list p, #slow-roads-list ul { margin: 4px 0 0; font-size: 12px }
+#slow-roads-list { max-height: 260px; overflow-y: auto; padding-inline-end: 4px }
 .slow-roads ul { padding: 0; list-style: none }
 .slow-roads li { padding-block: 4px; overflow-wrap: anywhere }
 .slow-roads li + li { border-top: 1px solid var(--line) }
@@ -1249,7 +1250,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
       <div class="refresh muted"><span id="refresh-label" role="status">불러오는 중</span><span id="updated"></span></div>
       <section class="slow-roads" aria-labelledby="slow-roads-title">
         <h3 id="slow-roads-title">서행/정체 구간</h3>
-        <div id="slow-roads-list"><p class="muted">불러오는 중</p></div>
+        <div id="slow-roads-list" tabindex="0" aria-label="서행·정체 구간 목록"><p class="muted">불러오는 중</p></div>
         <div id="incident-list" class="citydata-incidents"><p class="muted">사고·통제 정보를 불러오는 중</p></div>
       </section>
       <p class="muted panel-source">출처 · <a href="https://data.seoul.go.kr/dataList/OA-21285/F/1/datasetView.do">서울시 실시간 도시데이터</a></p>
@@ -2849,8 +2850,9 @@ function incidentElement(incident) {
   return article;
 }
 
-function renderSlowRoads(segments) {
+function renderSlowRoads(segments, total) {
   const container = byId('slow-roads-list');
+  const previousScroll = container.scrollTop; // 5초마다 다시 그려도 읽던 위치를 유지한다.
   if (!segments?.length) {
     const message = document.createElement('p');
     message.className = 'muted';
@@ -2871,10 +2873,17 @@ function renderSlowRoads(segments) {
     list.append(row);
   }
   container.replaceChildren(list);
+  container.scrollTop = previousScroll;
+  if (Number.isFinite(total) && total > segments.length) {
+    const more = document.createElement('p');
+    more.className = 'muted';
+    more.textContent = `외 ${(total - segments.length).toLocaleString('ko-KR')}곳`;
+    container.append(more);
+  }
 }
 
 function renderCitydataMetrics(data) {
-  renderSlowRoads(data.traffic?.slowSegments);
+  renderSlowRoads(data.traffic?.slowSegments, data.traffic?.slowSegmentCount);
   const { traffic, weather, incidents, crowd } = data;
   byId('crowd-status').textContent = crowd?.status || '정보 없음';
   byId('crowd-estimate').textContent =
