@@ -1218,7 +1218,6 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
 .change-tip dd { margin: 0; text-align: right; font-variant-numeric: tabular-nums }
 .change-gradient { height: 8px; border-radius: 4px; background: linear-gradient(to right, #1654ab, #e0e5eb, #c52637) }
 .change-scale { display: flex; justify-content: space-between; margin-top: 6px; font-size: 12px }
-.change-details > summary { cursor: pointer; padding-block: 10px; font-weight: 700 }
 @media (max-width: 680px) {
   .change-layout { grid-template-columns: 1fr }
   .change-map { height: auto }
@@ -2126,17 +2125,6 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
           </div>
         </div>
       </div>
-      <details class="change-details">
-        <summary>25개 구 상세 표 보기</summary>
-      <p class="audit-chart-caption">서울 전체 고령인구 1만 명당 사고율 <strong id="elderly-rate-caption">—건</strong> · 2024년 대비</p>
-      <div class="risk-change-scroll" tabindex="0" role="region" aria-label="서울 25개 자치구 사고율 및 순위 변화 표">
-        <table class="risk-change-table">
-          <thead><tr><th scope="col">자치구</th><th scope="col">순위</th><th scope="col">전년 순위</th><th scope="col">순위 변화<br>(상승 +)</th><th scope="col">사고율</th><th scope="col">서울 대비 격차</th><th scope="col">사고 증감(건)</th><th scope="col">사고 증감률(%)</th><th scope="col" class="district-name-end">자치구</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-      <p class="muted policy-source">사고율·격차 단위는 고령인구 1만 명당 사고 건수입니다. 서울 전체 사고율은 전체 사고 건수 ÷ 전체 65세 이상 거주인구 × 10,000으로 계산했습니다. 거주인구는 실제 보행량과 차이가 있습니다.</p>
-      </details>
       <p class="muted policy-source">출처 · <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/01_%EC%9E%90%EC%B9%98%EA%B5%AC%EC%97%B0%EB%8F%84_%ED%8C%A8%EB%84%90.csv">자치구·연도 패널 원자료</a> · TAAS 사고 통계 및 인구 집계</p>
     </section>
   </div>
@@ -4008,7 +3996,6 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
       setText("elderly-accidents-change", formatChange(elderly.accidents_change, "건"));
       setText("elderly-deaths-change", formatChange(elderly.deaths_change, "명"));
       setText("district-average-rate", `서울시 평균 ${rate}`);
-      setText("elderly-rate-caption", `${rate}건`);
 
       console.info("고령 보행사고 사고율 API 연결 완료", elderly.year);
     } catch (error) {
@@ -4121,16 +4108,12 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
 
       const { districts } = await response.json();
       const riskBody = document.querySelector("#district-risk .zone-data-table tbody");
-      const changeBody = document.querySelector("#district-change .risk-change-table tbody");
 
-      if (!riskBody || !changeBody || !Array.isArray(districts) || districts.length !== 25) {
+      if (!riskBody || !Array.isArray(districts) || districts.length !== 25) {
         throw new Error("자치구 표나 API 값을 확인해 줘.");
       }
 
       const formatCount = new Intl.NumberFormat("ko-KR");
-      // 부호를 붙인다. 0은 부호 없이 표시한다. 기존 표처럼 음수는 반각 하이픈이야.
-      const signed = (value, digits = 0) =>
-        value === 0 ? (0).toFixed(digits) : `${value > 0 ? "+" : "-"}${Math.abs(value).toFixed(digits)}`;
       const escapeHtml = (text) =>
         String(text).replace(/[&<>"']/g, (char) => (
           { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]
@@ -4142,14 +4125,6 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
               <td class="district-rate">${row.accidents_per_10k.toFixed(2)}</td>
               <td><span class="district-track" aria-hidden="true"><span style="--rate:${row.bar_percent.toFixed(2)}%"></span></span></td>
             <td class="district-name-end">${escapeHtml(row.district)}</td></tr>`).join("");
-
-      changeBody.innerHTML = districts.map((row) => {
-        const percent = row.accidents_change_percent === null
-          ? "—"
-          : signed(row.accidents_change_percent, 1);
-        return `
-          <tr><th scope="row">${escapeHtml(row.district)}</th><td>${row.rank}</td><td>${row.previous_rank}</td><td>${signed(row.rank_change)}</td><td>${row.accidents_per_10k.toFixed(2)}</td><td>${signed(row.rate_gap, 2)}</td><td>${signed(row.accidents_change)}</td><td>${percent}</td><td class="district-name-end">${escapeHtml(row.district)}</td></tr>`;
-      }).join("");
 
       drawChangeMap(districts);
       console.info("자치구 고령 보행사고율 API 연결 완료", districts.length);
