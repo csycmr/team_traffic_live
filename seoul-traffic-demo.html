@@ -813,17 +813,25 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
 }
 #district-risk .district-track { display: block; height: 13px; background: transparent }
 #policy-alternatives .policy-content { display: grid; gap: clamp(8px, 1.5svh, 16px) }
-.policy-evidence { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 14px; align-items: start }
-.policy-cases { display: grid; gap: 10px }
+.policy-evidence { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 0 14px; align-items: stretch }
+@media (min-width: 851px) {
+  .policy-evidence .policy-jeju-photo { position: relative }
+  .policy-evidence .policy-jeju-photo > a { position: absolute; inset: 0 }
+  .policy-evidence .policy-player { min-height: 100% }
+}
+@media (max-width: 850px) {
+  .policy-evidence > .policy-source { grid-row: 2; margin-bottom: 12px }
+}
+
 #policy-alternatives .audit-diagnosis { padding: clamp(10px, 1.6svh, 17px) }
-.policy-player { width: 100%; aspect-ratio: 16 / 9; margin-top: 8px; background: #081421 }
+.policy-player { width: 100%; aspect-ratio: 16 / 9; background: #081421 }
 .policy-player iframe { display: block; width: 100%; height: 100%; border: 0 }
-.policy-cases p, .policy-actions dd { margin-top: 6px; font-size: 13px; line-height: 1.5 }
+.policy-jeju-copy p, .policy-actions dd { margin-top: 6px; font-size: 13px; line-height: 1.5 }
 .policy-content .policy-source { margin-top: 7px; font-size: 11px; line-height: 1.5 }
 .policy-content a { color: #c1dcf5 }
 .policy-jeju { border-left: 3px solid #b6e746 }
 .policy-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 9px 0 0 }
-.policy-actions dt { font-size: 14px; font-weight: 700 }
+.policy-actions dt { font: 700 17px/1.2 Paperlogy, sans-serif; letter-spacing: -.04em }
 .policy-actions dd { margin-inline: 0; color: #c9d8e7 }
 @media (max-width: 850px) {
   .policy-evidence, .policy-actions { grid-template-columns: minmax(0, 1fr) }
@@ -2571,14 +2579,9 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
   <div class="oecd-content policy-content">
     <h2 class="audit-heading">노인보호구역을 알리고, 도로에서 알아볼 수 있게</h2>
     <div class="policy-evidence">
-      <section class="audit-diagnosis" aria-labelledby="policy-awareness">
-        <h3 id="policy-awareness">노인보호구역, 얼마나 알고 있을까?</h3>
-        <div class="policy-player">
+      <div class="policy-player">
           <iframe src="https://www.youtube-nocookie.com/embed/edblldUy484?start=18" title="노인보호구역 인식 관련 보도 영상" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
         </div>
-        <p class="muted policy-source">시민 인터뷰 사례 · <a href="https://youtu.be/edblldUy484?t=18">유튜브에서 18초부터 보기</a></p>
-      </section>
-      <div class="policy-cases">
         <section class="audit-diagnosis policy-jeju" aria-labelledby="policy-jeju-case">
           <div class="policy-jeju-copy">
           <h3 id="policy-jeju-case">제주, 형광녹색으로 노인보호구역 표시</h3>
@@ -2590,14 +2593,14 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
             <a href="./assets/jeju-silver-zone-pilot.jpg" target="_blank" rel="noopener"><img src="./assets/jeju-silver-zone-pilot.jpg" width="848" height="1248" loading="lazy" alt="서귀포시 매일올레시장 일원 기존 모습과 형광녹색 적용 구상 비교"></a>
           </figure>
         </section>
-      </div>
+      <p class="muted policy-source">시민 인터뷰 사례 · <a href="https://youtu.be/edblldUy484?t=18">유튜브에서 18초부터 보기</a></p>
     </div>
-    <section class="audit-diagnosis" aria-labelledby="policy-seoul">
+    <section aria-labelledby="policy-seoul">
       <h2 class="audit-heading" id="policy-seoul">서울에 제안하는 세 가지 대안</h2>
       <dl class="policy-actions">
-        <div><dt>우리 동네 보호구역 알리기</dt><dd>시장·복지관 주변 보호구역을 지역 지도와 버스정류장에 알리고, 감속·양보 캠페인을 진행합니다. 노인보호구역 진입 시 감속과 보행자 주의를 알리는 내비게이션 음성안내도 확대합니다.</dd></div>
-        <div><dt>안전시설과 단속용 CCTV 확대</dt><dd>사고다발지역과 고령 보행 동선을 현장 점검해 표지와 노면 표시를 개선하고, 노인보호구역의 과속·신호위반 단속용 CCTV 확대 설치를 요구합니다.</dd></div>
-        <div><dt>시범사업 효과 확인하기</dt><dd>운전자의 보호구역 인지도, 통행속도, 고령 보행사고 건수를 시행 전후와 유사 구간에서 비교합니다.</dd></div>
+        <div class="audit-diagnosis"><dt>우리 동네 보호구역 알리기</dt><dd>시장·복지관 주변 보호구역을 지역 지도와 버스정류장에 알리고, 감속·양보 캠페인을 진행합니다. 노인보호구역 진입 시 감속과 보행자 주의를 알리는 내비게이션 음성안내도 확대합니다.</dd></div>
+        <div class="audit-diagnosis"><dt>안전시설과 단속용 CCTV 확대</dt><dd>사고다발지역과 고령 보행 동선을 현장 점검해 표지와 노면 표시를 개선하고, 노인보호구역의 과속·신호위반 단속용 CCTV 확대 설치를 요구합니다.</dd></div>
+        <div class="audit-diagnosis"><dt>시범사업 효과 확인하기</dt><dd>운전자의 보호구역 인지도, 통행속도, 고령 보행사고 건수를 시행 전후와 유사 구간에서 비교합니다.</dd></div>
       </dl>
     </section>
   </div>
