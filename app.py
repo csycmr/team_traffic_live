@@ -123,7 +123,38 @@ from newsroom.article_draft import (
     load_idea_context,
     generate_draft,
     save_draft,
+    draft_for_idea,
 )
+
+
+@app.get("/api/newsroom/ideas")
+def newsroom_saved_ideas():
+    engine = None
+    try:
+        engine = engine_from_env()
+        ideas = recent_saved_ideas(engine, limit=50)
+        return jsonify(ideas=ideas, count=len(ideas))
+    except Exception:
+        app.logger.exception("저장된 기사거리 조회 실패")
+        return jsonify(error="저장된 기사거리를 불러오지 못했습니다."), 500
+    finally:
+        if engine is not None:
+            engine.dispose()
+
+
+@app.get("/api/newsroom/ideas/<int:idea_id>/draft")
+def newsroom_existing_idea_draft(idea_id):
+    engine = None
+    try:
+        engine = engine_from_env()
+        result = draft_for_idea(engine, idea_id)
+        return jsonify(draft=result)
+    except Exception:
+        app.logger.exception("기사거리의 기존 초안 조회 실패")
+        return jsonify(error="기존 초안을 불러오지 못했습니다."), 500
+    finally:
+        if engine is not None:
+            engine.dispose()
 
 
 @app.post("/api/newsroom/drafts")
@@ -140,14 +171,20 @@ def newsroom_create_draft():
         idea_id = int(payload["idea_id"])
         engine = engine_from_env()
 
+        guidance = payload.get("reporter_guidance", "")
+        if not isinstance(guidance, str) or len(guidance) > 3000:
+            return jsonify(error="기자 작성 지침은 3000자 이내 텍스트로 입력하세요."), 400
         context = load_idea_context(engine, idea_id)
-        draft = generate_draft(context)
+        if draft_for_idea(engine, idea_id) is not None:
+            return jsonify(error="이미 초안이 있습니다. 기존 초안을 불러와 수정하세요."), 409
+        draft = generate_draft(context, reporter_guidance=guidance.strip())
 
         result = save_draft(
             engine,
             context,
             draft.title,
             draft.content,
+            reporter_guidance=guidance,
         )
 
         return jsonify(result), 201
@@ -167,7 +204,7 @@ from newsroom.recommendation import (
     validate_hint_url,
 )
 
-from newsroom.persistence import engine_from_env, save_idea
+from newsroom.persistence import engine_from_env, save_idea, recent_saved_ideas
 
 
 @app.post("/api/newsroom/ideas")

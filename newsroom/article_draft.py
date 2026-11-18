@@ -67,6 +67,8 @@ DRAFTING_RULES = """당신은 한국 데이터 저널리즘 뉴스룸의 기사 
 검증된 Fact Sheet의 통계 수치와 직접 대조한 외부 발췌문만 사실 근거로 사용한다.
 RSS 제목·링크·발행처만 있는 METADATA_ONLY 자료는 본문 속 사실 근거로 사용할 수 없다.
 취재 메모, AI가 제안한 가제·취재 방향·정보 공백은 검증된 사실이 아니다.
+기자 작성 지침은 기사 구성과 강조점에 관한 요청이다. 지침에 포함된 사실 주장은 별도로 검증된 근거가 없다면 본문에 사실로 단정하지 마라.
+기자 지침과 검증된 Fact Sheet가 충돌하면 검증된 Fact Sheet를 우선하고, 확인되지 않은 인용·통계·원인을 창작하지 마라.
 미확인 행정 결정, 사고 원인, 보호구역 정책의 실패·예방 효과를 단정하지 마라.
 고령 보행자 사고는 발생지 기준, 고령인구는 거주지 기준이다.
 사고다발지역의 중첩/비중첩은 선정된 폴리곤 수이지 개별 사고 발생 비율이 아니다.
@@ -80,7 +82,7 @@ RSS 제목·링크·발행처만 있는 METADATA_ONLY 자료는 본문 속 사�
 """
 
 
-def generate_draft(context: dict) -> ArticleDraft:
+def generate_draft(context: dict, reporter_guidance: str = "") -> ArticleDraft:
     api_key = os.getenv("OPENAI_API_KEY")
     if not api_key:
         raise ValueError("OPENAI_API_KEY가 설정되지 않았습니다.")
@@ -98,6 +100,7 @@ def generate_draft(context: dict) -> ArticleDraft:
         "reporting_angle_unverified": context["angle"],
         "suggested_title_unverified": context["title"],
         "reporting_gaps_not_facts": context["reporting_gaps_json"],
+        "reporter_requested_emphasis_unverified": reporter_guidance,
         "verified_reference_excerpts": verified,
     }
     client = OpenAI(api_key=api_key, timeout=40, max_retries=0)
@@ -125,14 +128,14 @@ def _validated_text(title: str, content: str):
 def draft_for_idea(engine: Engine, idea_id: int) -> dict | None:
     with engine.connect() as conn:
         row = conn.execute(text("""
-            SELECT id, story_idea_id, title, content, status, updated_at
+            SELECT id, story_idea_id, title, content, status, updated_at, reporter_guidance
             FROM articles WHERE story_idea_id=:id ORDER BY id DESC LIMIT 1
         """), {"id": idea_id}).mappings().first()
     return dict(row) if row else None
 
 
 def save_draft(engine: Engine, context: dict, title: str, content: str,
-               existing: dict | None = None) -> int:
+               existing: dict | None = None, reporter_guidance: str = "") -> int:
     title, content = _validated_text(title, content)
     if context["verification_status"] != "PASSED" or not checked_facts(context["facts_json"]):
         raise ValueError("검증된 분석 스냅샷이 필요합니다.")
@@ -155,10 +158,11 @@ def save_draft(engine: Engine, context: dict, title: str, content: str,
         result = conn.execute(text("""
             INSERT INTO articles
               (story_idea_id, title, content, status, validation_passed,
-               validation_result, validated_hash, created_at, updated_at)
+               validation_result, validated_hash, created_at, updated_at, reporter_guidance)
             VALUES (:idea_id, :title, :content, '검토대기', FALSE,
-                    NULL, NULL, :now, :now)
-        """), {"idea_id": context["id"], "title": title, "content": content, "now": now})
+                    NULL, NULL, :now, :now, :guidance)
+        """), {"idea_id": context["id"], "title": title, "content": content, "now": now,
+             "guidance": reporter_guidance})
         article_id = int(result.lastrowid)
         conn.execute(text("""
             INSERT INTO article_evidence (article_id, analysis_id, source_document_id,
@@ -183,7 +187,7 @@ def load_draft(engine: Engine, article_id: int) -> dict:
     with engine.connect() as conn:
         row = conn.execute(text("""
             SELECT id, story_idea_id, title, content, status, validation_passed,
-                   updated_at FROM articles WHERE id=:id
+                   updated_at, reporter_guidance FROM articles WHERE id=:id
         """), {"id": article_id}).mappings().first()
     if not row:
         raise ValueError("저장된 기사 초안을 찾지 못했습니다.")
