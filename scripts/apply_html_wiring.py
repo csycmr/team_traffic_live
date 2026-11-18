@@ -11,6 +11,8 @@
   4. 서행·정체 '외 N곳' 표시   (실시간 교통 카드)
   5. 서행·정체 목록 내부 스크롤 (실시간 교통 카드)
   6. 전국 65세 이상 주민등록인구 추이 → /api/statistics/elderly-population
+  ... (7~16단계는 각 단계 이름 참고)
+  17. API로 채워지는 값을 HTML에서 비우기("—"만 남김) — 항상 마지막에 실행
 바뀐 내용이 있으면 원본을 <파일>.bak으로 한 번만 남긴다. 못 찾은 단계가 있으면 종료 코드 1로 끝난다.
 """
 
@@ -204,12 +206,13 @@ NATIONAL_SCRIPT = """
         }
       });
 
-      const first = years[0];
-      const leadFirst = document.querySelector(".national-lead strong");
-
-      if (leadFirst && first.elderly_share_percent !== null) {
-        leadFirst.textContent = `${first.elderly_share_percent.toFixed(1)}%`;
-      }
+      // 문장 속 비중 두 곳(첫 해·마지막 해)을 모두 API 값으로 채워.
+      const leadStrongs = document.querySelectorAll(".national-lead strong");
+      [[leadStrongs[0], years[0]], [leadStrongs[1], years[years.length - 1]]].forEach(([target, row]) => {
+        if (target && row && row.elderly_share_percent !== null) {
+          target.textContent = `${row.elderly_share_percent.toFixed(1)}%`;
+        }
+      });
 
       console.info("전국 사망자 API 연결 완료", years.length);
     } catch (error) {
@@ -594,6 +597,175 @@ def step_zone_budget(text):
     )
 
 
+# ─────────────────────────────────────────────────────────────
+# 17단계: API로 채워지는 값을 HTML에서 지워. (HTML에는 숫자를 직접 쓰지 않고 "—"만 남겨.)
+# 지우는 대상은 로딩 스크립트가 다시 채우는 칸뿐이야. 눈금·연도·출처 같은 고정 글자와,
+# 아직 API로 연결하지 않은 칸(전국 어린이 보행사고 추이, 과태료 등)은 그대로 둬.
+# ─────────────────────────────────────────────────────────────
+STATIC_SECTIONS = ["audit-video","national-fatalities","district-risk","district-change","zone-before-after","district-comparison","zone-overlap","zone-review","school-zone-precedent","zone-budget"]
+def element_end(text,start):
+    m=re.match(r"<(\w+)",text[start:]); tag=m.group(1)
+    depth=0
+    for t in re.finditer(r"<(/?)%s\b[^>]*?(/?)>"%tag,text[start:],flags=re.I):
+        if t.group(2): continue
+        depth+= -1 if t.group(1) else 1
+        if depth==0: return start+t.end()
+    raise SystemExit("no end "+tag)
+NUM=r"[+\-−]?\d[\d,]*(?:\.\d+)?"
+UNIT=r"(?:\s?(?:건|명|곳|%|%p|억 원|만 원|개|개국|km|m|곳\s*\(\w+\)))?"
+def scrub_region(s):
+    n=0
+    def sub(pat,rep,flags=0):
+        nonlocal s,n
+        s,k=re.subn(pat,rep,s,flags=flags); n+=k
+    # 1) 값만 있는 글자 노드 (연도 4자리 단독은 제외)
+    def text_rep(m):
+        v=m.group(1).strip()
+        if re.fullmatch(r"(19|20)\d\d",v): return m.group(0)
+        if re.fullmatch(r"\d{1,2}",v): return m.group(0)  # 눈금 숫자
+        near=s[max(0,m.start()-120):m.start()]
+        if near.endswith("<span") and re.search(r"(?:tick|axis)",near): return m.group(0)  # 눈금
+        tag = s[:m.start()].rsplit("<", 1)[-1]
+        if tag.startswith("text ") and ("tick" in tag or re.fullmatch(r"\d+", v)): return m.group(0)  # 그래프 눈금
+        if re.fullmatch(r"\d{1,2}",v) and m.group(0).count("\n")==0 and False: return m.group(0)
+        return ">—<"
+    s,k=re.subn(r">\s*((?:약\s)?"+NUM+UNIT+r"(?:\s이하)?)\s*<",lambda m:text_rep(m),s); n+=k
+    # 2) 막대·위치를 정하는 CSS 값
+    sub(r'(class="oecd-column-measure"[^>]*style="--level:\s*)[\d.]+%',lambda m:m.group(1)+"0%")
+    sub(r"(--(?:total|older|bar-height|zone-width)[\w-]*:\s*)[\d.]+(%|px)?",lambda m:m.group(1)+"0"+(m.group(2) or ""))
+    return s,n
+
+def sec_slice(t,sid):
+    a=re.search(r'<section\b[^>]*\bid="%s"'%sid,t).start(); return a,element_end(t,a)
+def in_sec(t,sid,fn,start_marker=None):
+    a,b=sec_slice(t,sid); seg=t[a:b]; k=seg.index(start_marker) if start_marker else 0
+    return t[:a]+seg[:k]+fn(seg[k:])+t[b:]
+def empty_all(seg,open_regex,tag):
+    """open_regex로 시작하는 <tag ...> 요소들의 안쪽을 모두 비워."""
+    out=[];pos=0
+    for m in re.finditer(open_regex,seg):
+        if m.start()<pos: continue
+        end=element_end(seg,m.start())
+        close=seg.rindex("</"+tag,m.start(),end)
+        out.append(seg[pos:seg.index(">",m.start())+1]);pos=close
+    out.append(seg[pos:]);return "".join(out)
+def stage2(t):
+    # --- 추이 그래프(전국·서울 교통사고)
+    def trend(seg):
+        seg=re.sub(r'(<polyline points=")[^"]*(")',r"\1\2",seg)
+        seg=re.sub(r'(<circle cx="[\d.]+" cy=")[\d.]+(" r="3.5" />)',r"\g<1>148\2",seg)
+        seg=re.sub(r'<text x="([\d.]+)" y="[\d.]+" text-anchor="middle">\d{1,3}(?:,\d{3})+</text>',r'<text x="\1" y="139" text-anchor="middle"></text>',seg)
+        return seg
+    t=in_sec(t,"audit-video",trend)
+    # --- OECD 순위
+    def oecd(seg):
+        seg=re.sub(r'(<header class="oecd-chart-header"><h3[^>]*>[^<]*</h3><span>)[^<]*(</span>)',r"\1—\2",seg)
+        seg=re.sub(r'(<li class="oecd-column)( oecd-korea)?(" title=")[^"]*(")',r"\1\3—\4",seg)
+        seg=re.sub(r'(<span class="oecd-sr">)[^<]*· [^<]*위 ·[^<]*(</span>)',r"\1—\2",seg)
+        seg=re.sub(r'(<span class="oecd-column-rank"[^>]*>)[^<]*(</span>)',r"\1—\2",seg)
+        seg=re.sub(r'(<span class="oecd-column-country"[^>]*>)[^<]*(</span>)',r"\1—\2",seg)
+        return seg
+    t=in_sec(t,"audit-video",oecd)
+    # --- 전국 사망자
+    def national(seg):
+        seg=re.sub(r'(<figure class="national-population"[\s\S]*?<svg [^>]*?aria-label=")[^"]*(")',r"\1\2",seg,count=1)
+        seg=re.sub(r'(<polyline pathLength="1" points=")[^"]*(")',r"\1\2",seg,count=1)
+        seg=re.sub(r'\n\s*<g><title>[^<]*</title><circle[\s\S]*?</g>',"",seg)
+        seg=empty_all(seg,r'<svg class="national-donut-shape"',"svg")
+        seg=re.sub(r'(<p class="oecd-sr">)[^<]*(</p>)',r"\1\2",seg)
+        seg=empty_all(seg,r'<ul class="oecd-sr" role="list">',"ul")
+        seg=re.sub(r'(<p class="national-note" id="national-unit">)[^<]*(</p>)',r"\1단위 명\2",seg)
+        return seg
+    t=in_sec(t,"national-fatalities",national)
+    # --- 표: 통째로 다시 그려지는 곳은 비워
+    for sid in ("district-risk","district-change","zone-before-after"):
+        t=in_sec(t,sid,lambda seg:empty_all(seg,r"<tbody>","tbody"))
+    return t
+
+
+def stage3(t):
+    # --- 자치구 4년 비교 그래프(꺾은선·점·값)
+    def comp(seg):
+        seg=re.sub(r'(<g style="--child-series-color:#[0-9a-f]+">)<polyline pathLength="1" points="[^"]*"/>[\s\S]*?(</g>)',r'\1<polyline pathLength="1" points=""/>\2',seg)
+        return seg
+    t=in_sec(t,"district-comparison",comp)
+    # --- 지정 전후 문구
+    def ba(seg):
+        seg=re.sub(r'(<h3 class="audit-heading">)7개 자치구 · 9개 지정 사례(</h3>)',r"\1—\2",seg)
+        seg=re.sub(r'(<p class="audit-chart-caption">)자치구 전체 사고 건수 기준[^<]*(</p>)',r"\1—\2",seg)
+        return seg
+    t=in_sec(t,"zone-before-after",ba)
+    # --- 사고다발지역 검토
+    def rev(seg):
+        seg=empty_all(seg,r"<tbody>","tbody")
+        seg=empty_all(seg,r'<div class="review-chart">',"div") if False else seg
+        seg=re.sub(r'(<div class="review-axis"[^>]*>[\s\S]*?</div>\s*<ol>)[\s\S]*?(</ol>)',r"\1\2",seg)
+        seg=re.sub(r'(<summary>)나머지 \d+곳 자료 표 보기(</summary>)',r"\1자료 표 보기\2",seg)
+        seg=re.sub(r'(<p class="audit-chart-caption">)\d{4}년 사고다발지역 선정 영역 수[^<]*(</p>)',r"\1—\2",seg)
+        seg=re.sub(r'(<p class="review-source">)판정 가능한[\s\S]*?(</p>)',r"\1—\2",seg)
+        return seg
+    t=in_sec(t,"zone-review",rev)
+    # --- 어린이보호구역 선례(카메라 전후·보호구역 현황)
+    def school(seg):
+        seg=re.sub(r'(<p class="audit-chart-caption">)어린이 보행사고[^<]*(</p>)',r"\1—\2",seg)
+        seg=re.sub(r'(<div class="zone-density-people"[^>]*><strong>)[^<]*(</strong>)',r"\1—\2",seg)
+        seg=re.sub(r'(<p class="muted policy-source">)어린이 [\d,]+명[^<]*(</p>)',r"\1—\2",seg)
+        return seg
+    t=in_sec(t,"school-zone-precedent",school,'id="policy-school-zones"')
+    # --- 예산: 문장 속 195곳도 숫자 직접 입력을 없애
+    t=t.replace("노인 보호구역 195곳으로 나눈 상한 추정치입니다.","지정된 노인 보호구역 수로 나눈 상한 추정치입니다.")
+    return t
+
+
+
+LEAD_OLD = """      const first = years[0];
+      const leadFirst = document.querySelector(".national-lead strong");
+
+      if (leadFirst && first.elderly_share_percent !== null) {
+        leadFirst.textContent = `${first.elderly_share_percent.toFixed(1)}%`;
+      }
+"""
+LEAD_NEW = """      // 문장 속 비중 두 곳(첫 해·마지막 해)을 모두 API 값으로 채워.
+      const leadStrongs = document.querySelectorAll(".national-lead strong");
+      [[leadStrongs[0], years[0]], [leadStrongs[1], years[years.length - 1]]].forEach(([target, row]) => {
+        if (target && row && row.elderly_share_percent !== null) {
+          target.textContent = `${row.elderly_share_percent.toFixed(1)}%`;
+        }
+      });
+"""
+
+
+AVERAGE_LINE_OLD = ('  const districtRows = document.querySelector("#district-risk .zone-data-table tbody");\n  const firstTrack = districtRows.querySelector(".district-track");\n  const scrollRegion = districtRows.closest(".district-table-scroll");\n  const line = document.createElement("span");\n  line.className = "district-average-line";\n  line.setAttribute("aria-hidden", "true");\n  scrollRegion.append(line);\n\n  const positionAverage = () => {\n    const track = firstTrack.getBoundingClientRect();\n', '  positionAverage();\n  const districtChartObserver = new ResizeObserver(positionAverage);\n  districtChartObserver.observe(firstTrack);\n  districtChartObserver.observe(districtRows);\n')
+AVERAGE_LINE_NEW = ('  const districtRows = document.querySelector("#district-risk .zone-data-table tbody");\n  const scrollRegion = districtRows.closest(".district-table-scroll");\n  const line = document.createElement("span");\n  line.className = "district-average-line";\n  line.setAttribute("aria-hidden", "true");\n  scrollRegion.append(line);\n\n  // 표 행은 API가 채우니까 첫 막대는 그릴 때마다 다시 찾고, 행이 없으면 평균선을 숨겨.\n  const positionAverage = () => {\n    const firstTrack = districtRows.querySelector(".district-track");\n    if (!firstTrack) {\n      line.style.display = "none";\n      return;\n    }\n    line.style.display = "";\n    const track = firstTrack.getBoundingClientRect();\n', '  positionAverage();\n  const districtChartObserver = new ResizeObserver(positionAverage);\n  districtChartObserver.observe(districtRows);\n  new MutationObserver(positionAverage).observe(districtRows, { childList: true });\n')
+
+
+def step_clear_static(text):
+    """마지막 단계: 로딩 스크립트가 채우는 값들을 HTML에서 비운다. 다시 돌려도 안전해."""
+    original = text
+    if "leadStrongs" not in text:
+        if text.count(LEAD_OLD) != 1:
+            return text, "못 찾음(전국 사망자 문장 비중 코드)"
+        text = text.replace(LEAD_OLD, LEAD_NEW)
+    if "if (!firstTrack)" not in text:
+        for old, new in zip(AVERAGE_LINE_OLD, AVERAGE_LINE_NEW):
+            if text.count(old) != 1:
+                return original, "못 찾음(자치구 표 평균선 코드)"
+            text = text.replace(old, new)
+    missing = []
+    for sid in STATIC_SECTIONS:
+        if not re.search(r'<section\b[^>]*\bid="%s"' % sid, text):
+            missing.append(sid)
+    if missing:
+        return original, "못 찾음(" + ", ".join(missing) + ")"
+    for sid in STATIC_SECTIONS:
+        a, b = sec_slice(text, sid)
+        new, _ = scrub_region(text[a:b][text[a:b].index('id="policy-school-zones"') if sid == "school-zone-precedent" else 0:])
+        skip = text[a:b].index('id="policy-school-zones"') if sid == "school-zone-precedent" else 0
+        text = text[:a] + text[a:b][:skip] + new + text[b:]
+    text = stage3(stage2(text))
+    return text, ("apply" if text != original else "skip")
+
+
 STEPS = [
     ("노인 교통사고율 카드", step_elderly),
     (
@@ -682,6 +854,10 @@ STEPS = [
             t, "loadNationalDonuts", NATIONAL_DONUT_SCRIPT,
             ['id="national-status"', 'class="national-donuts"'], "",
         ),
+    ),
+    (
+        "API 값 HTML에서 비우기",
+        step_clear_static,
     ),
 ]
 
