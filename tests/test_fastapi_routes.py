@@ -57,3 +57,10 @@ def test_cors_allows_dashboard_origin():
         "/health", headers={"Origin": "http://127.0.0.1:5001"}
     )
     assert response.headers["access-control-allow-origin"] == "http://127.0.0.1:5001"
+
+
+def test_elderly_districts_endpoint():
+    body = client.get("/api/statistics/elderly/districts").json()
+    assert body["seoul_accidents_per_10k"] == 10.77
+    assert len(body["districts"]) == 25
+    assert body["districts"][0]["district"] == "중구"

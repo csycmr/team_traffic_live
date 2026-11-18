@@ -90,3 +90,39 @@ def test_elderly_pedestrian_needs_previous_year(real_data_dir):
 def test_missing_file_is_service_error(tmp_path):
     with pytest.raises(ServiceError):
         accident_service.accident_trend(tmp_path)
+
+
+def test_district_rates_real_data(real_data_dir):
+    result = accident_service.elderly_district_rates(real_data_dir)
+    assert (result.year, result.previous_year, result.seoul_accidents_per_10k) == (
+        2025,
+        2024,
+        10.77,
+    )
+    rows = result.districts
+    assert len(rows) == 25
+    assert [row.rank for row in rows] == sorted(row.rank for row in rows)
+
+    first, second = rows[0], rows[1]
+    assert (first.district, first.accidents_per_10k, first.rank, first.previous_rank) == (
+        "중구",
+        22.08,
+        1,
+        1,
+    )
+    assert (first.population_65plus, first.accidents, first.hotspots) == (27623, 61, 2)
+    assert (first.protection_zones, first.overlaps, first.bar_percent) == (8, 1, 88.33)
+    assert (second.district, second.rank_change, second.rate_gap) == ("동대문구", 1, 7.37)
+    assert (second.accidents_change, second.accidents_change_percent) == (2, 1.5)
+
+    geumcheon = next(row for row in rows if row.district == "금천구")
+    assert (geumcheon.rank, geumcheon.previous_rank, geumcheon.rank_change) == (4, 10, 6)
+    assert (geumcheon.accidents_change, geumcheon.accidents_change_percent) == (29, 53.7)
+
+
+def test_district_rates_weighted_average_matches_card(real_data_dir):
+    """자치구 표의 서울 평균은 고령 사고율 카드(10.77)와 같은 값이어야 한다."""
+    districts = accident_service.elderly_district_rates(real_data_dir)
+    elderly = accident_service.elderly_pedestrian(real_data_dir)
+    assert districts.seoul_accidents_per_10k == elderly.accidents_per_10k
+    assert sum(row.accidents for row in districts.districts) == elderly.accidents

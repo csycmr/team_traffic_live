@@ -56,3 +56,29 @@ class ElderlyPedestrian(BaseModel):
     previous_year: int
     accidents_change: int  # 전년 대비 사고 증감(건)
     deaths_change: int  # 전년 대비 사망 증감(명)
+
+
+class DistrictRate(BaseModel):
+    """자치구 한 곳의 고령 보행자 사고율과 전년 대비 변화."""
+
+    district: str
+    population_65plus: int = Field(gt=0)
+    accidents: int = Field(ge=0)
+    hotspots: int = Field(ge=0)  # 사고다발지역 수
+    protection_zones: int = Field(ge=0)  # 노인보호구역 수
+    overlaps: int = Field(ge=0)  # 사고다발지역·보호구역 경계 중첩 수
+    accidents_per_10k: float = Field(ge=0)
+    bar_percent: float = Field(ge=0)  # 막대 길이. 축 최댓값은 25건(1만 명당)
+    rank: int = Field(ge=1)
+    previous_rank: int = Field(ge=1)
+    rank_change: int  # 전년 순위 - 올해 순위 (상승 +)
+    rate_gap: float  # 서울 평균 대비 격차
+    accidents_change: int
+    accidents_change_percent: float | None  # 전년 사고가 0건이면 None
+
+
+class DistrictRates(BaseModel):
+    year: int
+    previous_year: int
+    seoul_accidents_per_10k: float
+    districts: list[DistrictRate]

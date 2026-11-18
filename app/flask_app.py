@@ -272,6 +272,12 @@ def elderly_statistics():
     return jsonify(accident_service.elderly_pedestrian().model_dump())
 
 
+@app.get("/api/statistics/elderly/districts")
+def elderly_district_rates():
+    """자치구별 고령 보행자 사고율과 전년 대비 변화."""
+    return jsonify(accident_service.elderly_district_rates().model_dump())
+
+
 @app.get("/api/citydata")
 def citydata():
     """서울시 실시간 도시데이터를 기존 뉴스룸 JSON 형식으로 제공."""

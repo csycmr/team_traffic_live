@@ -9,6 +9,7 @@ from app.errors import ServiceError
 from app.models import (
     AccidentTrend,
     ChildPedestrian,
+    DistrictRates,
     ElderlyPedestrian,
     OecdRankings,
 )
@@ -52,6 +53,11 @@ def get_child_pedestrian(year: int = Query(2025)):
 @app.get("/api/statistics/elderly", response_model=ElderlyPedestrian)
 def get_elderly_pedestrian():
     return accident_service.elderly_pedestrian()
+
+
+@app.get("/api/statistics/elderly/districts", response_model=DistrictRates)
+def get_elderly_district_rates():
+    return accident_service.elderly_district_rates()
 
 
 @app.get("/api/cctv")
