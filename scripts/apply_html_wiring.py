@@ -15,6 +15,7 @@
   17. API로 채워지는 값을 HTML에서 비우기("—"만 남김)
   18. 예산 표 아래 설명 문장을 지금 계산 기준에 맞게 수정
   19. 차트·그래프 아래 출처 표기·링크를 데이터 근거에 맞게 수정
+  20. OECD '원본 CSV' 링크를 data/13_OECD_정제.csv로 교체
 바뀐 내용이 있으면 원본을 <파일>.bak으로 한 번만 남긴다. 못 찾은 단계가 있으면 종료 코드 1로 끝난다.
 """
 
@@ -854,6 +855,21 @@ def step_source_links(text):
     return replace_exact(text, "newsId=148873705", SOURCE_REPLACEMENTS)
 
 
+OECD_RAW_LINK = (
+    '<a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/raw/'
+    '13_OECD_%EA%B5%90%ED%86%B5%EC%82%AC%EA%B3%A0_2019-2023.csv">원본 CSV</a>'
+)
+OECD_CLEAN_LINK = (
+    '<a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/'
+    '13_OECD_%EC%A0%95%EC%A0%9C.csv">전체 정제 데이터(판본·원문각주 포함)</a>'
+)
+
+
+def step_oecd_link(text):
+    """data/raw에 없는 'OECD 원본 CSV' 링크를 있는 파일(전체 정제 데이터)로 바꾼다."""
+    return replace_exact(text, "전체 정제 데이터(판본·원문각주 포함)", [(OECD_RAW_LINK, OECD_CLEAN_LINK)])
+
+
 STEPS = [
     ("노인 교통사고율 카드", step_elderly),
     (
@@ -954,6 +970,10 @@ STEPS = [
     (
         "차트 아래 출처 링크",
         step_source_links,
+    ),
+    (
+        "OECD 원본 CSV 링크",
+        step_oecd_link,
     ),
 ]
 
