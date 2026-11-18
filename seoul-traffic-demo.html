@@ -4325,6 +4325,189 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
   }
 
   loadNationalDeaths();
+
+  async function loadElderlyPopulation() {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/statistics/elderly-population"
+      );
+
+      if (!response.ok) {
+        throw new Error(`65세 이상 인구 API 응답 오류: ${response.status}`);
+      }
+
+      const { points } = await response.json();
+      const svg = document.querySelector(".national-population svg");
+
+      if (!svg || !Array.isArray(points) || points.length < 2) {
+        throw new Error("65세 이상 인구 그래프나 API 값을 확인해 줘.");
+      }
+
+      const SVG_NS = "http://www.w3.org/2000/svg";
+      const formatCount = new Intl.NumberFormat("ko-KR");
+      // 기존 그래프의 좌표 규칙: 첫·끝 점의 x는 82·478, y 눈금은 900만 명=85, 100만 명당 25.5.
+      const FIRST_X = 82;
+      const LAST_X = 478;
+      const yOf = (population) => 85 - (population / 10000 - 900) * 0.255;
+      const make = (name, attributes = {}, text = "") => {
+        const element = document.createElementNS(SVG_NS, name);
+        Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, value));
+        if (text) element.textContent = text;
+        return element;
+      };
+
+      const shapes = points.map((point, index) => ({
+        x: Number((FIRST_X + ((LAST_X - FIRST_X) * index) / (points.length - 1)).toFixed(2)),
+        y: Number(yOf(point.population).toFixed(2)),
+        title: `${point.year}년 ${point.month}월 말 ${formatCount.format(point.population)}명`,
+        value: formatCount.format(Math.round(point.population / 10000)),
+        label: point.month === 12 ? `${point.year}년` : `${point.year}년 ${point.month}월`,
+      }));
+
+      svg.querySelector("polyline").setAttribute(
+        "points",
+        shapes.map((shape) => `${shape.x},${shape.y}`).join(" ")
+      );
+      svg.querySelectorAll("g").forEach((group) => group.remove());
+      shapes.forEach((shape) => {
+        const group = make("g");
+        group.append(
+          make("title", {}, shape.title),
+          make("circle", { cx: shape.x, cy: shape.y, r: 4 }),
+          make("text", { class: "population-value", x: shape.x, y: Number((shape.y - 8).toFixed(2)) }, shape.value),
+          make("text", { x: shape.x, y: 105 }, shape.label)
+        );
+        svg.append(group);
+      });
+      svg.setAttribute("aria-label", shapes.map((shape) => shape.title).join(", "));
+
+      console.info("65세 이상 주민등록인구 API 연결 완료", points.length);
+    } catch (error) {
+      console.error("65세 이상 주민등록인구를 불러오지 못했어.", error);
+    }
+  }
+
+  loadElderlyPopulation();
+
+  async function loadZoneBeforeAfter() {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/statistics/elderly/zone-before-after"
+      );
+
+      if (!response.ok) {
+        throw new Error(`지정 전후 비교 API 응답 오류: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const section = document.querySelector("#zone-before-after");
+      const body = section && section.querySelector(".risk-change-table tbody");
+      const heading = section && section.querySelector(".audit-heading");
+      const caption = section && section.querySelector(".audit-chart-caption");
+
+      if (!body || !heading || !caption || !Array.isArray(data.cases) || data.cases.length === 0) {
+        throw new Error("지정 전후 표나 API 값을 확인해 줘.");
+      }
+
+      // 기존 표처럼 음수는 유니코드 마이너스(−)로, 0은 부호 없이 보여 준다.
+      const signed = (value) => (value === 0 ? "0" : `${value > 0 ? "+" : "−"}${Math.abs(value)}`);
+      const escapeHtml = (text) =>
+        String(text).replace(/[&<>"']/g, (char) => (
+          { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]
+        ));
+
+      body.innerHTML = data.cases.map((row) => `
+            <tr><th scope="row">${escapeHtml(row.district)}</th><td>${row.designated_year}</td><td>${row.zones}곳</td><td>${row.accidents_before} → ${row.accidents_at} → ${row.accidents_after}</td><td>${signed(row.accidents_change)}</td><td>${row.rate_before.toFixed(2)} → ${row.rate_at.toFixed(2)} → ${row.rate_after.toFixed(2)}</td></tr>`).join("");
+      heading.textContent = `${data.districts}개 자치구 · ${data.cases.length}개 지정 사례`;
+      caption.textContent = `자치구 전체 사고 건수 기준 · 증가 ${data.increased}개 · 감소 ${data.decreased}개 · 동일 ${data.unchanged}개`;
+
+      console.info("노인보호구역 지정 전후 API 연결 완료", data.cases.length);
+    } catch (error) {
+      console.error("노인보호구역 지정 전후 비교를 불러오지 못했어.", error);
+    }
+  }
+
+  loadZoneBeforeAfter();
+
+  async function loadDistrictComparison() {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/statistics/elderly/district-comparison"
+      );
+
+      if (!response.ok) {
+        throw new Error(`자치구 비교 API 응답 오류: ${response.status}`);
+      }
+
+      const { years, series } = await response.json();
+      const section = document.querySelector("#district-comparison");
+      const rateSvg = section && section.querySelector('[data-risk-plot="rate"] svg');
+      const countSvg = section && section.querySelector('[data-risk-plot="count"] svg');
+      const tableBody = section && section.querySelector(".risk-comparison-data tbody");
+
+      if (!rateSvg || !countSvg || !tableBody || !Array.isArray(series) || series.length !== 3 || years.length !== 4) {
+        throw new Error("비교 차트나 API 값을 확인해 줘.");
+      }
+
+      // 그래프 축은 화면에 고정돼 있다. 사고율 0~25건, 사고 건수 0~2,500건이고 y 420(0) ~ 60(최댓값)이야.
+      const plots = [
+        // 점 위치는 반올림 전 사고율(사고 ÷ 인구 × 10,000)로 잡고, 적히는 숫자는 반올림한 값을 쓴다.
+        {
+          svg: rateSvg, max: 25,
+          value: (point) => (point.accidents / point.population_65plus) * 10000,
+          label: (point) => point.accidents_per_10k.toFixed(2),
+        },
+        {
+          svg: countSvg, max: 2500,
+          value: (point) => point.accidents,
+          label: (point) => point.accidents.toLocaleString("ko-KR"),
+        },
+      ];
+      const firstX = 100;
+      const lastX = 955;
+
+      for (const plot of plots) {
+        const groups = plot.svg.querySelectorAll("g[style*='--child-series-color']");
+        if (groups.length !== series.length) {
+          throw new Error("차트의 계열 개수가 API와 달라.");
+        }
+        series.forEach((item, seriesIndex) => {
+          const shapes = item.points.map((point, index) => {
+            const value = plot.value(point);
+            if (value > plot.max) {
+              throw new Error(`${item.name} ${point.year}년 값이 그래프 축(${plot.max})보다 커. 축을 늘려 줘.`);
+            }
+            const x = firstX + ((lastX - firstX) * index) / (years.length - 1);
+            const y = 420 - (value / plot.max) * 360;
+            // 맨 아래 계열은 값이 아래쪽에 적혀 서로 겹치지 않게 한다. 기존 화면과 같아.
+            const labelY = seriesIndex === series.length - 1 ? y + 23 : y - 14;
+            return { x, y, labelY, text: plot.label(point) };
+          });
+          groups[seriesIndex].innerHTML =
+            `<polyline pathLength="1" points="${shapes.map((s) => `${s.x},${s.y}`).join(" ")}"/>` +
+            shapes.map((s) =>
+              `<circle cx="${s.x}" cy="${s.y}" r="4"/><text class="child-value" x="${s.x}" y="${s.labelY}">${s.text}</text>`
+            ).join("");
+        });
+      }
+
+      const formatCount = new Intl.NumberFormat("ko-KR");
+      const escapeHtml = (text) =>
+        String(text).replace(/[&<>"']/g, (char) => (
+          { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]
+        ));
+      tableBody.innerHTML = years.map((year, index) => series.map((item) => {
+        const point = item.points[index];
+        return `<tr><th scope="row">${year}</th><td>${escapeHtml(item.name)}</td><td>${formatCount.format(point.population_65plus)}</td><td>${formatCount.format(point.accidents)}</td><td>${point.accidents_per_10k.toFixed(2)}</td></tr>`;
+      }).join("\n")).join("\n");
+
+      console.info("자치구 비교 추이 API 연결 완료", series.length);
+    } catch (error) {
+      console.error("자치구 비교 추이를 불러오지 못했어.", error);
+    }
+  }
+
+  loadDistrictComparison();
 </script>
 
 </body>

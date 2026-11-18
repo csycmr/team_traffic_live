@@ -9,6 +9,9 @@ from app.errors import ServiceError
 
 OECD_FILE = "13_OECD_고령지표_wide.csv"
 PANEL_FILE = "01_자치구연도_패널.csv"
+HOTSPOT_FILE = "03_다발지역_서울.csv"
+HOTSPOT_LINK_FILE = "06_다발지역_보호구역_연결.csv"
+PROTECTION_MASTER_FILE = "04_보호구역_마스터.csv"
 CHILD_SUMMARY_FILE = "10_어린이보호구역_교통안전_요약.csv"
 ACCIDENT_TREND_FILE = "15_TAAS_시도시군구_교통사고_2020-2025.csv"
 NATIONAL_DEATHS_FILE = "17_전국사망자_막대도넛.csv"

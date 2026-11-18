@@ -10,6 +10,7 @@
   3. 전국 사망자 막대          → /api/traffic/national-deaths
   4. 서행·정체 '외 N곳' 표시   (실시간 교통 카드)
   5. 서행·정체 목록 내부 스크롤 (실시간 교통 카드)
+  6. 전국 65세 이상 주민등록인구 추이 → /api/statistics/elderly-population
 바뀐 내용이 있으면 원본을 <파일>.bak으로 한 번만 남긴다. 못 찾은 단계가 있으면 종료 코드 1로 끝난다.
 """
 
@@ -219,6 +220,72 @@ NATIONAL_SCRIPT = """
   loadNationalDeaths();
 """
 
+# ── 6. 전국 65세 이상 주민등록인구 추이 ───────────────────
+POPULATION_SCRIPT = """
+  async function loadElderlyPopulation() {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/statistics/elderly-population"
+      );
+
+      if (!response.ok) {
+        throw new Error(`65세 이상 인구 API 응답 오류: ${response.status}`);
+      }
+
+      const { points } = await response.json();
+      const svg = document.querySelector(".national-population svg");
+
+      if (!svg || !Array.isArray(points) || points.length < 2) {
+        throw new Error("65세 이상 인구 그래프나 API 값을 확인해 줘.");
+      }
+
+      const SVG_NS = "http://www.w3.org/2000/svg";
+      const formatCount = new Intl.NumberFormat("ko-KR");
+      // 기존 그래프의 좌표 규칙: 첫·끝 점의 x는 82·478, y 눈금은 900만 명=85, 100만 명당 25.5.
+      const FIRST_X = 82;
+      const LAST_X = 478;
+      const yOf = (population) => 85 - (population / 10000 - 900) * 0.255;
+      const make = (name, attributes = {}, text = "") => {
+        const element = document.createElementNS(SVG_NS, name);
+        Object.entries(attributes).forEach(([key, value]) => element.setAttribute(key, value));
+        if (text) element.textContent = text;
+        return element;
+      };
+
+      const shapes = points.map((point, index) => ({
+        x: Number((FIRST_X + ((LAST_X - FIRST_X) * index) / (points.length - 1)).toFixed(2)),
+        y: Number(yOf(point.population).toFixed(2)),
+        title: `${point.year}년 ${point.month}월 말 ${formatCount.format(point.population)}명`,
+        value: formatCount.format(Math.round(point.population / 10000)),
+        label: point.month === 12 ? `${point.year}년` : `${point.year}년 ${point.month}월`,
+      }));
+
+      svg.querySelector("polyline").setAttribute(
+        "points",
+        shapes.map((shape) => `${shape.x},${shape.y}`).join(" ")
+      );
+      svg.querySelectorAll("g").forEach((group) => group.remove());
+      shapes.forEach((shape) => {
+        const group = make("g");
+        group.append(
+          make("title", {}, shape.title),
+          make("circle", { cx: shape.x, cy: shape.y, r: 4 }),
+          make("text", { class: "population-value", x: shape.x, y: Number((shape.y - 8).toFixed(2)) }, shape.value),
+          make("text", { x: shape.x, y: 105 }, shape.label)
+        );
+        svg.append(group);
+      });
+      svg.setAttribute("aria-label", shapes.map((shape) => shape.title).join(", "));
+
+      console.info("65세 이상 주민등록인구 API 연결 완료", points.length);
+    } catch (error) {
+      console.error("65세 이상 주민등록인구를 불러오지 못했어.", error);
+    }
+  }
+
+  loadElderlyPopulation();
+"""
+
 # ── 4·5. 실시간 교통 카드(서행·정체 목록) ─────────────────
 SLOW_COUNT_REPLACEMENTS = [('renderSlowRoads(data.traffic?.slowSegments);',
   'renderSlowRoads(data.traffic?.slowSegments, data.traffic?.slowSegmentCount);'),
@@ -241,6 +308,213 @@ SLOW_SCROLL_REPLACEMENTS = [('#slow-roads-list p, #slow-roads-list ul { margin: 
   '  const previousScroll = container.scrollTop; // 5초마다 다시 그려도 읽던 위치를 유지한다.\n'),
  ('  container.replaceChildren(list);\n',
   '  container.replaceChildren(list);\n  container.scrollTop = previousScroll;\n')]
+
+
+ZONE_BEFORE_AFTER_SCRIPT = """
+  async function loadZoneBeforeAfter() {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/statistics/elderly/zone-before-after"
+      );
+
+      if (!response.ok) {
+        throw new Error(`지정 전후 비교 API 응답 오류: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const section = document.querySelector("#zone-before-after");
+      const body = section && section.querySelector(".risk-change-table tbody");
+      const heading = section && section.querySelector(".audit-heading");
+      const caption = section && section.querySelector(".audit-chart-caption");
+
+      if (!body || !heading || !caption || !Array.isArray(data.cases) || data.cases.length === 0) {
+        throw new Error("지정 전후 표나 API 값을 확인해 줘.");
+      }
+
+      // 기존 표처럼 음수는 유니코드 마이너스(−)로, 0은 부호 없이 보여 준다.
+      const signed = (value) => (value === 0 ? "0" : `${value > 0 ? "+" : "−"}${Math.abs(value)}`);
+      const escapeHtml = (text) =>
+        String(text).replace(/[&<>"']/g, (char) => (
+          { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]
+        ));
+
+      body.innerHTML = data.cases.map((row) => `
+            <tr><th scope="row">${escapeHtml(row.district)}</th><td>${row.designated_year}</td><td>${row.zones}곳</td><td>${row.accidents_before} → ${row.accidents_at} → ${row.accidents_after}</td><td>${signed(row.accidents_change)}</td><td>${row.rate_before.toFixed(2)} → ${row.rate_at.toFixed(2)} → ${row.rate_after.toFixed(2)}</td></tr>`).join("");
+      heading.textContent = `${data.districts}개 자치구 · ${data.cases.length}개 지정 사례`;
+      caption.textContent = `자치구 전체 사고 건수 기준 · 증가 ${data.increased}개 · 감소 ${data.decreased}개 · 동일 ${data.unchanged}개`;
+
+      console.info("노인보호구역 지정 전후 API 연결 완료", data.cases.length);
+    } catch (error) {
+      console.error("노인보호구역 지정 전후 비교를 불러오지 못했어.", error);
+    }
+  }
+
+  loadZoneBeforeAfter();
+"""
+
+
+COMPARISON_SCRIPT = """
+  async function loadDistrictComparison() {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/statistics/elderly/district-comparison"
+      );
+
+      if (!response.ok) {
+        throw new Error(`자치구 비교 API 응답 오류: ${response.status}`);
+      }
+
+      const { years, series } = await response.json();
+      const section = document.querySelector("#district-comparison");
+      const rateSvg = section && section.querySelector('[data-risk-plot="rate"] svg');
+      const countSvg = section && section.querySelector('[data-risk-plot="count"] svg');
+      const tableBody = section && section.querySelector(".risk-comparison-data tbody");
+
+      if (!rateSvg || !countSvg || !tableBody || !Array.isArray(series) || series.length !== 3 || years.length !== 4) {
+        throw new Error("비교 차트나 API 값을 확인해 줘.");
+      }
+
+      // 그래프 축은 화면에 고정돼 있다. 사고율 0~25건, 사고 건수 0~2,500건이고 y 420(0) ~ 60(최댓값)이야.
+      const plots = [
+        // 점 위치는 반올림 전 사고율(사고 ÷ 인구 × 10,000)로 잡고, 적히는 숫자는 반올림한 값을 쓴다.
+        {
+          svg: rateSvg, max: 25,
+          value: (point) => (point.accidents / point.population_65plus) * 10000,
+          label: (point) => point.accidents_per_10k.toFixed(2),
+        },
+        {
+          svg: countSvg, max: 2500,
+          value: (point) => point.accidents,
+          label: (point) => point.accidents.toLocaleString("ko-KR"),
+        },
+      ];
+      const firstX = 100;
+      const lastX = 955;
+
+      for (const plot of plots) {
+        const groups = plot.svg.querySelectorAll("g[style*='--child-series-color']");
+        if (groups.length !== series.length) {
+          throw new Error("차트의 계열 개수가 API와 달라.");
+        }
+        series.forEach((item, seriesIndex) => {
+          const shapes = item.points.map((point, index) => {
+            const value = plot.value(point);
+            if (value > plot.max) {
+              throw new Error(`${item.name} ${point.year}년 값이 그래프 축(${plot.max})보다 커. 축을 늘려 줘.`);
+            }
+            const x = firstX + ((lastX - firstX) * index) / (years.length - 1);
+            const y = 420 - (value / plot.max) * 360;
+            // 맨 아래 계열은 값이 아래쪽에 적혀 서로 겹치지 않게 한다. 기존 화면과 같아.
+            const labelY = seriesIndex === series.length - 1 ? y + 23 : y - 14;
+            return { x, y, labelY, text: plot.label(point) };
+          });
+          groups[seriesIndex].innerHTML =
+            `<polyline pathLength="1" points="${shapes.map((s) => `${s.x},${s.y}`).join(" ")}"/>` +
+            shapes.map((s) =>
+              `<circle cx="${s.x}" cy="${s.y}" r="4"/><text class="child-value" x="${s.x}" y="${s.labelY}">${s.text}</text>`
+            ).join("");
+        });
+      }
+
+      const formatCount = new Intl.NumberFormat("ko-KR");
+      const escapeHtml = (text) =>
+        String(text).replace(/[&<>"']/g, (char) => (
+          { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]
+        ));
+      tableBody.innerHTML = years.map((year, index) => series.map((item) => {
+        const point = item.points[index];
+        return `<tr><th scope="row">${year}</th><td>${escapeHtml(item.name)}</td><td>${formatCount.format(point.population_65plus)}</td><td>${formatCount.format(point.accidents)}</td><td>${point.accidents_per_10k.toFixed(2)}</td></tr>`;
+      }).join("\\n")).join("\\n");
+
+      console.info("자치구 비교 추이 API 연결 완료", series.length);
+    } catch (error) {
+      console.error("자치구 비교 추이를 불러오지 못했어.", error);
+    }
+  }
+
+  loadDistrictComparison();
+"""
+
+
+HOTSPOT_REVIEW_SCRIPT = """
+  async function loadHotspotReview() {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/statistics/hotspots/review"
+      );
+
+      if (!response.ok) {
+        throw new Error(`사고다발지역 검토 API 응답 오류: ${response.status}`);
+      }
+
+      const review = await response.json();
+      const overlap = document.querySelector("#zone-overlap");
+      const section = document.querySelector("#zone-review");
+      const counts = overlap && overlap.querySelectorAll(".overlap-counts dd");
+      const topBody = section && section.querySelector(".review-list > .review-table-wrap tbody");
+      const restBody = section && section.querySelector(".review-details tbody");
+      const restTitle = section && section.querySelector(".review-details summary");
+      const chartSection = section && section.querySelector("[aria-labelledby='review-chart-title']");
+      const chartList = chartSection && chartSection.querySelector(".review-chart ol");
+      const chartCaption = chartSection && chartSection.querySelector(".audit-chart-caption");
+      const chartSource = chartSection && chartSection.querySelector(".review-source");
+      const candidateBody = section && section.querySelector(".review-candidates tbody");
+
+      if (!counts || counts.length !== 3 || !topBody || !restBody || !restTitle || !chartList
+          || !chartCaption || !chartSource || !candidateBody || !Array.isArray(review.items)) {
+        throw new Error("검토 자료 표나 API 값을 확인해 줘.");
+      }
+
+      // 막대 그래프 세로 축이 0~10곳으로 고정돼 있어서, 넘으면 조용히 잘리지 않게 알려 준다.
+      const tallest = Math.max(...review.districts.map((d) => d.overlapping + d.outside));
+      if (tallest > 10) {
+        throw new Error(`자치구 막대(${tallest}곳)가 그래프 축(10곳)보다 커. 축을 늘려 줘.`);
+      }
+
+      const escapeHtml = (text) =>
+        String(text).replace(/[&<>"']/g, (char) => (
+          { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]
+        ));
+      const rowHtml = (item) => {
+        const distance = item.overlaps
+          ? '<span class="review-badge">겹침</span>'
+          : `${item.distance_m.toLocaleString("ko-KR")}m`;
+        return `
+          <tr><th scope="row">${escapeHtml(item.name)}</th><td>${item.crashes}건</td><td>${distance}</td></tr>`;
+      };
+
+      counts[0].textContent = `${review.total}곳`;
+      counts[1].textContent = `${review.overlapping}곳`;
+      counts[2].textContent = `${review.outside}곳`;
+
+      const topCount = 12;
+      topBody.innerHTML = review.items.slice(0, topCount).map(rowHtml).join("");
+      restBody.innerHTML = review.items.slice(topCount).map(rowHtml).join("");
+      restTitle.textContent = `나머지 ${Math.max(review.items.length - topCount, 0)}곳 자료 표 보기`;
+
+      chartList.innerHTML = review.districts.map((d) => `
+            <li aria-label="${escapeHtml(d.district)}, 겹침 ${d.overlapping}곳, 보호구역 밖 ${d.outside}곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:${d.overlapping}">${d.overlapping || ""}</span><span class="review-outside" style="--count:${d.outside}">${d.outside || ""}</span></div><span aria-hidden="true">${escapeHtml(d.district)}</span></li>`).join("");
+      chartCaption.textContent =
+        `${review.year}년 사고다발지역 선정 영역 수(곳) · 선정 지역이 있는 ${review.districts.length}개 자치구`;
+      chartSource.innerHTML =
+        `판정 가능한 ${review.total}곳 중 보호구역 밖은 <strong>${review.outside}곳(${review.outside_percent.toFixed(1)}%)</strong>입니다.`;
+
+      candidateBody.innerHTML = review.candidates.map((c) => `
+          <tr><th scope="row">${escapeHtml(c.district)}</th><td>${c.selected}</td><td>${c.outside}</td><td>${c.overlapping}</td><td>${c.undetermined}</td><td>${c.accidents_per_10k.toFixed(2)}</td></tr>`).join("");
+
+      console.info("사고다발지역 검토 API 연결 완료", review.items.length);
+    } catch (error) {
+      console.error("사고다발지역 검토 자료를 불러오지 못했어.", error);
+    }
+  }
+
+  loadHotspotReview();
+"""
+
+HOTSPOT_MAP_REPLACEMENTS = [
+  ('fetch("./data/accident-hotspots-2025.json")', 'fetch("http://127.0.0.1:8000/api/statistics/hotspots")'),
+  ("fetch('./data/accident-hotspots-2025.json')", "fetch('http://127.0.0.1:8000/api/statistics/hotspots')"),
+]
 
 
 def append_script(text, marker, script, required, label):
@@ -310,6 +584,38 @@ STEPS = [
     (
         "서행·정체 내부 스크롤",
         lambda t: replace_exact(t, "previousScroll", SLOW_SCROLL_REPLACEMENTS),
+    ),
+    (
+        "65세 이상 인구 추이",
+        lambda t: append_script(
+            t, "loadElderlyPopulation", POPULATION_SCRIPT,
+            ['class="national-population"', 'class="population-value"'], "",
+        ),
+    ),
+    (
+        "노인보호구역 지정 전후",
+        lambda t: append_script(
+            t, "loadZoneBeforeAfter", ZONE_BEFORE_AFTER_SCRIPT,
+            ['id="zone-before-after"', 'class="risk-change-table"'], "",
+        ),
+    ),
+    (
+        "동대문·도봉 4년 비교",
+        lambda t: append_script(
+            t, "loadDistrictComparison", COMPARISON_SCRIPT,
+            ['id="district-comparison"', 'data-risk-plot="rate"'], "",
+        ),
+    ),
+    (
+        "사고다발지역 검토 표·막대",
+        lambda t: append_script(
+            t, "loadHotspotReview", HOTSPOT_REVIEW_SCRIPT,
+            ['id="zone-review"', 'class="review-chart"', 'review-candidates'], "",
+        ),
+    ),
+    (
+        "지도의 사고다발지역 점",
+        lambda t: replace_exact(t, 'fetch("http://127.0.0.1:8000/api/statistics/hotspots")', HOTSPOT_MAP_REPLACEMENTS),
     ),
 ]
 

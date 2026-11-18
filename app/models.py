@@ -119,3 +119,91 @@ class DistrictRates(BaseModel):
     previous_year: int
     seoul_accidents_per_10k: float
     districts: list[DistrictRate]
+
+
+class ZoneBeforeAfterCase(BaseModel):
+    district: str
+    designated_year: int
+    zones: int = Field(ge=1)  # 2025년 명단 기준 지정 구역 수
+    accidents_before: int = Field(ge=0)  # 지정 전년도
+    accidents_at: int = Field(ge=0)  # 지정연도
+    accidents_after: int = Field(ge=0)  # 지정 이듬해
+    accidents_change: int  # 이듬해 - 전년도
+    rate_before: float = Field(ge=0)
+    rate_at: float = Field(ge=0)
+    rate_after: float = Field(ge=0)
+
+
+class ZoneBeforeAfter(BaseModel):
+    districts: int = Field(ge=0)
+    increased: int = Field(ge=0)
+    decreased: int = Field(ge=0)
+    unchanged: int = Field(ge=0)
+    cases: list[ZoneBeforeAfterCase]
+
+
+class ComparisonPoint(BaseModel):
+    year: int
+    population_65plus: int = Field(gt=0)
+    accidents: int = Field(ge=0)
+    accidents_per_10k: float = Field(ge=0)
+
+
+class ComparisonSeries(BaseModel):
+    name: str
+    points: list[ComparisonPoint]
+
+
+class DistrictComparison(BaseModel):
+    years: list[int]
+    series: list[ComparisonSeries]  # 서울 전체가 맨 앞, 그다음 비교 자치구
+
+
+class Hotspot(BaseModel):
+    id: str
+    name: str
+    district: str
+    crashes: int = Field(ge=0)
+    deaths: int = Field(ge=0)
+    lat: float
+    lng: float
+
+
+class Hotspots(BaseModel):
+    year: int
+    locations: list[Hotspot]
+
+
+class HotspotReviewItem(BaseModel):
+    name: str  # 자치구 법정동 부근명
+    district: str
+    crashes: int = Field(ge=0)
+    overlaps: bool  # 보호구역 경계와 겹침
+    distance_m: int | None  # 겹치면 None, 아니면 가장 가까운 경계까지 직선거리
+
+
+class HotspotDistrictCount(BaseModel):
+    district: str
+    overlapping: int = Field(ge=0)
+    outside: int = Field(ge=0)
+
+
+class HotspotCandidate(BaseModel):
+    district: str
+    selected: int = Field(ge=0)  # 선정 영역 수
+    outside: int = Field(ge=0)
+    overlapping: int = Field(ge=0)
+    undetermined: int = Field(ge=0)
+    accidents_per_10k: float = Field(ge=0)
+
+
+class HotspotReview(BaseModel):
+    year: int
+    total: int = Field(ge=0)  # 판정 가능한 다발지역
+    overlapping: int = Field(ge=0)
+    outside: int = Field(ge=0)
+    undetermined: int = Field(ge=0)
+    outside_percent: float
+    items: list[HotspotReviewItem]  # 사고 많은 순
+    districts: list[HotspotDistrictCount]
+    candidates: list[HotspotCandidate]

@@ -84,3 +84,23 @@ def test_national_deaths_endpoint():
     }
     assert years[-1]["elderly_deaths"] == 1378
     assert years[-1]["elderly_by_mode"] is None
+
+
+def test_zone_before_after_endpoint():
+    body = client.get("/api/statistics/elderly/zone-before-after").json()
+    assert (body["districts"], body["increased"], body["decreased"], body["unchanged"]) == (7, 5, 3, 1)
+    assert len(body["cases"]) == 9
+    assert body["cases"][0]["district"] == "은평구"
+
+
+def test_district_comparison_endpoint():
+    body = client.get("/api/statistics/elderly/district-comparison").json()
+    assert body["years"] == [2022, 2023, 2024, 2025]
+    assert [s["name"] for s in body["series"]] == ["서울 전체", "동대문구", "도봉구"]
+
+
+def test_hotspot_endpoints():
+    spots = client.get("/api/statistics/hotspots").json()
+    assert spots["year"] == 2025 and len(spots["locations"]) == 71
+    review = client.get("/api/statistics/hotspots/review").json()
+    assert (review["total"], review["overlapping"], review["outside"]) == (71, 12, 59)

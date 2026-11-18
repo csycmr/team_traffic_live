@@ -9,18 +9,25 @@ from app.errors import ServiceError
 from app.models import (
     AccidentTrend,
     ChildPedestrian,
+    DistrictComparison,
     DistrictRates,
     ElderlyPedestrian,
     ElderlyPopulation,
+    HotspotReview,
+    Hotspots,
     NationalDeaths,
     OecdRankings,
+    ZoneBeforeAfter,
 )
 from app.services import (
     accident_service,
     cctv_service,
     citydata_service,
+    hotspot_service,
+    comparison_service,
     oecd_service,
     population_service,
+    protection_service,
 )
 
 settings = get_settings()
@@ -71,6 +78,26 @@ def get_elderly_pedestrian():
 @app.get("/api/statistics/elderly/districts", response_model=DistrictRates)
 def get_elderly_district_rates():
     return accident_service.elderly_district_rates()
+
+
+@app.get("/api/statistics/elderly/zone-before-after", response_model=ZoneBeforeAfter)
+def get_zone_before_after():
+    return protection_service.zone_before_after()
+
+
+@app.get("/api/statistics/elderly/district-comparison", response_model=DistrictComparison)
+def get_district_comparison():
+    return comparison_service.district_comparison()
+
+
+@app.get("/api/statistics/hotspots", response_model=Hotspots)
+def get_hotspots():
+    return hotspot_service.hotspots()
+
+
+@app.get("/api/statistics/hotspots/review", response_model=HotspotReview)
+def get_hotspot_review():
+    return hotspot_service.hotspot_review()
 
 
 @app.get("/api/statistics/elderly-population", response_model=ElderlyPopulation)
