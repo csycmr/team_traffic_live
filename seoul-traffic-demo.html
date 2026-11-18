@@ -4085,6 +4085,16 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
         annualAccidentCard.textContent =
           formatCount.format(seoul2025.seoul_accidents);
 }
+      const annualInjuriesCard = document.getElementById("seoul-annual-injuries");
+      const annualDeathsCard = document.getElementById("seoul-annual-deaths");
+
+      if (annualInjuriesCard && Number.isInteger(seoul2025?.seoul_injuries)) {
+        annualInjuriesCard.textContent = formatCount.format(seoul2025.seoul_injuries);
+      }
+
+      if (annualDeathsCard && Number.isInteger(seoul2025?.seoul_deaths)) {
+        annualDeathsCard.textContent = formatCount.format(seoul2025.seoul_deaths);
+      }
 
       for (const [seriesIndex, { selector, field }] of series.entries()) {
         const group = chart.querySelector(`svg ${selector}`);
