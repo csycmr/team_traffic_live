@@ -14,7 +14,12 @@ from xml.etree import ElementTree as ET
 
 from dotenv import load_dotenv
 
-from flask import Flask, Response, jsonify, send_from_directory
+
+from flask import Flask, Response, jsonify, request, send_from_directory
+
+
+from newsroom.rag import answer_question
+
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent
@@ -758,6 +763,32 @@ def newsroom_public_article(article_id):
     finally:
         if engine is not None:
             engine.dispose()
+
+
+@app.post("/api/rag/ask")
+def api_rag_ask():
+    payload = request.get_json(silent=True)
+
+    if not isinstance(payload, dict):
+        return jsonify({
+            "error": "JSON 요청 본문이 필요합니다."
+        }), 400
+
+    question = payload.get("question")
+
+    if not isinstance(question, str) or not question.strip():
+        return jsonify({
+            "error": "질문을 입력해 주세요."
+        }), 400
+
+    if len(question) > 2000:
+        return jsonify({
+            "error": "질문은 2000자 이하로 입력해 주세요."
+        }), 400
+
+    result = answer_question(question.strip())
+    return jsonify(result)
+
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=5001)

@@ -219,7 +219,7 @@ def search_statistics(question: str) -> dict | None:
         metric = "accidents"
 
     metric_info = {
-        "accidents": ("고령 보행자 사고", "건"),
+        "accidents": ("고령 보행자 사고 건수", "건"),
         "deaths": ("고령 보행자 사망자", "명"),
         "population": ("65세 이상 고령인구", "명"),
         "rate": ("고령인구 1만 명당 고령 보행자 사고", "건"),
