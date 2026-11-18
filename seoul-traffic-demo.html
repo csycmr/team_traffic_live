@@ -1215,6 +1215,9 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
 .change-table { width: 100%; border-collapse: separate; border-spacing: 0; font-variant-numeric: tabular-nums; font-size: clamp(12px, 1.5svh, 14px) }
 .change-table th, .change-table td { padding: 2px 8px; text-align: right; line-height: 1.18; border-bottom: 1px solid var(--line) }
 .change-table tr > :first-child { text-align: left }
+.change-table .increase { color: #ff7681 }
+.change-table .decrease { color: #75acff }
+.change-table td:last-child { white-space: nowrap }
 .change-table thead th { position: sticky; top: 0; padding-block: 6px; background: #21364a }
 .change-tip {
   position: absolute; z-index: 5; pointer-events: none; width: max-content;
@@ -2184,7 +2187,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
           <p class="audit-chart-caption">자치구별 고령 보행사고 건수</p>
           <div class="change-table-scroll" tabindex="0" role="region" aria-label="자치구별 2024년과 2025년 고령 보행사고 건수">
             <table class="change-table">
-              <thead><tr><th scope="col">자치구</th><th scope="col">2024년 사고 건수</th><th scope="col">2025년 사고 건수</th></tr></thead>
+              <thead><tr><th scope="col">자치구</th><th scope="col">2024년 사고 건수</th><th scope="col">2025년 사고 건수</th><th scope="col">증감(건)</th></tr></thead>
               <tbody></tbody>
             </table>
           </div>
@@ -4120,6 +4123,18 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
       tr.append(name);
       tr.insertCell().textContent = (row.accidents - row.accidents_change) + "건";
       tr.insertCell().textContent = row.accidents + "건";
+      const delta = row.accidents_change;
+      const cell = tr.insertCell();
+      if (delta !== 0) {
+        const arrow = document.createElement("span");
+        const increased = delta > 0;
+        arrow.className = increased ? "increase" : "decrease";
+        arrow.textContent = increased ? "▲" : "▼";
+        arrow.setAttribute("role", "img");
+        arrow.setAttribute("aria-label", increased ? "증가" : "감소");
+        cell.append(arrow, " ");
+      }
+      cell.append(Math.abs(delta) + "건");
       return tr;
     });
     tbody.replaceChildren(...tableRows);
