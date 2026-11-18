@@ -56,6 +56,10 @@
 | 인구 비교 | 2026년 9월 말 기준. 노인은 65세 이상, 어린이는 0~12세입니다. [서울 연령별 집계표](data/11_서울_연령별_주민등록인구_202609.csv) · [KOSIS 원자료](https://kosis.kr/statisticsList/mass/mass_list.jsp?org_id=101&tbl_id=DT_1B04006) |
 | 보호구역 | 노인은 2025년 명단, 어린이는 전국어린이보호구역표준데이터의 서울 시설 기록을 사용합니다. [노인 명단](data/04_보호구역_마스터.csv) · [노인 위치](data/05_보호구역_경계.csv) · [어린이 기록](data/09_어린이보호구역_서울_지도용.csv) |
 | 지도 경계·사고다발지역 | [서울시·자치구 경계 GeoJSON](data/08_서울_자치구_경계.geojson) · [2025년 사고다발지역 JSON](data/accident-hotspots-2025.json) |
+| 어린이보호구역 지정 현황 | 경찰청 2026년 6월 30일 기준 서울 합계 [경찰청 지정현황](data/12_경찰청_어린이보호구역_지정현황_20260630.csv). 시설 목록은 기준일별로 [2025년 12월 31일](data/21_서울_어린이보호구역_지정현황_20251231_목록용.csv) · [2026년 6월 30일](data/22_서울_어린이보호구역_지정현황_20260630_목록용.csv) 파일을 씁니다. |
+| 어린이 카메라 설치 전후 | 서울시 무인단속카메라 107대 설치 대상지의 전후 각 2년(2018~2019년, 2021~2022년) 집계. [전후 자료](data/20_서울_어린이보호구역_무인단속카메라_전후.csv) |
+| 보호구역 개선 예산 | 서울시 2026년 예산서의 어린이·노인장애인 보호구역 개선 세부사업. 1곳당 환산액은 위 지정 목록의 구역 수로 나눕니다. [예산 CSV](data/14_서울시예산_2026.csv) |
+| 전국 사망자·인구·OECD | [전국 사망자와 65세 이상 상태별 사망자](data/17_전국사망자_막대도넛.csv) · [전국 65세 이상 인구](data/18_전국_65세이상_주민등록인구.csv) · [OECD 고령자 사망률](data/13_OECD_고령지표_wide.csv) |
 
 왼쪽 패널의 시연 수치와 오른쪽 패널의 자료 기반 집계도 구분해서 읽어주세요.
 
@@ -78,7 +82,17 @@ py -3.14 -m venv .venv
 .\.venv\Scripts\python.exe -m app.flask_app
 ```
 
-터미널에 `Running on http://127.0.0.1:5000`이 보이면 [로컬 대시보드](http://127.0.0.1:5000/)를 엽니다. 로컬 카카오맵을 쓰려면 카카오 JavaScript SDK 허용 도메인에 `http://127.0.0.1:5000`을 등록해야 합니다. 서버 종료는 `Ctrl+C`입니다.
+터미널에 `Running on http://127.0.0.1:5001`이 보이면 [로컬 대시보드](http://127.0.0.1:5001/)를 엽니다. 로컬 카카오맵을 쓰려면 카카오 JavaScript SDK 허용 도메인에 `http://127.0.0.1:5001`을 등록해야 합니다. 서버 종료는 `Ctrl+C`입니다.
+
+통계 API(FastAPI)는 두 번째 PowerShell 터미널에서 함께 실행합니다. 화면의 차트·카드가 이 서버의 값을 읽습니다.
+
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --port 8000
+```
+
+`Uvicorn running on http://127.0.0.1:8000`이 보이면 [FastAPI 문서](http://127.0.0.1:8000/docs)에서 전체 API 목록과 응답 형태를 확인합니다. 자료나 서버 코드를 바꾼 뒤에는 `Ctrl+C`로 끄고 다시 실행해야 반영됩니다. 두 서버를 한 번에 띄우는 `scripts/run_windows.ps1`도 있습니다.
+
+화면의 차트·카드 값은 이 API가 `data/`의 정제 CSV에서 계산해 줍니다. HTML에는 이 값들을 직접 적지 않고 `—`로 두며, API가 꺼져 있으면 `—`로 남습니다. 현재 HTML은 API 주소 `http://127.0.0.1:8000`을 직접 쓰므로, 서버를 다른 주소에 배포할 때는 이 주소를 바꿔야 합니다. API별 자료와 계산은 [데이터 흐름과 폴더 구조](docs/DATA_STRUCTURE.md)에 정리했습니다.
 
 로컬에서 다른 카카오 JavaScript 키를 쓰려면 저장소 루트의 `.env`에 `KAKAO_MAP_JS_KEY=발급받은_JavaScript_키`를 추가하고 Flask를 재시작합니다. 해당 키의 JavaScript SDK 도메인에 브라우저에서 실제로 쓰는 주소를 등록합니다. 5001 포트라면 `http://127.0.0.1:5001`입니다.
 
@@ -101,7 +115,17 @@ Remove-Variable itsKey, itsCredential
 | 파일 | 역할 |
 | --- | --- |
 | [seoul-traffic-demo.html](seoul-traffic-demo.html) | 대시보드 화면과 지도 동작 |
-| [app.py](app.py) | 로컬 대시보드를 제공하고 CCTV 목록을 서울시 경계로 필터링 |
+| [app/main.py](app/main.py) | FastAPI 통계 API (OECD 순위, 교통사고 추이, 전국 사망자, 고령·어린이 보행사고, 보호구역 지도·현황, 사고다발지역, 개선 예산) |
+| [app/flask_app.py](app/flask_app.py) | 대시보드 화면, 뉴스룸 API, CCTV·도시데이터 API를 제공하는 Flask 서버 |
+| [app/services/](app/services/) | CSV를 읽어 값을 계산하는 서비스. Flask와 FastAPI가 함께 사용 |
+| [app/adapters/](app/adapters/) | 국가교통정보센터·서울시 도시데이터 같은 외부 API 호출 |
+| [app/models.py](app/models.py) | API 응답 형태(Pydantic) |
+| [app/config.py](app/config.py) | `.env` 설정과 data 폴더 경로 |
+| [newsroom/](newsroom/) | 뉴스룸 기사 초안·검수·추천 로직 |
+| [tests/](tests/) | 서비스·API 테스트 |
+| [docs/](docs/) | [데이터 흐름과 폴더 구조](docs/DATA_STRUCTURE.md), API 키 안내 |
+| [scripts/](scripts/) | 실행·테스트 스크립트와 자료 정제 코드. `apply_html_wiring.py`는 화면 HTML에 API 연결 코드를 적용합니다(여러 번 실행해도 안전). |
+| [make_child_zone_list.py](make_child_zone_list.py) | 어린이보호구역 지정현황 엑셀을 `21_`·`22_` 목록용 CSV로 바꿉니다. `openpyxl`이 필요합니다. |
 | [requirements.txt](requirements.txt) | 로컬 실행에 필요한 Python 패키지 |
 | [assets/](assets/) | 배경 영상과 대표 이미지 |
 | [data/](data/) | 교통사고·보호구역 분석 자료와 지도 경계 |
