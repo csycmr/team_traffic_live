@@ -128,10 +128,12 @@ def _validated_text(title: str, content: str):
 def draft_for_idea(engine: Engine, idea_id: int) -> dict | None:
     with engine.connect() as conn:
         row = conn.execute(text("""
-            SELECT id, story_idea_id, title, content, status, updated_at, reporter_guidance
+            SELECT id, story_idea_id, title, content, status, updated_at, reporter_guidance, validation_result
             FROM articles WHERE story_idea_id=:id ORDER BY id DESC LIMIT 1
         """), {"id": idea_id}).mappings().first()
-    return dict(row) if row else None
+    result = dict(row) if row else None
+    if result: result['validation_result'] = _json(result['validation_result']) if result['validation_result'] else None
+    return result
 
 
 def save_draft(engine: Engine, context: dict, title: str, content: str,
@@ -187,8 +189,10 @@ def load_draft(engine: Engine, article_id: int) -> dict:
     with engine.connect() as conn:
         row = conn.execute(text("""
             SELECT id, story_idea_id, title, content, status, validation_passed,
-                   updated_at, reporter_guidance FROM articles WHERE id=:id
+                   updated_at, reporter_guidance, validation_result FROM articles WHERE id=:id
         """), {"id": article_id}).mappings().first()
     if not row:
         raise ValueError("저장된 기사 초안을 찾지 못했습니다.")
-    return dict(row)
+    result = dict(row)
+    result['validation_result'] = _json(result['validation_result']) if result['validation_result'] else None
+    return result
