@@ -4691,6 +4691,143 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
   }
 
   loadZoneBudget();
+
+  // 65세 이상 사망자 상태별 도넛: 17번 CSV(API)로 기존 입체 도넛 모양을 그대로 다시 그려.
+  // 보행 중 조각은 138° 방향으로 앞(아래)쪽에 띄우고(중심 115,84 · 두께 21),
+  // 나머지는 그 끝에서 시계 방향으로 이륜차 → 승용차 → 자전거 → 그 외 순서야(중심 126,86 · 두께 14).
+  function buildDonutSvg(values) {
+    const OUTER = [104, 73], INNER = [42, 30];
+    const MAIN = [126, 86], FRONT = [115, 84];
+    const names = ["보행 중", "이륜차", "승용차", "자전거", "그 외"];
+    // 조각 이름표 위치: 조각 가운데 각도에서 약간 비켜 놓은 값(원본 도넛을 따라 맞춘 값)
+    const labelFit = [null, [0.52, 6.4], [0.584, -0.7], [0.618, 0.7], [0.458, -8.2]];
+    const total = values.reduce((sum, value) => sum + value, 0);
+    const span = values.map((value) => value / total * 360);
+    const rad = (degree) => degree * Math.PI / 180;
+    const fix = (value) => value.toFixed(2);
+    const point = ([cx, cy], [rx, ry], degree) => [cx + rx * Math.cos(rad(degree)), cy + ry * Math.sin(rad(degree))];
+    const at = ([x, y]) => `${fix(x)} ${fix(y)}`;
+    const down = ([x, y], depth) => [x, y + depth];
+    const large = (from, to) => (to - from > 180 ? 1 : 0);
+
+    const frontStart = 138 - span[0] / 2, frontEnd = 138 + span[0] / 2;
+    const slices = [{ start: frontStart, end: frontEnd, center: FRONT, depth: 21 }];
+    let angle = frontEnd;
+    for (let index = 1; index < 5; index += 1) {
+      slices.push({ start: angle, end: angle + span[index], center: MAIN, depth: 14 });
+      angle += span[index];
+    }
+
+    const surface = (slice, number) => {
+      const a = point(slice.center, OUTER, slice.start), b = point(slice.center, OUTER, slice.end);
+      const c = point(slice.center, INNER, slice.end), d = point(slice.center, INNER, slice.start);
+      const flag = large(slice.start, slice.end);
+      return `<path d="M ${at(a)} A 104 73 0 ${flag} 1 ${at(b)} L ${at(c)} A 42 30 0 ${flag} 0 ${at(d)} Z" fill="var(--slice-${number})" class="national-donut-surface" stroke="var(--edge-${number})"/>`;
+    };
+    // 벽면: 안쪽 벽은 위쪽 반(180~360°), 바깥 벽은 아래쪽 반(0~180° = 360~540°)만 보여.
+    const wall = (slice, number, radii, from, to) => {
+      const p = point(slice.center, radii, from), q = point(slice.center, radii, to);
+      const [rx, ry] = radii;
+      return `<path d="M ${at(p)} A ${rx} ${ry} 0 0 1 ${at(q)} L ${at(down(q, slice.depth))} A ${rx} ${ry} 0 0 0 ${at(down(p, slice.depth))} Z" fill="var(--side-${number})"/>`;
+    };
+    const radial = (slice, number, degree) => {
+      const outer = point(slice.center, OUTER, degree), inner = point(slice.center, INNER, degree);
+      return `<path d="M ${at(outer)} L ${at(inner)} L ${at(down(inner, slice.depth))} L ${at(down(outer, slice.depth))} Z" fill="var(--side-${number})"/>`;
+    };
+
+    const parts = [];
+    for (let index = 1; index < 5; index += 1) {
+      const slice = slices[index], number = index + 1;
+      const innerFrom = Math.max(slice.start, 180), innerTo = Math.min(slice.end, 360);
+      if (innerTo - innerFrom > 1e-9) parts.push(wall(slice, number, INNER, innerFrom, innerTo));
+      const outerFrom = Math.max(slice.start, 360), outerTo = Math.min(slice.end, 540);
+      if (outerTo - outerFrom > 1e-9) parts.push(wall(slice, number, OUTER, outerFrom, outerTo));
+    }
+    for (let index = 1; index < 5; index += 1) parts.push(surface(slices[index], index + 1));
+
+    const front = slices[0];
+    if (front.end > 180) parts.push(wall(front, 1, INNER, 180, front.end));
+    if (front.start < 180) parts.push(wall(front, 1, OUTER, front.start, 180));
+    parts.push(radial(front, 1, front.start), radial(front, 1, front.end), surface(front, 1));
+
+    names.forEach((name, index) => {
+      const count = `${values[index].toLocaleString("ko-KR")}명`;
+      if (index === 0) {
+        const x = FRONT[0] + 73 * Math.cos(rad(front.start + 33.9));
+        parts.push(`<text class="national-slice-label national-slice-label-pedestrian" transform="translate(-25 -5)" x="${fix(x)}" y="133.05" style="--label-size: 11px"><tspan x="${fix(x)}">${name}</tspan><tspan x="${fix(x)}" dy="11">${count}</tspan></text>`);
+        return;
+      }
+      const [fraction, shift] = labelFit[index];
+      const middle = (slices[index].start + slices[index].end) / 2 + shift;
+      const [x, y] = point(MAIN, [42 + fraction * 62, 30 + fraction * 43], middle);
+      parts.push(`<text class="national-slice-label" x="${fix(x)}" y="${fix(y)}" style="--label-size: 9.5px"><tspan x="${fix(x)}">${name}</tspan><tspan x="${fix(x)}" dy="11">${count}</tspan></text>`);
+    });
+    parts.push(`<text class="national-donut-total" x="126" y="99">${total.toLocaleString("ko-KR")}<tspan>명</tspan></text>`);
+    return parts.join("");
+  }
+
+  async function loadNationalDonuts() {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/traffic/national-deaths");
+
+      if (!response.ok) {
+        throw new Error(`전국 사망자 API 응답 오류: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const card = document.querySelector("#national-status")?.closest("article");
+      const container = card && card.querySelector(".national-donuts");
+      const note = card && card.querySelector(".national-note");
+      const years = Array.isArray(data.years) ? data.years.filter((row) => row.elderly_by_mode) : [];
+
+      if (!container || !note || years.length === 0) {
+        throw new Error("상태별 도넛 자리나 API 값을 확인해 줘.");
+      }
+
+      const order = ["pedestrian", "two_wheeler", "car", "bicycle", "other"];
+      const labels = ["보행 중", "이륜차 승차 중", "승용차 승차 중", "자전거 승차 중", "그 외(차감)"];
+      const kept = new Set();
+
+      for (const row of years) {
+        const values = order.map((key) => row.elderly_by_mode[key]);
+        const total = values.reduce((sum, value) => sum + value, 0);
+        let figure = container.querySelector(`#national-donut-${row.year}`)?.closest("figure");
+
+        if (!figure) {
+          figure = document.createElement("figure");
+          figure.className = "national-donut chart-entered";
+          figure.setAttribute("aria-labelledby", `national-donut-${row.year}`);
+          figure.innerHTML = `<figcaption id="national-donut-${row.year}">${row.year}년</figcaption><svg class="national-donut-shape" viewBox="0 0 246 184" aria-hidden="true"></svg><p class="oecd-sr"></p><ul class="oecd-sr" role="list"></ul>`;
+          container.append(figure);
+        }
+
+        figure.querySelector("svg").innerHTML = buildDonutSvg(values);
+        figure.querySelector("p.oecd-sr").textContent = `65세 이상 사망자 합계 ${total.toLocaleString("ko-KR")}명`;
+        figure.querySelector("ul.oecd-sr").innerHTML = values
+          .map((value, index) => `<li>${labels[index]} ${value.toLocaleString("ko-KR")}명 (${(value / total * 100).toFixed(1)}%)</li>`)
+          .join("");
+        kept.add(`national-donut-${row.year}`);
+      }
+
+      for (const figure of container.querySelectorAll("figure.national-donut")) {
+        if (!kept.has(figure.getAttribute("aria-labelledby"))) figure.remove();
+      }
+
+      const walkingLargest = years.every((row) => {
+        const mode = row.elderly_by_mode;
+        return mode.pedestrian > Math.max(mode.two_wheeler, mode.car, mode.bicycle, mode.other);
+      });
+      note.textContent = walkingLargest
+        ? `단위 명 · 보행 중 사망이 ${years.length}년 연속 가장 많았습니다.`
+        : "단위 명";
+
+      console.info("65세 이상 사망자 상태 도넛 API 연결 완료", years.length);
+    } catch (error) {
+      console.error("65세 이상 사망자 상태 도넛을 불러오지 못했어.", error);
+    }
+  }
+
+  loadNationalDonuts();
 </script>
 
 </body>

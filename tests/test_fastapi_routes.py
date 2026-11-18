@@ -125,4 +125,4 @@ def test_child_camera_effect_endpoint():
 
 def test_zone_budget_endpoint():
     body = client.get("/api/budget/zone-improvement").json()
-    assert body["pdf_page"] == 616 and body["elderly_disabled"]["zones_2025"] == 195 and body["child"]["zones_2026"] == 1658
+    assert body["pdf_page"] == 616 and body["elderly_disabled"]["zones_2025"] == 195 and body["child"]["zones_2026"] == 1630

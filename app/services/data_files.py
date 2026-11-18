@@ -17,7 +17,13 @@ PROTECTION_MASTER_FILE = "04_보호구역_마스터.csv"
 SEOUL_POPULATION_FILE = "11_서울_연령별_주민등록인구_202609.csv"
 CHILD_ZONE_FILE = "12_경찰청_어린이보호구역_지정현황_20260630.csv"
 CHILD_CAMERA_FILE = "20_서울_어린이보호구역_무인단속카메라_전후.csv"
-CHILD_YEAREND_FILE = "21_서울_어린이보호구역_연말_지정수.csv"
+# 기준일별 서울 어린이보호구역 지정 목록(시설 한 곳이 한 줄). 예산 표의 구역 수에 쓴다.
+# 2025년 예산 = 2025-12-31 기준, 2026년 예산 = 2026-06-30 기준.
+CHILD_LIST_FILES = {
+    "2025-12-31": "21_서울_어린이보호구역_지정현황_20251231_목록용.csv",
+    "2026-06-30": "22_서울_어린이보호구역_지정현황_20260630_목록용.csv",
+}
+BUDGET_FILE = "14_서울시예산_2026.csv"
 BUDGET_FILE = "14_서울시예산_2026.csv"
 CHILD_SUMMARY_FILE = "10_어린이보호구역_교통안전_요약.csv"
 ACCIDENT_TREND_FILE = "15_TAAS_시도시군구_교통사고_2020-2025.csv"

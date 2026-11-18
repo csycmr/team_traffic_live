@@ -8,7 +8,7 @@ from app.errors import ServiceError
 from app.models import BudgetProject, ZoneBudget
 from app.services.data_files import (
     BUDGET_FILE,
-    CHILD_YEAREND_FILE,
+    CHILD_LIST_FILES,
     PROTECTION_MASTER_FILE,
     read_csv,
     require_columns,
@@ -40,17 +40,20 @@ def _man_won(thousand_won: int, zones: int) -> int:
 
 
 def _child_zones(data_dir, date: str) -> int:
-    """연말 기준일의 서울 어린이보호구역 지정 수. 합계와 시설 행 수가 같아야 한다."""
+    """연말 기준일의 서울 어린이보호구역 지정 목록 행 수(시설 한 곳이 한 줄)."""
 
-    data = read_csv(CHILD_YEAREND_FILE, data_dir)
-    require_columns(data, CHILD_YEAREND_FILE, ["기준일", "서울_지정구역수", "시설행수"])
-    rows = data[data["기준일"].eq(date)]
-    if len(rows) != 1 or rows[["서울_지정구역수", "시설행수"]].isna().any().any():
-        raise ServiceError(f"{CHILD_YEAREND_FILE}에 {date} 행이 정확히 하나여야 해.", 500)
-    row = rows.iloc[0]
-    if row["서울_지정구역수"] != row["시설행수"]:
-        raise ServiceError(f"{CHILD_YEAREND_FILE}의 {date} 합계와 시설 행 수가 달라.", 500)
-    return int(row["서울_지정구역수"])
+    name = CHILD_LIST_FILES.get(date)
+    if name is None:
+        raise ServiceError(f"{date} 어린이보호구역 지정 목록 파일이 설정에 없어.", 500)
+    data = read_csv(name, data_dir)
+    require_columns(data, name, ["기준일", "자치구", "시설명"])
+    if data.empty:
+        raise ServiceError(f"{name}에 시설이 없어.", 500)
+    if not data["기준일"].eq(date).all():
+        raise ServiceError(f"{name}의 기준일이 모두 {date}이어야 해.", 500)
+    if data[["자치구", "시설명"]].isna().any().any():
+        raise ServiceError(f"{name}에 자치구나 시설명이 빈 행이 있어.", 500)
+    return len(data)
 
 
 def _project(row: pd.Series, name: str, zones_2025: int, zones_2026: int) -> BudgetProject:
@@ -81,6 +84,6 @@ def zone_budget(data_dir: Path | str | None = None) -> ZoneBudget:
 
     return ZoneBudget(
         pdf_page=int(child["PDF쪽"]),
-        child=_project(child, str(child["항목"]), _child_zones(data_dir, "2024-12-31"), _child_zones(data_dir, "2025-12-31")),
+        child=_project(child, str(child["항목"]), _child_zones(data_dir, "2025-12-31"), _child_zones(data_dir, "2026-06-30")),
         elderly_disabled=_project(elderly, " ".join(str(elderly["항목"]).split()), elderly_zones, elderly_zones),
     )
