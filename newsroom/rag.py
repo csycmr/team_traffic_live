@@ -13,6 +13,10 @@ from dotenv import load_dotenv
 from openai import OpenAI
 from pydantic import BaseModel, Field
 
+from newsroom.data import dataset_state, load_data
+from newsroom.recommendation import fact_sheet
+
+
 load_dotenv(
     dotenv_path=Path(__file__).resolve().parent.parent / ".env"
 )
@@ -101,9 +105,109 @@ RAG_INSTRUCTIONS = """
 """
 
 
-def answer_question(question: str) -> dict:
-    """문서 검색 후 해당 근거만으로 AI 답변을 생성한다."""
+def search_statistics(question: str) -> dict | None:
+    """명시된 연도·지역의 고령 보행자 통계를 조회한다."""
 
+    # 법령·정책 질문을 통계 검색으로 잘못 처리하지 않는다.
+    if not any(word in question for word in (
+        "사고", "사망", "고령인구", "부상"
+    )):
+        return None
+
+    # 법령·정책 자체를 묻는 질문은 기존 문서 검색에 맡긴다.
+    if any(word in question for word in (
+        "지정 기준", "지정기준", "법령", "법적 근거"
+    )):
+        return None
+
+    # 질문에서 연도 찾기
+    years = re.findall(r"20\d{2}년?", question)
+    years = list(dict.fromkeys(
+        int(year[:4]) for year in years
+    ))
+
+    state = dataset_state()
+
+    if state["missing"]:
+        return {
+            "status": "INSUFFICIENT_EVIDENCE",
+            "answer": "필요한 사고 통계 파일이 없습니다.",
+            "evidence": [],
+        }
+
+    data = load_data(state["directory"], state["versions"])
+    panel = data["panel"]
+
+    # 질문에 등장하는 자치구 확인
+    districts = [
+        name for name in panel["자치구명"].dropna().unique()
+        if isinstance(name, str) and name in question
+    ]
+
+    if "서울 전체" in question:
+        districts.append("서울 전체")
+
+    if len(years) != 1 or len(districts) != 1:
+        return {
+            "status": "NEEDS_CLARIFICATION",
+            "answer": "사고 통계를 조회할 연도와 자치구를 하나씩 지정해 주세요.",
+            "evidence": [],
+        }
+
+    year = years[0]
+    district = districts[0]
+
+    facts = fact_sheet(
+        panel,
+        data["links"],
+        year,
+        district,
+    )
+
+    if facts["calculation_status"] != "CHECKED":
+        return {
+            "status": "INSUFFICIENT_EVIDENCE",
+            "answer": "해당 연도·지역의 확인 가능한 통계가 없습니다.",
+            "evidence": [],
+        }
+
+    answer = (
+        f"{year}년 {district}의 고령 보행자 사고는 "
+        f"{facts['accidents']:,}건, "
+        f"사망자는 {facts['elderly_pedestrian_deaths']:,}명입니다. "
+        f"고령인구는 {facts['elderly_residents']:,}명이며, "
+        f"고령인구 1만 명당 사고 건수는 "
+        f"{facts['accidents_per_10000_residents']:.2f}건입니다."
+    )
+
+    return {
+        "status": "ANSWERED",
+        "answer": answer,
+        "evidence": [{
+            "id": f"DATA-PANEL-{year}-{district}",
+            "title": "자치구·연도별 고령 보행자 사고 통계",
+            "source_type": "STATISTIC",
+            "source_file": "data/01_자치구연도_패널.csv",
+            "related_file": "data/06_다발지역_보호구역_연결.csv",
+            "year": year,
+            "district": district,
+            "calculation_status": facts["calculation_status"],
+            "limitations": facts["limitations"],
+        }],
+    }
+
+
+
+def answer_question(question: str) -> dict:
+    """통계 또는 공식 문서 근거로 질문에 답한다."""
+
+    # 1. 기존 검증된 CSV 통계를 우선 조회
+    statistics = search_statistics(question)
+
+    if statistics is not None:
+        return statistics
+
+    # 2. 통계 질문이 아니면 기존 법령 RAG 실행
     sources = search_documents(question)
 
     if not sources:
@@ -185,11 +289,13 @@ def answer_question(question: str) -> dict:
 
 
 
+
 if __name__ == "__main__":
     questions = [
+        "2025년 동대문구 고령 보행자 사고 건수는?",
+        "2025년 동대문구 고령인구 1만 명당 사고 건수는?",
         "노인보호구역 지정 대상은 어디인가?",
-        "보호구역 지정 시 교통사고 현황을 조사하나?",
-        "서울시의 2030년 보호구역 예산은 얼마인가?",
+        "2030년 동대문구 고령 보행자 사고 건수는?",
     ]
 
     for question in questions:
@@ -199,12 +305,25 @@ if __name__ == "__main__":
             result = answer_question(question)
 
             print("상태:", result["status"])
-            print("AI 답변:", result["answer"])
+            print("답변:", result["answer"])
 
-            for item in result["evidence"]:
+            evidence = result.get("evidence", [])
+
+            if not evidence:
+                print("연결된 근거 없음")
+
+            for item in evidence:
                 print(f"근거 ID: {item['id']}")
-                print(f"원문: {item['excerpt']}")
-                print(f"출처: {item['url']}")
+
+                if item.get("source_type") == "STATISTIC":
+                    print(f"원본 파일: {item['source_file']}")
+                    print(f"관련 파일: {item['related_file']}")
+                    print(f"집계 기준: {item['year']}년 {item['district']}")
+                    print(f"계산 상태: {item['calculation_status']}")
+                    print("해석상 한계:", " / ".join(item["limitations"]))
+                else:
+                    print(f"원문: {item['excerpt']}")
+                    print(f"출처: {item['url']}")
 
         except Exception as error:
             print("오류:", error)
