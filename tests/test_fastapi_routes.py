@@ -121,3 +121,8 @@ def test_zone_overview_endpoint():
 def test_child_camera_effect_endpoint():
     body = client.get("/api/traffic/child-camera-effect").json()
     assert (body["before"]["accidents"], body["after"]["accidents"]) == (31, 9)
+
+
+def test_zone_budget_endpoint():
+    body = client.get("/api/budget/zone-improvement").json()
+    assert body["pdf_page"] == 616 and body["elderly_disabled"]["zones_2025"] == 195 and body["child"]["zones_2026"] == 1658

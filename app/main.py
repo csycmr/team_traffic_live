@@ -22,10 +22,12 @@ from app.models import (
     ProtectionZones,
     SchoolZones,
     ZoneBeforeAfter,
+    ZoneBudget,
     ZoneOverview,
 )
 from app.services import (
     accident_service,
+    budget_service,
     cctv_service,
     citydata_service,
     hotspot_service,
@@ -119,6 +121,11 @@ def get_zone_overview():
 @app.get("/api/traffic/child-camera-effect", response_model=ChildCameraEffect)
 def get_child_camera_effect():
     return accident_service.child_camera_effect()
+
+
+@app.get("/api/budget/zone-improvement", response_model=ZoneBudget)
+def get_zone_budget():
+    return budget_service.zone_budget()
 
 
 @app.get("/api/statistics/hotspots", response_model=Hotspots)

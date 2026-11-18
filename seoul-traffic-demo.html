@@ -3553,8 +3553,17 @@ async function showSchoolZones(kakaoMap) {
       return marker;
     });
 
-    control.textContent = "어린이보호구역 " + markers.length.toLocaleString("ko-KR") + "곳";
-    control.title = "전국어린이보호구역표준데이터의 서울 시설 기록 · 자료 기준일 2019~2026년";
+    // 버튼 숫자는 공식 지정 수, 지도 핀 수는 표준데이터 서울 기록 수라서 서로 달라.
+    const overview = await readProtectionApi("/api/statistics/zone-overview").catch(() => null);
+    const pinCount = markers.length.toLocaleString("ko-KR");
+    if (overview) {
+      const date = overview.child_zone_date;
+      control.textContent = "어린이보호구역 " + overview.child.zones.toLocaleString("ko-KR") + "곳";
+      control.title = date.slice(0, 4) + "년 " + Number(date.slice(5, 7)) + "월 말 서울 지정 현황 · 지도 핀은 전국어린이보호구역표준데이터의 서울 시설 기록 " + pinCount + "건 기준 · 자료 기준일 2019~2026년";
+    } else {
+      control.textContent = "어린이보호구역 " + pinCount + "곳";
+      control.title = "전국어린이보호구역표준데이터의 서울 시설 기록 · 자료 기준일 2019~2026년";
+    }
     control.disabled = false;
     control.addEventListener("click", () => {
       const visible = control.getAttribute("aria-pressed") !== "true";
@@ -4641,6 +4650,47 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
   }
 
   loadChildCameraEffect();
+
+  async function loadZoneBudget() {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/budget/zone-improvement");
+
+      if (!response.ok) {
+        throw new Error(`보호구역 개선 예산 API 응답 오류: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const rows = document.querySelectorAll("#zone-budget .policy-law-table tbody tr");
+
+      if (rows.length !== 4) {
+        throw new Error("보호구역 개선 예산 표를 확인해 줘.");
+      }
+
+      // 예산서는 천원 단위라 10만 천원 = 1억 원이야. 1곳당 환산액은 서버가 만 원 단위로 계산해 줘.
+      const billion = (thousandWon) => `${(thousandWon / 100000).toFixed(2)}억 원`;
+      const number = (value) => value.toLocaleString("ko-KR");
+      const cells = (row) => row.querySelectorAll("td");
+      const lines = [
+        [data.child, "2025", "곳", ""],
+        [data.child, "2026", "곳", ""],
+        [data.elderly_disabled, "2025", "곳 (노인)", " 이하"],
+        [data.elderly_disabled, "2026", "곳 (노인)", " 이하"],
+      ];
+
+      lines.forEach(([project, year, zoneSuffix, limit], index) => {
+        const td = cells(rows[index]);
+        td[1].textContent = billion(project[`budget_${year}`]);
+        td[2].textContent = `${number(project[`zones_${year}`])}${zoneSuffix}`;
+        td[3].textContent = `약 ${number(project[`per_zone_${year}_man_won`])}만 원${limit}`;
+      });
+
+      console.info("보호구역 개선 예산 API 연결 완료", 4);
+    } catch (error) {
+      console.error("보호구역 개선 예산을 불러오지 못했어.", error);
+    }
+  }
+
+  loadZoneBudget();
 </script>
 
 </body>

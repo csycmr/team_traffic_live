@@ -284,3 +284,19 @@ class ChildCameraEffect(BaseModel):
     before: CameraPeriod
     after: CameraPeriod
     accidents_reduction_percent: int  # 사고 감소율(반올림)
+
+
+class BudgetProject(BaseModel):
+    name: str  # 예산서 세부사업명
+    budget_2025: int = Field(ge=0)  # 천원
+    budget_2026: int = Field(ge=0)
+    zones_2025: int = Field(gt=0)  # 2025년 예산 편성 기준(2024년 12월 말) 지정 구역 수
+    zones_2026: int = Field(gt=0)  # 2026년 예산 편성 기준(2025년 12월 말) 지정 구역 수
+    per_zone_2025_man_won: int = Field(ge=0)  # 1곳당 환산액(만 원)
+    per_zone_2026_man_won: int = Field(ge=0)
+
+
+class ZoneBudget(BaseModel):
+    pdf_page: int
+    child: BudgetProject
+    elderly_disabled: BudgetProject  # 장애인 보호구역과 합산 편성이라 1곳당 금액은 상한 추정치

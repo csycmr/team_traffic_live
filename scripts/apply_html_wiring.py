@@ -517,6 +517,12 @@ HOTSPOT_MAP_REPLACEMENTS = [
 ]
 
 
+SCHOOL_LEGEND_REPLACEMENTS = [('    control.textContent = "어린이보호구역 " + markers.length.toLocaleString("ko-KR") + "곳";\n    control.title = "전국어린이보호구역표준데이터의 서울 시설 기록 · 자료 기준일 2019~2026년";\n', '    // 버튼 숫자는 공식 지정 수, 지도 핀 수는 표준데이터 서울 기록 수라서 서로 달라.\n    const overview = await readProtectionApi("/api/statistics/zone-overview").catch(() => null);\n    const pinCount = markers.length.toLocaleString("ko-KR");\n    if (overview) {\n      const date = overview.child_zone_date;\n      control.textContent = "어린이보호구역 " + overview.child.zones.toLocaleString("ko-KR") + "곳";\n      control.title = date.slice(0, 4) + "년 " + Number(date.slice(5, 7)) + "월 말 서울 지정 현황 · 지도 핀은 전국어린이보호구역표준데이터의 서울 시설 기록 " + pinCount + "건 기준 · 자료 기준일 2019~2026년";\n    } else {\n      control.textContent = "어린이보호구역 " + pinCount + "곳";\n      control.title = "전국어린이보호구역표준데이터의 서울 시설 기록 · 자료 기준일 2019~2026년";\n    }\n')]
+
+
+ZONE_BUDGET_SCRIPT = '\n  async function loadZoneBudget() {\n    try {\n      const response = await fetch("http://127.0.0.1:8000/api/budget/zone-improvement");\n\n      if (!response.ok) {\n        throw new Error(`보호구역 개선 예산 API 응답 오류: ${response.status}`);\n      }\n\n      const data = await response.json();\n      const rows = document.querySelectorAll("#zone-budget .policy-law-table tbody tr");\n\n      if (rows.length !== 4) {\n        throw new Error("보호구역 개선 예산 표를 확인해 줘.");\n      }\n\n      // 예산서는 천원 단위라 10만 천원 = 1억 원이야. 1곳당 환산액은 서버가 만 원 단위로 계산해 줘.\n      const billion = (thousandWon) => `${(thousandWon / 100000).toFixed(2)}억 원`;\n      const number = (value) => value.toLocaleString("ko-KR");\n      const cells = (row) => row.querySelectorAll("td");\n      const lines = [\n        [data.child, "2025", "곳", ""],\n        [data.child, "2026", "곳", ""],\n        [data.elderly_disabled, "2025", "곳 (노인)", " 이하"],\n        [data.elderly_disabled, "2026", "곳 (노인)", " 이하"],\n      ];\n\n      lines.forEach(([project, year, zoneSuffix, limit], index) => {\n        const td = cells(rows[index]);\n        td[1].textContent = billion(project[`budget_${year}`]);\n        td[2].textContent = `${number(project[`zones_${year}`])}${zoneSuffix}`;\n        td[3].textContent = `약 ${number(project[`per_zone_${year}_man_won`])}만 원${limit}`;\n      });\n\n      console.info("보호구역 개선 예산 API 연결 완료", 4);\n    } catch (error) {\n      console.error("보호구역 개선 예산을 불러오지 못했어.", error);\n    }\n  }\n\n  loadZoneBudget();\n'
+
+
 CHILD_CAMERA_SCRIPT = '\n  async function loadChildCameraEffect() {\n    try {\n      const response = await fetch("http://127.0.0.1:8000/api/traffic/child-camera-effect");\n\n      if (!response.ok) {\n        throw new Error(`어린이 무인단속카메라 전후 API 응답 오류: ${response.status}`);\n      }\n\n      const data = await response.json();\n      const section = document.querySelector("#policy-school-zones")?.closest("section");\n      const caption = section && section.querySelector(".audit-chart-caption");\n      const columns = section ? section.querySelectorAll(".school-study-bars > div") : [];\n\n      if (!caption || columns.length !== 2) {\n        throw new Error("어린이 무인단속카메라 전후 막대를 확인해 줘.");\n      }\n\n      // 막대 높이는 기존 화면처럼 사고 1건당 3px이야.\n      [["설치 전", data.before], ["설치 후", data.after]].forEach(([label, group], index) => {\n        columns[index].querySelector("dt").innerHTML = `${label}<br>${group.period}년`;\n        columns[index].querySelector("strong").textContent = `${group.accidents}건`;\n        columns[index].querySelector("span").style.setProperty("--bar-height", `${group.accidents * 3}px`);\n      });\n      caption.textContent = `어린이 보행사고 ${data.before.accidents}건 → ${data.after.accidents}건 · ${data.accidents_reduction_percent}% 감소`;\n\n      console.info("어린이보호구역 카메라 전후 API 연결 완료", 2);\n    } catch (error) {\n      console.error("어린이 무인단속카메라 전후 비교를 불러오지 못했어.", error);\n    }\n  }\n\n  loadChildCameraEffect();\n'
 
 
@@ -568,6 +574,21 @@ def step_elderly(text):
     if bad:
         return text, bad[0]
     return text, "apply" if "apply" in notes else "skip"
+
+
+def step_zone_budget(text):
+    """예전 버전(어린이 구역 수 미연결)을 새 버전으로 바꾼다."""
+    old_start = text.find("\n  async function loadZoneBudget() {")
+    if old_start != -1 and "per_zone_${year}_man_won" not in text:
+        old_end_marker = "\n  loadZoneBudget();\n"
+        old_end = text.find(old_end_marker, old_start)
+        if old_end == -1:
+            return text, "못 찾음(예전 예산 스크립트 끝)"
+        text = text[:old_start].rstrip("\n") + "\n" + text[old_end + len(old_end_marker):]
+    return append_script(
+        text, "per_zone_${year}_man_won", ZONE_BUDGET_SCRIPT,
+        ['id="zone-budget"', 'zone-budget-table-title'], "",
+    )
 
 
 STEPS = [
@@ -643,6 +664,14 @@ STEPS = [
             t, "loadChildCameraEffect", CHILD_CAMERA_SCRIPT,
             ['id="policy-school-zones"', 'school-study-bars'], "",
         ),
+    ),
+    (
+        "보호구역 개선 예산",
+        step_zone_budget,
+    ),
+    (
+        "어린이보호구역 버튼 숫자",
+        lambda t: replace_exact(t, "pinCount", SCHOOL_LEGEND_REPLACEMENTS),
     ),
 ]
 
