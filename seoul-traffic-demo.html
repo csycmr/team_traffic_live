@@ -3996,5 +3996,55 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
   });
 </script>
 
+<script>
+  async function loadOecdRankings() {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/oecd/rankings"
+      );
+
+      if (!response.ok) {
+        throw new Error(`OECD API 응답 오류: ${response.status}`);
+      }
+
+      const { years } = await response.json();
+
+      for (const { year, country_count, countries } of years) {
+        const heading = document.getElementById(`oecd-rate-${year}`);
+        const card = heading?.closest(".oecd-annual-chart");
+
+        if (!card) continue;
+
+        const rows = card.querySelectorAll(".oecd-column");
+        if (rows.length !== countries.length) {
+          throw new Error(`${year}년 카드와 API의 국가 수가 달라.`);
+        }
+
+        card.querySelector(".oecd-chart-header span").textContent =
+          `자료 있는 ${country_count}개국 · 상위 ${countries.length}개국`;
+
+        countries.forEach(({ country, iso3, rate, rank }, index) => {
+          const row = rows[index];
+          const measure = row.querySelector(".oecd-column-measure");
+          const value = rate.toFixed(1);
+          const label = `${country} · ${rank}위 · ${value}명`;
+
+          row.classList.toggle("oecd-korea", iso3 === "KOR");
+          row.title = label;
+          row.querySelector(".oecd-sr").textContent =
+            `${label} / 65세 이상 인구 10만 명`;
+          row.querySelector(".oecd-column-rank").textContent = rank;
+          row.querySelector(".oecd-column-country").textContent = country;
+          measure.querySelector("strong").textContent = value;
+          measure.style.setProperty("--level", `${(rate / 30) * 100}%`);
+        });
+      }
+    } catch (error) {
+      console.error("OECD 차트 데이터를 불러오지 못했어.", error);
+    }
+  }
+
+  loadOecdRankings();
+</script>
 </body>
 </html>
