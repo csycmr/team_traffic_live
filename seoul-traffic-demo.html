@@ -1289,10 +1289,10 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
     <section class="citydata-totals" aria-labelledby="annual-traffic">
       <div class="panel-title"><h3 id="annual-traffic">연간 교통사고</h3></div>
       <dl class="board" aria-label="2025년 서울 교통사고 연간 집계와 사고다발지역">
-        <div class="stat"><dt>교통사고</dt><dd><strong>34,309</strong><small>건</small></dd></div>
+        <div class="stat"><dt>교통사고</dt><dd><strong id="seoul-annual-accidents">—</strong><small>건</small></dd></div>
         <div class="stat hotspot-total"><dt>사고다발지역</dt><dd><strong id="hotspot-total">—</strong><small>곳</small></dd></div>
-        <div class="stat"><dt>부상자</dt><dd><strong>45,446</strong><small>명</small></dd></div>
-        <div class="stat"><dt>사망자</dt><dd><strong>212</strong><small>명</small></dd></div>
+        <div class="stat"><dt>부상자</dt><dd><strong id="seoul-annual-injuries">—</strong><small>명</small></dd></div>
+        <div class="stat"><dt>사망자</dt><dd><strong id="seoul-annual-deaths">—</strong><small>명</small></dd></div>
       </dl>
       <p class="muted panel-source"><a href="https://taas.koroad.or.kr/sta/acs/gus/selectSignguTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAG_SGT">한국도로교통공단 TAAS</a></p>
     </section>
@@ -4046,5 +4046,77 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
 
   loadOecdRankings();
 </script>
+
+<script>
+  async function loadAccidentTrend() {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/traffic/accident-trend"
+      );
+
+      if (!response.ok) {
+        throw new Error(`교통사고 추이 API 응답 오류: ${response.status}`);
+      }
+
+      const { years } = await response.json();
+      const chart = document.querySelector(".audit-trend");
+      const tableRows = [...chart.querySelectorAll("tbody tr")];
+
+      // 기존 그래프의 연도 순서와 API 응답을 대조해.
+      const sameYears = years.length === tableRows.length
+        && years.every(({ year }, index) =>
+          year === Number(tableRows[index].cells[0].textContent)
+        );
+
+      if (!sameYears) {
+        throw new Error("그래프와 API의 연도 구성이 달라.");
+      }
+
+      const series = [
+        { selector: ".audit-series-national", field: "nationwide_accidents" },
+        { selector: ".audit-series-seoul", field: "seoul_accidents" }
+      ];
+
+      const formatCount = new Intl.NumberFormat("ko-KR");
+      const seoul2025 = years.find(({ year }) => year === 2025);
+      const annualAccidentCard = document.getElementById("seoul-annual-accidents");
+
+      if (annualAccidentCard && seoul2025) {
+        annualAccidentCard.textContent =
+          formatCount.format(seoul2025.seoul_accidents);
+}
+
+      for (const [seriesIndex, { selector, field }] of series.entries()) {
+        const group = chart.querySelector(`svg ${selector}`);
+        const dots = group.querySelectorAll("circle");
+        const labels = group.querySelectorAll("text");
+
+        const points = years.map((row, index) => {
+          const count = row[field];
+          const x = dots[index].getAttribute("cx");
+          // 기존 축에서 0건은 y=148, 5만 건은 y=119.6이야.
+          const y = 148 - (count / 50000) * 28.4;
+          const label = formatCount.format(count);
+
+          dots[index].setAttribute("cy", y);
+          labels[index].setAttribute("y", y - 9);
+          labels[index].textContent = label;
+          tableRows[index].cells[seriesIndex + 1].textContent = label;
+
+          return `${x},${y}`;
+        });
+
+        group.querySelector("polyline").setAttribute("points", points.join(" "));
+      }
+
+      console.info("전국·서울 교통사고 추이 API 연결 완료", years.length);
+    } catch (error) {
+      console.error("교통사고 추이 데이터를 불러오지 못했어.", error);
+    }
+  }
+
+  loadAccidentTrend();
+</script>
+
 </body>
 </html>

@@ -42,3 +42,16 @@ def get_oecd_rankings():
         })
 
     return {"years": years}
+
+ACCIDENT_TREND_CSV = (
+    Path(__file__).resolve().parent
+    / "data"
+    / "15_전국서울_교통사고_추이.csv"
+)
+
+
+@app.get("/api/traffic/accident-trend")
+def get_accident_trend():
+    data = pd.read_csv(ACCIDENT_TREND_CSV, encoding="utf-8-sig")
+    data = data.sort_values("year")
+    return {"years": data.to_dict(orient="records")}
