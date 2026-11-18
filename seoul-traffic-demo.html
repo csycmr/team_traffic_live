@@ -2181,10 +2181,10 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
           </div>
         </div>
         <div class="change-summary">
-          <p class="audit-chart-caption">2025년 · 고령인구 1만 명당 사고 건수</p>
-          <div class="change-table-scroll" tabindex="0" role="region" aria-label="자치구별 사고율과 서울 대비 격차">
+          <p class="audit-chart-caption">자치구별 고령 보행사고 건수</p>
+          <div class="change-table-scroll" tabindex="0" role="region" aria-label="자치구별 2024년과 2025년 고령 보행사고 건수">
             <table class="change-table">
-              <thead><tr><th scope="col">자치구</th><th scope="col">사고율</th><th scope="col">서울 대비 격차</th></tr></thead>
+              <thead><tr><th scope="col">자치구</th><th scope="col">2024년 사고 건수</th><th scope="col">2025년 사고 건수</th></tr></thead>
               <tbody></tbody>
             </table>
           </div>
@@ -4109,14 +4109,17 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
     document.querySelector("#change-low").textContent = "−" + limit + "%";
     document.querySelector("#change-high").textContent = "+" + limit + "%";
     const tbody = document.querySelector(".change-table tbody");
-    const tableRows = districts.map(row => {
+    const sortedDistricts = [...districts].sort((a, b) =>
+      b.accidents - a.accidents || a.district.localeCompare(b.district, "ko")
+    );
+    const tableRows = sortedDistricts.map(row => {
       const tr = document.createElement("tr");
       const name = document.createElement("th");
       name.scope = "row";
       name.textContent = row.district;
       tr.append(name);
-      tr.insertCell().textContent = row.accidents_per_10k.toFixed(2);
-      tr.insertCell().textContent = format(row.rate_gap, 2);
+      tr.insertCell().textContent = (row.accidents - row.accidents_change) + "건";
+      tr.insertCell().textContent = row.accidents + "건";
       return tr;
     });
     tbody.replaceChildren(...tableRows);
