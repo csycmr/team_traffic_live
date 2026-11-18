@@ -159,3 +159,10 @@
 @media (max-width: 450px) {
   .national-year-label, .national-year-total, .national-older { font-size: 9px }
 }
+
+.story-screen .oecd-content h3.audit-heading {
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -.04em;
+}
