@@ -11,10 +11,17 @@ from app.models import (
     ChildPedestrian,
     DistrictRates,
     ElderlyPedestrian,
+    ElderlyPopulation,
     NationalDeaths,
     OecdRankings,
 )
-from app.services import accident_service, cctv_service, citydata_service, oecd_service
+from app.services import (
+    accident_service,
+    cctv_service,
+    citydata_service,
+    oecd_service,
+    population_service,
+)
 
 settings = get_settings()
 
@@ -64,6 +71,11 @@ def get_elderly_pedestrian():
 @app.get("/api/statistics/elderly/districts", response_model=DistrictRates)
 def get_elderly_district_rates():
     return accident_service.elderly_district_rates()
+
+
+@app.get("/api/statistics/elderly-population", response_model=ElderlyPopulation)
+def get_elderly_population():
+    return population_service.elderly_population()
 
 
 @app.get("/api/cctv")

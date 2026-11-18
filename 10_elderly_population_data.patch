@@ -1,0 +1,33 @@
+diff --git "a/data/18_\354\240\204\352\265\255_65\354\204\270\354\235\264\354\203\201_\354\243\274\353\257\274\353\223\261\353\241\235\354\235\270\352\265\254.csv" "b/data/18_\354\240\204\352\265\255_65\354\204\270\354\235\264\354\203\201_\354\243\274\353\257\274\353\223\261\353\241\235\354\235\270\352\265\254.csv"
+new file mode 100644
+index 0000000..deb42d0
+--- /dev/null
++++ "b/data/18_\354\240\204\352\265\255_65\354\204\270\354\235\264\354\203\201_\354\243\274\353\257\274\353\223\261\353\241\235\354\235\270\352\265\254.csv"
+@@ -0,0 +1,6 @@
++﻿기준연월,65세이상_인구수,출처
++2022-12,9267290,"행정안전부 주민등록 인구통계(월말, 전국 65세 이상 전체)"
++2023-12,9730411,"행정안전부 주민등록 인구통계(월말, 전국 65세 이상 전체)"
++2024-12,10256782,"행정안전부 주민등록 인구통계(월말, 전국 65세 이상 전체)"
++2025-12,10840822,"행정안전부 주민등록 인구통계(월말, 전국 65세 이상 전체)"
++2026-10,11350255,"행정안전부 주민등록 인구통계(월말, 전국 65세 이상 전체)"
+diff --git a/tests/test_population_service.py b/tests/test_population_service.py
+index bb4b19f..5323f00 100644
+--- a/tests/test_population_service.py
++++ b/tests/test_population_service.py
+@@ -42,3 +42,16 @@ def test_missing_file_is_service_error(tmp_path):
+     with pytest.raises(ServiceError):
+         population_service.elderly_population(tmp_path)
+ 
++
++def test_real_data_matches_chart_values():
++    from pathlib import Path
++
++    data_dir = Path(__file__).resolve().parents[1] / "data"
++    points = population_service.elderly_population(data_dir).points
++    assert [(p.year, p.month, p.population) for p in points] == [
++        (2022, 12, 9267290),
++        (2023, 12, 9730411),
++        (2024, 12, 10256782),
++        (2025, 12, 10840822),
++        (2026, 10, 11350255),
++    ]

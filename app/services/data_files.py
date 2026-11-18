@@ -12,6 +12,7 @@ PANEL_FILE = "01_자치구연도_패널.csv"
 CHILD_SUMMARY_FILE = "10_어린이보호구역_교통안전_요약.csv"
 ACCIDENT_TREND_FILE = "15_TAAS_시도시군구_교통사고_2020-2025.csv"
 NATIONAL_DEATHS_FILE = "17_전국사망자_막대도넛.csv"
+ELDERLY_POPULATION_FILE = "18_전국_65세이상_주민등록인구.csv"
 BOUNDARY_FILE = "08_서울_자치구_경계.geojson"
 
 

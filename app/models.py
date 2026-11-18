@@ -57,6 +57,18 @@ class NationalDeaths(BaseModel):
     years: list[NationalDeathYear]
 
 
+class ElderlyPopulationPoint(BaseModel):
+    """전국 65세 이상 주민등록인구(명). 기준 시점은 연·월 말이다."""
+
+    year: int
+    month: int = Field(ge=1, le=12)
+    population: int = Field(gt=0)
+
+
+class ElderlyPopulation(BaseModel):
+    points: list[ElderlyPopulationPoint]
+
+
 class ChildPedestrian(BaseModel):
     """서울 어린이(12세 이하) 보행자 교통사고."""
 

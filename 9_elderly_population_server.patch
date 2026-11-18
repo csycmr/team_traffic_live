@@ -1,0 +1,163 @@
+diff --git a/app/main.py b/app/main.py
+index 5b7e835..bdcba46 100644
+--- a/app/main.py
++++ b/app/main.py
+@@ -11,10 +11,17 @@ from app.models import (
+     ChildPedestrian,
+     DistrictRates,
+     ElderlyPedestrian,
++    ElderlyPopulation,
+     NationalDeaths,
+     OecdRankings,
+ )
+-from app.services import accident_service, cctv_service, citydata_service, oecd_service
++from app.services import (
++    accident_service,
++    cctv_service,
++    citydata_service,
++    oecd_service,
++    population_service,
++)
+ 
+ settings = get_settings()
+ 
+@@ -66,6 +73,11 @@ def get_elderly_district_rates():
+     return accident_service.elderly_district_rates()
+ 
+ 
++@app.get("/api/statistics/elderly-population", response_model=ElderlyPopulation)
++def get_elderly_population():
++    return population_service.elderly_population()
++
++
+ @app.get("/api/cctv")
+ def get_cctv():
+     return cctv_service.seoul_cctv(load_settings().its_cctv_api_key)
+diff --git a/app/models.py b/app/models.py
+index a8c12aa..7cf354a 100644
+--- a/app/models.py
++++ b/app/models.py
+@@ -57,6 +57,18 @@ class NationalDeaths(BaseModel):
+     years: list[NationalDeathYear]
+ 
+ 
++class ElderlyPopulationPoint(BaseModel):
++    """전국 65세 이상 주민등록인구(명). 기준 시점은 연·월 말이다."""
++
++    year: int
++    month: int = Field(ge=1, le=12)
++    population: int = Field(gt=0)
++
++
++class ElderlyPopulation(BaseModel):
++    points: list[ElderlyPopulationPoint]
++
++
+ class ChildPedestrian(BaseModel):
+     """서울 어린이(12세 이하) 보행자 교통사고."""
+ 
+diff --git a/app/services/data_files.py b/app/services/data_files.py
+index 1c6835a..ac61759 100644
+--- a/app/services/data_files.py
++++ b/app/services/data_files.py
+@@ -12,6 +12,7 @@ PANEL_FILE = "01_자치구연도_패널.csv"
+ CHILD_SUMMARY_FILE = "10_어린이보호구역_교통안전_요약.csv"
+ ACCIDENT_TREND_FILE = "15_TAAS_시도시군구_교통사고_2020-2025.csv"
+ NATIONAL_DEATHS_FILE = "17_전국사망자_막대도넛.csv"
++ELDERLY_POPULATION_FILE = "18_전국_65세이상_주민등록인구.csv"
+ BOUNDARY_FILE = "08_서울_자치구_경계.geojson"
+ 
+ 
+diff --git a/app/services/population_service.py b/app/services/population_service.py
+new file mode 100644
+index 0000000..159d157
+--- /dev/null
++++ b/app/services/population_service.py
+@@ -0,0 +1,38 @@
++"""전국 65세 이상 주민등록인구(행정안전부 주민등록 인구통계)."""
++
++import re
++from pathlib import Path
++
++from app.errors import ServiceError
++from app.models import ElderlyPopulation
++from app.services.data_files import ELDERLY_POPULATION_FILE, read_csv, require_columns
++
++PERIOD = re.compile(r"^(\d{4})-(0[1-9]|1[0-2])$")
++
++
++def elderly_population(data_dir: Path | str | None = None) -> ElderlyPopulation:
++    """기준연월(YYYY-MM)과 65세 이상 인구수를 시간 순서로 돌려준다."""
++
++    data = read_csv(ELDERLY_POPULATION_FILE, data_dir)
++    require_columns(data, ELDERLY_POPULATION_FILE, ["기준연월", "65세이상_인구수"])
++    if data[["기준연월", "65세이상_인구수"]].isna().any().any():
++        raise ServiceError(f"{ELDERLY_POPULATION_FILE}에 비어 있는 값이 있어.", 500)
++    if data["기준연월"].duplicated().any():
++        raise ServiceError(f"{ELDERLY_POPULATION_FILE}에 같은 기준연월이 겹쳐 있어.", 500)
++
++    points = []
++    for _, row in data.iterrows():
++        match = PERIOD.match(str(row["기준연월"]).strip())
++        if not match:
++            raise ServiceError(
++                f"기준연월은 YYYY-MM 형식이어야 해: {row['기준연월']}", 500
++            )
++        points.append(
++            {
++                "year": int(match.group(1)),
++                "month": int(match.group(2)),
++                "population": int(row["65세이상_인구수"]),
++            }
++        )
++    points.sort(key=lambda point: (point["year"], point["month"]))
++    return ElderlyPopulation(points=points)
+diff --git a/tests/test_population_service.py b/tests/test_population_service.py
+new file mode 100644
+index 0000000..20fbd14
+--- /dev/null
++++ b/tests/test_population_service.py
+@@ -0,0 +1,43 @@
++import pytest
++
++from app.errors import ServiceError
++from app.services import population_service
++from app.services.data_files import ELDERLY_POPULATION_FILE
++
++HEADER = "기준연월,65세이상_인구수"
++
++
++def test_sorts_and_splits_period(write_csv):
++    data_dir = write_csv(
++        ELDERLY_POPULATION_FILE, f"{HEADER}\n2026-10,300\n2022-12,100\n2023-12,200"
++    )
++    points = population_service.elderly_population(data_dir).points
++    assert [(p.year, p.month, p.population) for p in points] == [
++        (2022, 12, 100),
++        (2023, 12, 200),
++        (2026, 10, 300),
++    ]
++
++
++@pytest.mark.parametrize("period", ["2022/12", "202212", "2022-13", "2022-1"])
++def test_bad_period_is_error(write_csv, period):
++    data_dir = write_csv(ELDERLY_POPULATION_FILE, f"{HEADER}\n{period},100")
++    with pytest.raises(ServiceError, match="YYYY-MM"):
++        population_service.elderly_population(data_dir)
++
++
++def test_duplicate_period_is_error(write_csv):
++    data_dir = write_csv(ELDERLY_POPULATION_FILE, f"{HEADER}\n2022-12,100\n2022-12,101")
++    with pytest.raises(ServiceError, match="겹쳐"):
++        population_service.elderly_population(data_dir)
++
++
++def test_blank_value_is_error(write_csv):
++    data_dir = write_csv(ELDERLY_POPULATION_FILE, f"{HEADER}\n2022-12,")
++    with pytest.raises(ServiceError, match="비어"):
++        population_service.elderly_population(data_dir)
++
++
++def test_missing_file_is_service_error(tmp_path):
++    with pytest.raises(ServiceError):
++        population_service.elderly_population(tmp_path)
