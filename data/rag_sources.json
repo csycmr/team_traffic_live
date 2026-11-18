@@ -1,0 +1,91 @@
+
+[
+  {
+    "id": "LAW-001",
+    "title": "도로교통법",
+    "section": "제12조의2 제1항 제1호",
+    "organization": "국가법령정보센터",
+    "effective_date": "2026-10-13",
+    "retrieved_date": "2026-11-18",
+    "url": "https://www.law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1031178179",
+    "excerpt": "「노인복지법」 제31조에 따른 노인복지시설",
+    "keywords": ["노인보호구역", "지정", "대상", "노인복지시설", "시설", "어디"]
+  },
+  {
+    "id": "RULE-001",
+    "title": "어린이ㆍ노인 및 장애인 보호구역의 지정 및 관리에 관한 규칙",
+    "section": "제3조 제4항 제3호",
+    "organization": "국가법령정보센터",
+    "effective_date": "2024-07-31",
+    "retrieved_date": "2026-11-18",
+    "url": "https://www.law.go.kr/lsLinkCommonInfo.do?lsJoLnkSeq=1024763169",
+    "excerpt": "보호구역 지정대상 시설 또는 장소 주변 도로에서의 연간 교통사고 발생현황",
+    "keywords": ["노인보호구역", "지정", "조사", "교통사고", "사고현황", "발생현황"]
+  },
+{
+  "id": "LAW-002",
+  "title": "도로교통법",
+  "section": "제12조의2 제1항 제3호",
+  "organization": "국가법령정보센터",
+  "effective_date": "2026-10-13",
+  "retrieved_date": "2026-11-18",
+  "url": "https://www.law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1031178179",
+  "excerpt": "「체육시설의 설치ㆍ이용에 관한 법률」 제6조에 따른 생활체육시설",
+  "keywords": ["노인보호구역", "지정 대상", "체육시설", "생활체육시설"]
+},
+{
+  "id": "LAW-003",
+  "title": "도로교통법",
+  "section": "제12조의2 제1항 제3호의2",
+  "organization": "국가법령정보센터",
+  "effective_date": "2026-10-13",
+  "retrieved_date": "2026-11-18",
+  "url": "https://www.law.go.kr/LSW/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1031178179",
+  "excerpt": "그 밖에 노인이 자주 왕래하는 곳으로서 조례로 정하는 시설 또는 장소",
+  "keywords": ["노인보호구역", "지정", "조례", "노인 왕래 장소"]
+},
+{
+  "id": "RULE-002",
+  "title": "어린이ㆍ노인 및 장애인 보호구역의 지정 및 관리에 관한 규칙",
+  "section": "제3조 제6항",
+  "organization": "국가법령정보센터",
+  "effective_date": "2024-07-31",
+  "retrieved_date": "2026-11-18",
+  "url": "https://law.go.kr/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1024763141",
+  "excerpt": "관할 시ㆍ도경찰청장 또는 경찰서장과 협의하여",
+  "keywords": ["보호구역", "지정 절차", "경찰 협의", "경찰서장"]
+},
+{
+  "id": "RULE-003",
+  "title": "어린이ㆍ노인 및 장애인 보호구역의 지정 및 관리에 관한 규칙",
+  "section": "제3조 제6항",
+  "organization": "국가법령정보센터",
+  "effective_date": "2024-07-31",
+  "retrieved_date": "2026-11-18",
+  "url": "https://law.go.kr/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1024763141",
+  "excerpt": "반경 300미터 이내의 도로 중 일정구간을 보호구역으로 지정한다.",
+  "keywords": ["보호구역", "지정 범위", "300미터", "지정 거리"]
+},
+{
+  "id": "LAW-004",
+  "title": "도로교통법",
+  "section": "제12조의4 제1항",
+  "organization": "국가법령정보센터",
+  "effective_date": "2026-10-13",
+  "retrieved_date": "2026-11-18",
+  "url": "https://www.law.go.kr/LSW/lsEfInfoP.do?lsiSeq=281875",
+  "excerpt": "교통환경에 대한 실태조사를 연 1회 이상 실시하고, 그 결과를 보호구역의 지정ㆍ해제 및 관리에 반영하여야 한다.",
+  "keywords": ["보호구역", "실태조사", "연 1회", "관리", "교통환경"]
+},
+
+{
+  "id": "RULE-004",
+  "title": "어린이ㆍ노인 및 장애인 보호구역의 지정 및 관리에 관한 규칙",
+  "section": "제3조 제6항 단서",
+  "organization": "국가법령정보센터",
+  "effective_date": "2024-07-31",
+  "retrieved_date": "2026-11-18",
+  "url": "https://law.go.kr/lsLinkCommonInfo.do?chrClsCd=010202&lsJoLnkSeq=1024763141",
+  "excerpt": "반경 500미터 이내의 도로에 대해서도 보호구역으로 지정할 수 있다.",
+  "keywords": ["보호구역", "지정 범위", "500미터", "예외", "교통여건"]
+}]

@@ -23,6 +23,7 @@ def handle_service_error(error):
 
 from newsroom.data import dataset_state, load_data
 from newsroom.recommendation import fact_sheet
+from newsroom.rag import answer_question
 
 
 @app.get("/api/newsroom/facts")
@@ -514,6 +515,31 @@ def newsroom_public_article(article_id):
     finally:
         if engine is not None:
             engine.dispose()
+
+@app.post("/api/rag/ask")
+def api_rag_ask():
+    payload = request.get_json(silent=True)
+
+    if not isinstance(payload, dict):
+        return jsonify({
+            "error": "JSON 요청 본문이 필요합니다."
+        }), 400
+
+    question = payload.get("question")
+
+    if not isinstance(question, str) or not question.strip():
+        return jsonify({
+            "error": "질문을 입력해 주세요."
+        }), 400
+
+    if len(question) > 2000:
+        return jsonify({
+            "error": "질문은 2000자 이하로 입력해 주세요."
+        }), 400
+
+    result = answer_question(question.strip())
+    return jsonify(result)
+
 
 if __name__ == "__main__":
     app.run(host="127.0.0.1", port=load_settings().flask_port)

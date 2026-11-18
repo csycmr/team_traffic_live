@@ -4432,5 +4432,259 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
   loadNationalDonuts();
 </script>
 
+<style>
+
+#rag-launcher {
+  position: fixed;
+  right: 31px;
+  bottom: 94px;
+  z-index: 10000;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
+}
+
+#rag-launcher svg {
+  width: 21px;
+  height: 21px;
+  flex: 0 0 21px;
+}
+
+@media (max-width: 768px) {
+  #rag-launcher {
+    right: 21px;
+    bottom: 80px;
+    width: 42px;
+    height: 42px;
+  }
+}
+
+
+  #rag-panel {
+    position: fixed;
+    right: 24px;
+    bottom: 150px;
+    z-index: 10001;
+    width: min(400px, calc(100vw - 32px));
+    height: min(520px, calc(100dvh - 110px));
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #58749b;
+    border-radius: 12px;
+    background: #101e33;
+    color: #fff;
+    box-shadow: 0 12px 35px #0007;
+    overflow: hidden;
+  }
+
+  #rag-panel[hidden] { display: none; }
+
+  .rag-header, .rag-form {
+    display: flex;
+    gap: 8px;
+    padding: 12px;
+    align-items: center;
+  }
+
+  .rag-header {
+    justify-content: space-between;
+    border-bottom: 1px solid #344966;
+  }
+
+  .rag-header button {
+    color: inherit;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+  }
+
+  #rag-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  .rag-message {
+    padding: 10px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    background: #243752;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  .rag-message.user {
+    background: #355880;
+  }
+
+  .rag-evidence {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #58749b;
+    font-size: 12px;
+    color: #c4d5ed;
+  }
+
+  .rag-evidence a { color: #a9d2ff; }
+
+  .rag-form {
+    border-top: 1px solid #344966;
+  }
+
+  #rag-input {
+    flex: 1;
+    min-width: 0;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #58749b;
+    background: #172b47;
+    color: white;
+    font: inherit;
+  }
+
+  .rag-form button {
+    padding: 10px;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+</style>
+
+<button
+  id="rag-launcher"
+  class="newsroom-fab"
+  type="button"
+  aria-label="AI 근거 검색"
+  aria-controls="rag-panel"
+  aria-expanded="false"
+>
+  <svg viewBox="0 0 24 24" aria-hidden="true">
+    <path d="M20 11.5a8.5 8.5 0 0 1-8.5 8.5 9 9 0 0 1-4-.9L3 20l1-4.5a8.5 8.5 0 1 1 16-4z"/>
+  </svg>
+  <span class="newsroom-fab-label">AI 근거 검색</span>
+</button>
+
+<section id="rag-panel" hidden aria-label="AI 근거 검색">
+  <div class="rag-header">
+    <strong>AI 근거 검색</strong>
+    <button id="rag-close" type="button" aria-label="닫기">✕</button>
+  </div>
+
+  <div id="rag-messages" role="log" aria-live="polite"></div>
+
+  <form id="rag-form" class="rag-form">
+    <input id="rag-input" type="text"
+           placeholder="교통안전 자료를 질문하세요"
+           aria-label="질문" maxlength="2000" required>
+    <button type="submit">전송</button>
+  </form>
+</section>
+
+<script>
+(() => {
+  const launcher = document.getElementById("rag-launcher");
+  const panel = document.getElementById("rag-panel");
+  const close = document.getElementById("rag-close");
+  const form = document.getElementById("rag-form");
+  const input = document.getElementById("rag-input");
+  const messages = document.getElementById("rag-messages");
+  const submit = form.querySelector('button[type="submit"]');
+
+  launcher.addEventListener("click", () => {
+    panel.hidden = !panel.hidden;
+    launcher.setAttribute("aria-expanded", String(!panel.hidden));
+    if (!panel.hidden) input.focus();
+  });
+
+  close.addEventListener("click", () => {
+    panel.hidden = true;
+    launcher.setAttribute("aria-expanded", "false");
+    launcher.focus();
+  });
+
+  function addMessage(text, type = "assistant") {
+    const message = document.createElement("div");
+    message.className = "rag-message " + type;
+    message.textContent = text;
+    messages.appendChild(message);
+    messages.scrollTop = messages.scrollHeight;
+    return message;
+  }
+
+  function showEvidence(message, evidence) {
+    if (!evidence?.length) return;
+
+    const details = document.createElement("details");
+    details.className = "rag-evidence";
+
+    const summary = document.createElement("summary");
+    summary.textContent = `근거 ${evidence.length}개 보기`;
+    details.appendChild(summary);
+
+    evidence.forEach(item => {
+      const block = document.createElement("p");
+      block.appendChild(document.createTextNode(
+        `${item.id || "근거"} · ${item.title || ""}\n` +
+        (item.excerpt || item.source_file || "")
+      ));
+
+      if (item.url) {
+        const link = document.createElement("a");
+        link.href = item.url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = " 원문 열기";
+        block.appendChild(link);
+      }
+
+      details.appendChild(block);
+    });
+
+    message.appendChild(details);
+  }
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+
+    const question = input.value.trim();
+    if (!question || submit.disabled) return;
+
+    addMessage(question, "user");
+    input.value = "";
+    submit.disabled = true;
+
+    const reply = addMessage("근거를 검색하고 있습니다.");
+
+    try {
+      const response = await fetch("/api/rag/ask", {
+        method: "POST",
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({question})
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "요청에 실패했습니다.");
+      }
+
+      reply.textContent = data.answer || "답변이 없습니다.";
+      showEvidence(reply, data.evidence);
+
+    } catch (error) {
+      reply.textContent = "오류: " + error.message;
+    } finally {
+      submit.disabled = false;
+      input.focus();
+      messages.scrollTop = messages.scrollHeight;
+    }
+  });
+})();
+</script>
+
 </body>
 </html>
