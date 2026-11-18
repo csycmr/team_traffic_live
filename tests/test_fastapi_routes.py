@@ -116,3 +116,8 @@ def test_protection_map_endpoints():
 def test_zone_overview_endpoint():
     body = client.get("/api/statistics/zone-overview").json()
     assert body["child"]["zones"] == 1630 and body["elderly"]["zones"] == 195
+
+
+def test_child_camera_effect_endpoint():
+    body = client.get("/api/traffic/child-camera-effect").json()
+    assert (body["before"]["accidents"], body["after"]["accidents"]) == (31, 9)

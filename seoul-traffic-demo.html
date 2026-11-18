@@ -4608,6 +4608,39 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
   }
 
   loadZoneOverview();
+
+  async function loadChildCameraEffect() {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/traffic/child-camera-effect");
+
+      if (!response.ok) {
+        throw new Error(`어린이 무인단속카메라 전후 API 응답 오류: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const section = document.querySelector("#policy-school-zones")?.closest("section");
+      const caption = section && section.querySelector(".audit-chart-caption");
+      const columns = section ? section.querySelectorAll(".school-study-bars > div") : [];
+
+      if (!caption || columns.length !== 2) {
+        throw new Error("어린이 무인단속카메라 전후 막대를 확인해 줘.");
+      }
+
+      // 막대 높이는 기존 화면처럼 사고 1건당 3px이야.
+      [["설치 전", data.before], ["설치 후", data.after]].forEach(([label, group], index) => {
+        columns[index].querySelector("dt").innerHTML = `${label}<br>${group.period}년`;
+        columns[index].querySelector("strong").textContent = `${group.accidents}건`;
+        columns[index].querySelector("span").style.setProperty("--bar-height", `${group.accidents * 3}px`);
+      });
+      caption.textContent = `어린이 보행사고 ${data.before.accidents}건 → ${data.after.accidents}건 · ${data.accidents_reduction_percent}% 감소`;
+
+      console.info("어린이보호구역 카메라 전후 API 연결 완료", 2);
+    } catch (error) {
+      console.error("어린이 무인단속카메라 전후 비교를 불러오지 못했어.", error);
+    }
+  }
+
+  loadChildCameraEffect();
 </script>
 
 </body>

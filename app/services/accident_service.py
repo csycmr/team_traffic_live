@@ -8,6 +8,8 @@ from app.errors import ServiceError
 from app.models import (
     AccidentTrend,
     NationalDeaths,
+    CameraPeriod,
+    ChildCameraEffect,
     ChildPedestrian,
     DistrictRate,
     DistrictRates,
@@ -16,6 +18,7 @@ from app.models import (
 from app.services.data_files import (
     ACCIDENT_TREND_FILE,
     NATIONAL_DEATHS_FILE,
+    CHILD_CAMERA_FILE,
     CHILD_SUMMARY_FILE,
     PANEL_FILE,
     read_csv,
@@ -287,4 +290,38 @@ def elderly_district_rates(
         previous_year=year - 1,
         seoul_accidents_per_10k=seoul_rate,
         districts=districts,
+    )
+
+
+def child_camera_effect(data_dir: Path | str | None = None) -> ChildCameraEffect:
+    """서울 무인단속카메라 설치 전·후 각 2년의 어린이 보행사고."""
+
+    data = read_csv(CHILD_CAMERA_FILE, data_dir)
+    columns = ["구분", "기간", "어린이_보행사고", "어린이_보행부상자", "설치대수"]
+    require_columns(data, CHILD_CAMERA_FILE, columns)
+    if data[columns].isna().any().any():
+        raise ServiceError(f"{CHILD_CAMERA_FILE}에 비어 있는 값이 있어.", 500)
+    rows = {}
+    for label in ("설치 전", "설치 후"):
+        found = data[data["구분"].eq(label)]
+        if len(found) != 1:
+            raise ServiceError(f"{CHILD_CAMERA_FILE}에 '{label}' 행이 정확히 하나여야 해.", 500)
+        rows[label] = found.iloc[0]
+    before, after = rows["설치 전"], rows["설치 후"]
+    if before["어린이_보행사고"] <= 0:
+        raise ServiceError("설치 전 사고 건수가 0이라 감소율을 계산할 수 없어.", 500)
+
+    def period(row):
+        return CameraPeriod(
+            period=str(row["기간"]),
+            accidents=int(row["어린이_보행사고"]),
+            injuries=int(row["어린이_보행부상자"]),
+        )
+
+    drop = (before["어린이_보행사고"] - after["어린이_보행사고"]) / before["어린이_보행사고"] * 100
+    return ChildCameraEffect(
+        cameras=int(before["설치대수"]),
+        before=period(before),
+        after=period(after),
+        accidents_reduction_percent=int(drop + 0.5),
     )

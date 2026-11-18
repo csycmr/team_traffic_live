@@ -517,6 +517,9 @@ HOTSPOT_MAP_REPLACEMENTS = [
 ]
 
 
+CHILD_CAMERA_SCRIPT = '\n  async function loadChildCameraEffect() {\n    try {\n      const response = await fetch("http://127.0.0.1:8000/api/traffic/child-camera-effect");\n\n      if (!response.ok) {\n        throw new Error(`어린이 무인단속카메라 전후 API 응답 오류: ${response.status}`);\n      }\n\n      const data = await response.json();\n      const section = document.querySelector("#policy-school-zones")?.closest("section");\n      const caption = section && section.querySelector(".audit-chart-caption");\n      const columns = section ? section.querySelectorAll(".school-study-bars > div") : [];\n\n      if (!caption || columns.length !== 2) {\n        throw new Error("어린이 무인단속카메라 전후 막대를 확인해 줘.");\n      }\n\n      // 막대 높이는 기존 화면처럼 사고 1건당 3px이야.\n      [["설치 전", data.before], ["설치 후", data.after]].forEach(([label, group], index) => {\n        columns[index].querySelector("dt").innerHTML = `${label}<br>${group.period}년`;\n        columns[index].querySelector("strong").textContent = `${group.accidents}건`;\n        columns[index].querySelector("span").style.setProperty("--bar-height", `${group.accidents * 3}px`);\n      });\n      caption.textContent = `어린이 보행사고 ${data.before.accidents}건 → ${data.after.accidents}건 · ${data.accidents_reduction_percent}% 감소`;\n\n      console.info("어린이보호구역 카메라 전후 API 연결 완료", 2);\n    } catch (error) {\n      console.error("어린이 무인단속카메라 전후 비교를 불러오지 못했어.", error);\n    }\n  }\n\n  loadChildCameraEffect();\n'
+
+
 ZONE_OVERVIEW_SCRIPT = '\n  async function loadZoneOverview() {\n    try {\n      const response = await fetch("http://127.0.0.1:8000/api/statistics/zone-overview");\n\n      if (!response.ok) {\n        throw new Error(`보호구역 현황 API 응답 오류: ${response.status}`);\n      }\n\n      const data = await response.json();\n      const chart = document.querySelector(".school-zone-overview .zone-density");\n      const source = document.querySelector(".school-zone-overview .compare-chart > .policy-source");\n      const bars = chart ? chart.querySelectorAll(":scope > div[style*=\'--zone-width\']") : [];\n      const values = chart ? chart.querySelectorAll(".zone-density-value") : [];\n      const people = chart ? chart.querySelectorAll(".zone-density-people strong") : [];\n\n      if (!source || bars.length !== 2 || values.length !== 2 || people.length !== 2) {\n        throw new Error("보호구역 현황 막대나 문구를 확인해 줘.");\n      }\n\n      // 축이 0~30곳이라 막대 너비는 30곳 대비 비율이야.\n      [data.child, data.elderly].forEach((group, index) => {\n        bars[index].style.setProperty("--zone-width", `${(group.zones_per_10k / 30 * 100).toFixed(4)}%`);\n        values[index].textContent = `${group.zones_per_10k.toFixed(2)}곳`;\n        people[index].textContent = `약 ${group.people_per_zone.toLocaleString("ko-KR")}명`;\n      });\n      source.textContent = `어린이 ${data.child.population.toLocaleString("ko-KR")}명 · ${data.child.zones.toLocaleString("ko-KR")}곳(${data.child_zone_date.slice(0, 4)}년) | 노인 ${data.elderly.population.toLocaleString("ko-KR")}명 · ${data.elderly.zones.toLocaleString("ko-KR")}곳(${data.elderly_year}년)`;\n\n      console.info("서울 보호구역 현황 API 연결 완료", 2);\n    } catch (error) {\n      console.error("서울 보호구역 현황을 불러오지 못했어.", error);\n    }\n  }\n\n  loadZoneOverview();\n'
 
 
@@ -632,6 +635,13 @@ STEPS = [
         lambda t: append_script(
             t, "loadZoneOverview", ZONE_OVERVIEW_SCRIPT,
             ['class="zone-density"', 'school-zone-overview'], "",
+        ),
+    ),
+    (
+        "어린이 카메라 설치 전후",
+        lambda t: append_script(
+            t, "loadChildCameraEffect", CHILD_CAMERA_SCRIPT,
+            ['id="policy-school-zones"', 'school-study-bars'], "",
         ),
     ),
 ]

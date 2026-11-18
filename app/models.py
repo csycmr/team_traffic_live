@@ -271,3 +271,16 @@ class ZoneOverview(BaseModel):
     elderly_year: int  # 노인보호구역 명단 연도
     child: ZoneDensityGroup  # 0~12세
     elderly: ZoneDensityGroup  # 65세 이상
+
+
+class CameraPeriod(BaseModel):
+    period: str  # 예: 2018~2019
+    accidents: int = Field(ge=0)  # 어린이 보행사고
+    injuries: int = Field(ge=0)  # 어린이 보행 부상자
+
+
+class ChildCameraEffect(BaseModel):
+    cameras: int = Field(gt=0)
+    before: CameraPeriod
+    after: CameraPeriod
+    accidents_reduction_percent: int  # 사고 감소율(반올림)

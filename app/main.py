@@ -8,6 +8,7 @@ from app.config import get_settings, load_settings
 from app.errors import ServiceError
 from app.models import (
     AccidentTrend,
+    ChildCameraEffect,
     ChildPedestrian,
     DistrictComparison,
     DistrictRates,
@@ -113,6 +114,11 @@ def get_school_zones():
 @app.get("/api/statistics/zone-overview", response_model=ZoneOverview)
 def get_zone_overview():
     return protection_service.zone_overview()
+
+
+@app.get("/api/traffic/child-camera-effect", response_model=ChildCameraEffect)
+def get_child_camera_effect():
+    return accident_service.child_camera_effect()
 
 
 @app.get("/api/statistics/hotspots", response_model=Hotspots)
