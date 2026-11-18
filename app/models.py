@@ -256,3 +256,18 @@ class SchoolZone(BaseModel):
 
 class SchoolZones(BaseModel):
     zones: list[SchoolZone]
+
+
+class ZoneDensityGroup(BaseModel):
+    population: int = Field(gt=0)
+    zones: int = Field(gt=0)
+    zones_per_10k: float = Field(ge=0)  # 인구 1만 명당 보호구역 수
+    people_per_zone: int = Field(gt=0)  # 보호구역 1곳당 인구(반올림)
+
+
+class ZoneOverview(BaseModel):
+    population_month: str  # 인구 기준 연월
+    child_zone_date: str  # 어린이보호구역 지정 현황 기준일
+    elderly_year: int  # 노인보호구역 명단 연도
+    child: ZoneDensityGroup  # 0~12세
+    elderly: ZoneDensityGroup  # 65세 이상

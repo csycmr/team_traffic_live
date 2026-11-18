@@ -5,10 +5,12 @@ from pathlib import Path
 import pandas as pd
 
 from app.errors import ServiceError
-from app.models import ZoneBeforeAfter, ZoneBeforeAfterCase
+from app.models import ZoneBeforeAfter, ZoneBeforeAfterCase, ZoneDensityGroup, ZoneOverview
 from app.services.data_files import (
     PANEL_FILE,
+    CHILD_ZONE_FILE,
     PROTECTION_MASTER_FILE,
+    SEOUL_POPULATION_FILE,
     read_csv,
     require_columns,
 )
@@ -82,3 +84,50 @@ def zone_before_after(data_dir: Path | str | None = None) -> ZoneBeforeAfter:
         unchanged=sum(v == 0 for v in changes),
         cases=cases,
     )
+
+
+def _group(population: int, zones: int) -> ZoneDensityGroup:
+    return ZoneDensityGroup(
+        population=population,
+        zones=zones,
+        zones_per_10k=zones / population * 10000,
+        people_per_zone=int(population / zones + 0.5),  # 0.5는 올린다
+    )
+
+
+def zone_overview(data_dir: Path | str | None = None, elderly_year: int = 2025) -> ZoneOverview:
+    """서울 어린이(0~12세)·노인(65세 이상) 인구 1만 명당 보호구역 수."""
+
+    people = read_csv(SEOUL_POPULATION_FILE, data_dir)
+    require_columns(people, SEOUL_POPULATION_FILE, ["기준연월", "지역", "연령", "총인구수"])
+    people = people[people["지역"].eq("서울특별시")]
+    months = people["기준연월"].unique()
+    if len(months) != 1:
+        raise ServiceError(f"{SEOUL_POPULATION_FILE}의 기준연월이 하나가 아니야.", 500)
+    age = people["연령"].str.extract(r"^(\d+)")[0]
+    if age.isna().any() or people["총인구수"].isna().any() or people["연령"].duplicated().any():
+        raise ServiceError(f"{SEOUL_POPULATION_FILE}의 연령이나 인구 값을 읽지 못했어.", 500)
+    age = age.astype(int)
+    child_population = int(people.loc[age <= 12, "총인구수"].sum())
+    elderly_population = int(people.loc[age >= 65, "총인구수"].sum())
+
+    child_zones = read_csv(CHILD_ZONE_FILE, data_dir)
+    require_columns(child_zones, CHILD_ZONE_FILE, ["기준일", "지역", "기재항목합계"])
+    seoul = child_zones[child_zones["지역"].eq("서울")]
+    if len(seoul) != 1 or pd.isna(seoul.iloc[0]["기재항목합계"]):
+        raise ServiceError(f"{CHILD_ZONE_FILE}에 서울 합계 행이 정확히 하나여야 해.", 500)
+
+    master = read_csv(PROTECTION_MASTER_FILE, data_dir)
+    require_columns(master, PROTECTION_MASTER_FILE, ["시설ID", f"명단{elderly_year}"])
+    elderly_zones = master.loc[master[f"명단{elderly_year}"].eq(1), "시설ID"].nunique()
+
+    try:
+        return ZoneOverview(
+            population_month=str(months[0]),
+            child_zone_date=str(seoul.iloc[0]["기준일"]),
+            elderly_year=elderly_year,
+            child=_group(child_population, int(seoul.iloc[0]["기재항목합계"])),
+            elderly=_group(elderly_population, int(elderly_zones)),
+        )
+    except ValueError as error:
+        raise ServiceError(f"보호구역 현황 값이 올바르지 않아: {error}", 500) from error

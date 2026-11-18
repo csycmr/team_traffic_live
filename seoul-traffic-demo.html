@@ -4573,6 +4573,41 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
   }
 
   loadHotspotReview();
+
+  async function loadZoneOverview() {
+    try {
+      const response = await fetch("http://127.0.0.1:8000/api/statistics/zone-overview");
+
+      if (!response.ok) {
+        throw new Error(`보호구역 현황 API 응답 오류: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const chart = document.querySelector(".school-zone-overview .zone-density");
+      const source = document.querySelector(".school-zone-overview .compare-chart > .policy-source");
+      const bars = chart ? chart.querySelectorAll(":scope > div[style*='--zone-width']") : [];
+      const values = chart ? chart.querySelectorAll(".zone-density-value") : [];
+      const people = chart ? chart.querySelectorAll(".zone-density-people strong") : [];
+
+      if (!source || bars.length !== 2 || values.length !== 2 || people.length !== 2) {
+        throw new Error("보호구역 현황 막대나 문구를 확인해 줘.");
+      }
+
+      // 축이 0~30곳이라 막대 너비는 30곳 대비 비율이야.
+      [data.child, data.elderly].forEach((group, index) => {
+        bars[index].style.setProperty("--zone-width", `${(group.zones_per_10k / 30 * 100).toFixed(4)}%`);
+        values[index].textContent = `${group.zones_per_10k.toFixed(2)}곳`;
+        people[index].textContent = `약 ${group.people_per_zone.toLocaleString("ko-KR")}명`;
+      });
+      source.textContent = `어린이 ${data.child.population.toLocaleString("ko-KR")}명 · ${data.child.zones.toLocaleString("ko-KR")}곳(${data.child_zone_date.slice(0, 4)}년) | 노인 ${data.elderly.population.toLocaleString("ko-KR")}명 · ${data.elderly.zones.toLocaleString("ko-KR")}곳(${data.elderly_year}년)`;
+
+      console.info("서울 보호구역 현황 API 연결 완료", 2);
+    } catch (error) {
+      console.error("서울 보호구역 현황을 불러오지 못했어.", error);
+    }
+  }
+
+  loadZoneOverview();
 </script>
 
 </body>

@@ -111,3 +111,8 @@ def test_protection_map_endpoints():
     assert zones["total"] == 195 and len(zones["facilities"]) + len(zones["unlocated"]) == 195
     assert len(client.get("/api/protection-zones/boundaries").json()["zones"]) == 280
     assert len(client.get("/api/school-zones").json()["zones"]) == 1601
+
+
+def test_zone_overview_endpoint():
+    body = client.get("/api/statistics/zone-overview").json()
+    assert body["child"]["zones"] == 1630 and body["elderly"]["zones"] == 195

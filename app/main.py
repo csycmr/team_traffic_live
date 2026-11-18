@@ -21,6 +21,7 @@ from app.models import (
     ProtectionZones,
     SchoolZones,
     ZoneBeforeAfter,
+    ZoneOverview,
 )
 from app.services import (
     accident_service,
@@ -107,6 +108,11 @@ def get_protection_boundaries():
 @app.get("/api/school-zones", response_model=SchoolZones)
 def get_school_zones():
     return protection_map_service.school_zones()
+
+
+@app.get("/api/statistics/zone-overview", response_model=ZoneOverview)
+def get_zone_overview():
+    return protection_service.zone_overview()
 
 
 @app.get("/api/statistics/hotspots", response_model=Hotspots)
