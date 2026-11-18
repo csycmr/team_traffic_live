@@ -21,7 +21,8 @@
 | API | 서비스 | 자료 |
 | --- | --- | --- |
 | `GET /api/oecd/rankings` | `oecd_service.oecd_rankings` | `13_OECD_고령지표_wide.csv` |
-| `GET /api/traffic/accident-trend` | `accident_service.accident_trend` | `15_전국서울_교통사고_추이.csv` |
+| `GET /api/traffic/accident-trend` | `accident_service.accident_trend` | `15_TAAS_시도시군구_교통사고_2020-2025.csv` |
+| `GET /api/traffic/national-deaths` | `accident_service.national_deaths` | `15_TAAS_시도시군구_교통사고_2020-2025.csv`(전체) + `13_OECD_고령지표_wide.csv`(65세 이상, 2020~2023만) |
 | `GET /api/traffic/child-pedestrian` | `accident_service.child_pedestrian` | `10_어린이보호구역_교통안전_요약.csv` (보행자 교통사고 · 서울 · 2025 · 12세 이하, 정확히 1행) |
 | `GET /api/statistics/elderly` | `accident_service.elderly_pedestrian` | `01_자치구연도_패널.csv` (2025, 25개 자치구 합계) |
 | `GET /api/cctv` | `cctv_service.seoul_cctv` | ITS API + `08_서울_자치구_경계.geojson` |
@@ -31,7 +32,7 @@
 
 ## 정제 CSV 열
 
-- `15_전국서울_교통사고_추이.csv`: `year, nationwide_accidents, seoul_accidents, seoul_injuries, seoul_deaths` (2020~2025, 마지막 행 `2025,193889,34309,45446,212`)
+- `15_TAAS_시도시군구_교통사고_2020-2025.csv`: `연도, 시도, 시군구, 사고건수, 사망자수, 부상자수` (세로형, 2020~2025). 시군구가 `합계`인 행이 시도 합계, 시도가 `합계`인 행이 전국 합계. 전국 합계 행은 17개 시도 합계의 합보다 해마다 조금 크다(원본 특성). 추이 API는 전국 합계·서울 합계 행을 쓴다(2025: 193,889건 / 서울 34,309건·45,446명·212명).
 - `10_어린이보호구역_교통안전_요약.csv`: `자료구분, 지역, 사고연도, 연령범위, 사고건수, 사망자수, 부상자수, 보호구역기록수, 자료기준일, 출처`
 
 화면에 표시할 숫자를 바꾸려면 공식 원본과 정제 과정을 먼저 확인한다.

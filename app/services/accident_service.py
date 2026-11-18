@@ -7,6 +7,7 @@ import pandas as pd
 from app.errors import ServiceError
 from app.models import (
     AccidentTrend,
+    NationalDeaths,
     ChildPedestrian,
     DistrictRate,
     DistrictRates,
@@ -14,28 +15,96 @@ from app.models import (
 )
 from app.services.data_files import (
     ACCIDENT_TREND_FILE,
+    OECD_FILE,
     CHILD_SUMMARY_FILE,
     PANEL_FILE,
     read_csv,
     require_columns,
 )
 
-TREND_COLUMNS = [
-    "year",
-    "nationwide_accidents",
-    "seoul_accidents",
-    "seoul_injuries",
-    "seoul_deaths",
-]
+TAAS_COLUMNS = ["연도", "시도", "시군구", "사고건수", "사망자수", "부상자수"]
+
+
+def _total_rows(data: pd.DataFrame, region: str) -> pd.DataFrame:
+    """시군구가 '합계'인 행에서 한 시도(또는 전국 '합계')의 연도별 값을 고른다."""
+
+    rows = data[data["시도"].eq(region) & data["시군구"].eq("합계")]
+    if rows["연도"].duplicated().any():
+        raise ServiceError(f"{ACCIDENT_TREND_FILE}에 {region} 합계 행이 연도마다 하나가 아니야.", 500)
+    return rows.set_index("연도")
 
 
 def accident_trend(data_dir: Path | str | None = None) -> AccidentTrend:
+    """TAAS 시도·시군구 CSV의 전국 합계 행과 서울 합계 행으로 연도별 추이를 만든다."""
+
     data = read_csv(ACCIDENT_TREND_FILE, data_dir)
-    require_columns(data, ACCIDENT_TREND_FILE, TREND_COLUMNS)
-    if data[TREND_COLUMNS].isna().any().any():
+    require_columns(data, ACCIDENT_TREND_FILE, TAAS_COLUMNS)
+    nationwide = _total_rows(data, "합계")
+    seoul = _total_rows(data, "서울")
+    years = sorted(set(nationwide.index) & set(seoul.index))
+    if not years:
+        raise ServiceError(f"{ACCIDENT_TREND_FILE}에서 전국·서울 합계 행을 찾지 못했어.", 500)
+
+    values = ["사고건수", "사망자수", "부상자수"]
+    if nationwide.loc[years, values].isna().any().any() or seoul.loc[years, values].isna().any().any():
         raise ServiceError(f"{ACCIDENT_TREND_FILE}에 비어 있는 값이 있어.", 500)
-    data = data.sort_values("year")
-    return AccidentTrend(years=data[TREND_COLUMNS].to_dict(orient="records"))
+
+    return AccidentTrend(
+        years=[
+            {
+                "year": int(year),
+                "nationwide_accidents": int(nationwide.at[year, "사고건수"]),
+                "nationwide_deaths": int(nationwide.at[year, "사망자수"]),
+                "seoul_accidents": int(seoul.at[year, "사고건수"]),
+                "seoul_injuries": int(seoul.at[year, "부상자수"]),
+                "seoul_deaths": int(seoul.at[year, "사망자수"]),
+            }
+            for year in years
+        ]
+    )
+
+
+def national_deaths(data_dir: Path | str | None = None) -> NationalDeaths:
+    """전국 연도별 사망자. 전체는 TAAS, 65세 이상은 OECD(대한민국)에서 읽는다.
+
+    OECD 자료에 없는 연도의 65세 이상 값은 null로 둔다(추정하지 않는다).
+    OECD의 전체 사망자가 TAAS와 다르면 자료가 어긋난 것이니 오류로 알린다.
+    """
+
+    trend = accident_trend(data_dir).years
+    oecd = read_csv(OECD_FILE, data_dir)
+    require_columns(
+        oecd, OECD_FILE, ["국가", "연도", "전체_사망자수", "65세이상_사망자수"]
+    )
+    korea = oecd[oecd["국가"].eq("대한민국")].set_index("연도")
+
+    years = []
+    for row in trend:
+        elderly = None
+        if row.year in korea.index:
+            record = korea.loc[row.year]
+            if pd.isna(record["65세이상_사망자수"]):
+                raise ServiceError(f"{row.year}년 OECD 65세 이상 사망자가 비어 있어.", 500)
+            if int(record["전체_사망자수"]) != row.nationwide_deaths:
+                raise ServiceError(
+                    f"{row.year}년 전체 사망자가 TAAS({row.nationwide_deaths})와 "
+                    f"OECD({int(record['전체_사망자수'])})에서 달라.",
+                    500,
+                )
+            elderly = int(record["65세이상_사망자수"])
+        years.append(
+            {
+                "year": row.year,
+                "total_deaths": row.nationwide_deaths,
+                "elderly_deaths": elderly,
+                "elderly_share_percent": (
+                    None
+                    if elderly is None
+                    else round(elderly / row.nationwide_deaths * 100, 1)
+                ),
+            }
+        )
+    return NationalDeaths(years=years)
 
 
 def child_pedestrian(

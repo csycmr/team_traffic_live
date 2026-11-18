@@ -2,35 +2,66 @@ import pytest
 
 from app.errors import ServiceError
 from app.services import accident_service
-from app.services.data_files import ACCIDENT_TREND_FILE, CHILD_SUMMARY_FILE
+from app.services.data_files import (
+    ACCIDENT_TREND_FILE,
+    CHILD_SUMMARY_FILE,
+    OECD_FILE,
+)
 
 CHILD_HEADER = "자료구분,지역,사고연도,연령범위,사고건수,사망자수,부상자수"
+
+
+TAAS_HEADER = "연도,시도,시군구,사고건수,사망자수,부상자수"
 
 
 def test_accident_trend_real_data_ends_with_2025(real_data_dir):
     years = accident_service.accident_trend(real_data_dir).years
     assert [row.year for row in years] == [2020, 2021, 2022, 2023, 2024, 2025]
     last = years[-1]
-    assert (last.nationwide_accidents, last.seoul_accidents) == (193889, 34309)
-    assert (last.seoul_injuries, last.seoul_deaths) == (45446, 212)
+    assert (last.nationwide_accidents, last.nationwide_deaths) == (193889, 2549)
+    assert (last.seoul_accidents, last.seoul_injuries, last.seoul_deaths) == (34309, 45446, 212)
+    assert [row.nationwide_deaths for row in years] == [3081, 2916, 2735, 2551, 2521, 2549]
 
 
-def test_accident_trend_sorts_by_year(write_csv):
-    data_dir = write_csv(
-        ACCIDENT_TREND_FILE,
-        "year,nationwide_accidents,seoul_accidents,seoul_injuries,seoul_deaths\n"
-        "2021,2,2,2,2\n2020,1,1,1,1",
-    )
-    assert [row.year for row in accident_service.accident_trend(data_dir).years] == [
-        2020,
-        2021,
+def test_accident_trend_uses_total_rows_and_sorts(write_csv):
+    rows = [
+        "2021,합계,합계,20,2,30",
+        "2021,서울,합계,5,1,6",
+        "2021,서울,종로구,5,1,6",
+        "2020,서울,합계,4,1,5",
+        "2020,합계,합계,10,1,15",
     ]
+    data_dir = write_csv(ACCIDENT_TREND_FILE, TAAS_HEADER + "\n" + "\n".join(rows))
+    years = accident_service.accident_trend(data_dir).years
+    assert [row.year for row in years] == [2020, 2021]
+    assert (years[1].nationwide_accidents, years[1].seoul_accidents) == (20, 5)
 
 
 def test_accident_trend_missing_column_is_error(write_csv):
-    data_dir = write_csv(ACCIDENT_TREND_FILE, "year,nationwide_accidents\n2020,1")
+    data_dir = write_csv(ACCIDENT_TREND_FILE, "연도,시도\n2020,합계")
     with pytest.raises(ServiceError):
         accident_service.accident_trend(data_dir)
+
+
+def test_accident_trend_duplicate_total_is_error(write_csv):
+    row = "2020,서울,합계,4,1,5"
+    data_dir = write_csv(ACCIDENT_TREND_FILE, f"{TAAS_HEADER}\n{row}\n{row}\n2020,합계,합계,9,1,9")
+    with pytest.raises(ServiceError, match="하나가 아니야"):
+        accident_service.accident_trend(data_dir)
+
+
+def test_seoul_districts_sum_to_seoul_total(real_data_dir):
+    """원본 xlsx 검증: 서울 25개 구 합이 서울 합계 행과 같다."""
+    import pandas as pd
+
+    data = pd.read_csv(real_data_dir / ACCIDENT_TREND_FILE, encoding="utf-8-sig")
+    seoul = data[data["시도"].eq("서울")]
+    for year, group in seoul.groupby("연도"):
+        total = group[group["시군구"].eq("합계")].iloc[0]
+        districts = group[~group["시군구"].eq("합계")]
+        assert len(districts) == 25
+        assert districts["사고건수"].sum() == total["사고건수"]
+        assert districts["사망자수"].sum() == total["사망자수"]
 
 
 def test_child_pedestrian_real_data(real_data_dir):
@@ -126,3 +157,26 @@ def test_district_rates_weighted_average_matches_card(real_data_dir):
     elderly = accident_service.elderly_pedestrian(real_data_dir)
     assert districts.seoul_accidents_per_10k == elderly.accidents_per_10k
     assert sum(row.accidents for row in districts.districts) == elderly.accidents
+
+
+def test_national_deaths_real_data(real_data_dir):
+    """화면 막대: 전체 3,081→2,549명, 65세 이상은 OECD 2020~2023만."""
+    years = accident_service.national_deaths(real_data_dir).years
+    assert [row.year for row in years] == [2020, 2021, 2022, 2023, 2024, 2025]
+    assert [row.total_deaths for row in years] == [3081, 2916, 2735, 2551, 2521, 2549]
+    assert [row.elderly_deaths for row in years[:4]] == [1342, 1295, 1258, 1240]
+    assert [row.elderly_share_percent for row in years[:4]] == [43.6, 44.4, 46.0, 48.6]
+    assert all(
+        row.elderly_deaths is None and row.elderly_share_percent is None
+        for row in years[4:]
+    )
+
+
+def test_national_deaths_total_mismatch_is_error(write_csv, tmp_path):
+    taas = "연도,시도,시군구,사고건수,사망자수,부상자수\n"
+    taas += "2020,합계,합계,10,100,15\n2020,서울,합계,4,1,5"
+    oecd = "국가,연도,전체_사망자수,65세이상_사망자수\n대한민국,2020,99,40"
+    (tmp_path / ACCIDENT_TREND_FILE).write_text(taas, encoding="utf-8-sig")
+    (tmp_path / OECD_FILE).write_text(oecd, encoding="utf-8-sig")
+    with pytest.raises(ServiceError, match="달라"):
+        accident_service.national_deaths(tmp_path)

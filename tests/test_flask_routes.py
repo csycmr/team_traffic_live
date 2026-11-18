@@ -15,7 +15,7 @@ def client():
 
 def test_dashboard_and_data_files_are_served(client):
     assert client.get("/").status_code == 200
-    csv = client.get("/data/15_전국서울_교통사고_추이.csv")
+    csv = client.get("/data/15_TAAS_시도시군구_교통사고_2020-2025.csv")
     assert csv.status_code == 200
     assert b"193889" in csv.data
 

@@ -23,6 +23,7 @@ class OecdRankings(BaseModel):
 class AccidentTrendYear(BaseModel):
     year: int
     nationwide_accidents: int = Field(ge=0)
+    nationwide_deaths: int = Field(ge=0)
     seoul_accidents: int = Field(ge=0)
     seoul_injuries: int = Field(ge=0)
     seoul_deaths: int = Field(ge=0)
@@ -30,6 +31,19 @@ class AccidentTrendYear(BaseModel):
 
 class AccidentTrend(BaseModel):
     years: list[AccidentTrendYear]
+
+
+class NationalDeathYear(BaseModel):
+    """전국 교통사고 사망자. 65세 이상 값은 OECD 자료가 있는 연도에만 채운다."""
+
+    year: int
+    total_deaths: int = Field(ge=0)
+    elderly_deaths: int | None = Field(default=None, ge=0)
+    elderly_share_percent: float | None = Field(default=None, ge=0, le=100)
+
+
+class NationalDeaths(BaseModel):
+    years: list[NationalDeathYear]
 
 
 class ChildPedestrian(BaseModel):

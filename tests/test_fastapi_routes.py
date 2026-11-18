@@ -20,6 +20,7 @@ def test_accident_trend_endpoint():
     assert years[-1] == {
         "year": 2025,
         "nationwide_accidents": 193889,
+        "nationwide_deaths": 2549,
         "seoul_accidents": 34309,
         "seoul_injuries": 45446,
         "seoul_deaths": 212,
@@ -64,3 +65,14 @@ def test_elderly_districts_endpoint():
     assert body["seoul_accidents_per_10k"] == 10.77
     assert len(body["districts"]) == 25
     assert body["districts"][0]["district"] == "중구"
+
+
+def test_national_deaths_endpoint():
+    years = client.get("/api/traffic/national-deaths").json()["years"]
+    assert years[0] == {
+        "year": 2020,
+        "total_deaths": 3081,
+        "elderly_deaths": 1342,
+        "elderly_share_percent": 43.6,
+    }
+    assert years[-1]["elderly_deaths"] is None

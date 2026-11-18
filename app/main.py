@@ -11,6 +11,7 @@ from app.models import (
     ChildPedestrian,
     DistrictRates,
     ElderlyPedestrian,
+    NationalDeaths,
     OecdRankings,
 )
 from app.services import accident_service, cctv_service, citydata_service, oecd_service
@@ -43,6 +44,11 @@ def get_oecd_rankings():
 @app.get("/api/traffic/accident-trend", response_model=AccidentTrend)
 def get_accident_trend():
     return accident_service.accident_trend()
+
+
+@app.get("/api/traffic/national-deaths", response_model=NationalDeaths)
+def get_national_deaths():
+    return accident_service.national_deaths()
 
 
 @app.get("/api/traffic/child-pedestrian", response_model=ChildPedestrian)
