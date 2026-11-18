@@ -92,11 +92,10 @@ def test_real_gwanghwamun_traffic_and_incidents():
     assert traffic["updatedAt"] == "2026-11-18 12:30"
 
     segments = traffic["slowSegments"]
-    assert len(segments) == citydata_service.MAX_SLOW_SEGMENTS
-    assert traffic["slowSegmentCount"] >= len(segments)
+    assert len(segments) == traffic["slowSegmentCount"] == 16  # 샘플: 정체 12 + 서행 4
     assert {item["status"] for item in segments} <= {"정체", "서행"}
-    speeds = [item["speedKmh"] for item in segments]
-    assert speeds == sorted(speeds)  # 정체 구간 안에서 느린 순서
+    order = [(item["status"] != "정체", item["speedKmh"]) for item in segments]
+    assert order == sorted(order)  # 정체 먼저, 같은 등급에서는 느린 순서
     assert segments[0]["name"] and segments[0]["start"] and segments[0]["end"]
 
     assert len(data["incidents"]) == 2

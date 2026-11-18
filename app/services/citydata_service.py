@@ -22,7 +22,6 @@ PLACES = {
     "dongdaemun": "동대문 관광특구",
     "namdaemun": "남대문시장",
 }
-MAX_SLOW_SEGMENTS = 10  # 화면에 보여 줄 서행·정체 구간 수(전체 개수는 따로 준다)
 SLOW_STATUSES = ("정체", "서행")  # 정체가 더 나쁜 순서
 
 _cache: dict[str, dict] = {}
@@ -82,7 +81,7 @@ def _traffic(city: ET.Element) -> dict:
         )
     )
     traffic["slowSegmentCount"] = len(slow)
-    traffic["slowSegments"] = slow[:MAX_SLOW_SEGMENTS]
+    traffic["slowSegments"] = slow  # 많으면 화면의 목록 영역이 내부 스크롤로 보여 준다.
     return traffic
 
 
