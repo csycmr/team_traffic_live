@@ -1306,7 +1306,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
             <div class="stat-change">전년 대비 +97건</div>
           </dd>
         </dl>
-        <dl class="stat"><dt>어린이 보행자 사고수</dt><dd><strong>339</strong><small>건</small></dd></dl>
+        <dl class="stat"><dt>어린이 보행자 사고수</dt><dd><strong id="child-pedestrian-accidents">—</strong><small>건</small></dd></dl>
         <dl class="stat">
           <dt>고령 보행사고 사망자수</dt>
           <dd>
@@ -1314,7 +1314,7 @@ body > :is(.traffic-screen, .story-screen) { scroll-snap-stop: always }
             <div class="stat-change">전년 대비 +14명</div>
           </dd>
         </dl>
-        <dl class="stat"><dt>어린이 보행사고 사망자수</dt><dd><strong>1</strong><small>명</small></dd></dl>
+        <dl class="stat"><dt>어린이 보행사고 사망자수</dt><dd><strong id="child-pedestrian-deaths">—</strong><small>명</small></dd></dl>
       </div>
       <p class="muted safety-board-note">서울 · 고령층 65세 이상 · 어린이 12세 이하 · <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/10_어린이보호구역_교통안전_요약.csv">집계 자료</a></p>
     </section>
@@ -4084,7 +4084,8 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
       if (annualAccidentCard && seoul2025) {
         annualAccidentCard.textContent =
           formatCount.format(seoul2025.seoul_accidents);
-}
+      }
+
       const annualInjuriesCard = document.getElementById("seoul-annual-injuries");
       const annualDeathsCard = document.getElementById("seoul-annual-deaths");
 
@@ -4126,6 +4127,38 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
   }
 
   loadAccidentTrend();
+
+  async function loadChildPedestrian() {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/traffic/child-pedestrian"
+      );
+
+      if (!response.ok) {
+        throw new Error(`어린이 보행사고 API 응답 오류: ${response.status}`);
+      }
+
+      const child = await response.json();
+      const accidentsCard = document.getElementById("child-pedestrian-accidents");
+      const deathsCard = document.getElementById("child-pedestrian-deaths");
+
+      if (!accidentsCard || !deathsCard
+        || !Number.isInteger(child.accidents)
+        || !Number.isInteger(child.deaths)) {
+        throw new Error("어린이 보행사고 카드나 API 값을 확인해 줘.");
+      }
+
+      const formatCount = new Intl.NumberFormat("ko-KR");
+      accidentsCard.textContent = formatCount.format(child.accidents);
+      deathsCard.textContent = formatCount.format(child.deaths);
+
+      console.info("어린이 보행사고 API 연결 완료", child.year);
+    } catch (error) {
+      console.error("어린이 보행사고 데이터를 불러오지 못했어.", error);
+    }
+  }
+
+  loadChildPedestrian();
 </script>
 
 </body>

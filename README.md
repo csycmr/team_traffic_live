@@ -27,7 +27,7 @@
 
 VS Code에서 저장소 폴더를 열고 PowerShell 터미널에서 진행합니다. Python 3.14가 필요합니다.
 
-### 1. 가상환경 만들기와 Flask 설치
+### 1. 가상환경 만들기와 패키지 설치
 
 ```powershell
 py -3.14 -m venv .venv
@@ -39,10 +39,18 @@ py -3.14 -m venv .venv
 ### 2. 서버 시작과 화면 확인
 
 ```powershell
-.\.venv\Scripts\python.exe app.py
+.\.venv\Scripts\python.exe -m app.flask_app
 ```
 
-터미널에 `Running on http://127.0.0.1:5000`이 보이면 [로컬 대시보드](http://127.0.0.1:5000/)를 엽니다. 로컬 카카오맵을 쓰려면 카카오 JavaScript SDK 허용 도메인에 `http://127.0.0.1:5000`을 등록해야 합니다. 서버 종료는 `Ctrl+C`입니다.
+터미널에 `Running on http://127.0.0.1:5001`이 보이면 [로컬 대시보드](http://127.0.0.1:5001/)를 엽니다. 로컬 카카오맵을 쓰려면 카카오 JavaScript SDK 허용 도메인에 `http://127.0.0.1:5001`을 등록해야 합니다. 서버 종료는 `Ctrl+C`입니다.
+
+통계 API(FastAPI)는 두 번째 PowerShell 터미널에서 함께 실행합니다. 화면의 차트·카드가 이 서버의 값을 읽습니다.
+
+```powershell
+.\.venv\Scripts\python.exe -m uvicorn app.main:app --port 8000
+```
+
+[FastAPI 문서](http://127.0.0.1:8000/docs)에서 `/api/oecd/rankings`, `/api/traffic/accident-trend`, `/api/traffic/child-pedestrian`을 확인합니다. 두 서버를 한 번에 띄우는 `scripts/run_windows.ps1`도 있습니다.
 
 로컬에서 다른 카카오 JavaScript 키를 쓰려면 저장소 루트의 `.env`에 `KAKAO_MAP_JS_KEY=발급받은_JavaScript_키`를 추가하고 Flask를 재시작합니다. 해당 키의 JavaScript SDK 도메인에 브라우저에서 실제로 쓰는 주소를 등록합니다. 5001 포트라면 `http://127.0.0.1:5001`입니다.
 
@@ -55,17 +63,32 @@ $itsKey = Read-Host 'CCTV API 키' -AsSecureString
 $itsCredential = [pscredential]::new('ITS', $itsKey)
 $env:ITS_CCTV_API_KEY = $itsCredential.GetNetworkCredential().Password
 Remove-Variable itsKey, itsCredential
-.\.venv\Scripts\python.exe app.py
+.\.venv\Scripts\python.exe -m app.flask_app
 ```
 
-[로컬 CCTV API](http://127.0.0.1:5000/api/cctv)를 열면 `source_count`(API 응답 건수), `seoul_count`(서울시 경계 안의 건수), `cameras`(이름·좌표·영상 주소 등)를 확인할 수 있습니다. 이 API는 로컬 Flask 서버에서 제공됩니다. 공개 사이트는 정적 페이지이며, 전광판의 CCTV 상태는 시연용입니다.
+[로컬 CCTV API](http://127.0.0.1:5001/api/cctv)를 열면 `source_count`(API 응답 건수), `seoul_count`(서울시 경계 안의 건수), `cameras`(이름·좌표·영상 주소 등)를 확인할 수 있습니다. 이 API는 로컬 Flask 서버에서 제공됩니다. 공개 사이트는 정적 페이지이며, 전광판의 CCTV 상태는 시연용입니다.
 
 ## 주요 파일
 
 | 파일 | 역할 |
 | --- | --- |
 | [seoul-traffic-demo.html](seoul-traffic-demo.html) | 대시보드 화면과 지도 동작 |
-| [app.py](app.py) | 로컬 대시보드를 제공하고 CCTV 목록을 서울시 경계로 필터링 |
+| [app/main.py](app/main.py) | FastAPI 통계 API (OECD 순위, 교통사고 추이, 어린이·고령 보행사고) |
+| [app/flask_app.py](app/flask_app.py) | 대시보드 화면, 뉴스룸 API, CCTV·도시데이터 API를 제공하는 Flask 서버 |
+| [app/services/](app/services/) | CSV를 읽어 값을 계산하는 서비스. Flask와 FastAPI가 함께 사용 |
+| [app/adapters/](app/adapters/) | 국가교통정보센터·서울시 도시데이터 같은 외부 API 호출 |
+| [app/models.py](app/models.py) | API 응답 형태(Pydantic) |
+| [app/config.py](app/config.py) | `.env` 설정과 data 폴더 경로 |
+| [newsroom/](newsroom/) | 뉴스룸 기사 초안·검수·추천 로직 |
+| [tests/](tests/) | 서비스·API 테스트 |
+| [docs/](docs/) | 데이터 구조와 API 키 안내 |
+| [scripts/](scripts/) | 실행·테스트 스크립트와 자료 정제 코드 |
 | [requirements.txt](requirements.txt) | 로컬 실행에 필요한 Python 패키지 |
 | [assets/](assets/) | 배경 영상과 대표 이미지 |
 | [data/](data/) | 교통사고·보호구역 분석 자료와 지도 경계 |
+
+## 테스트
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest -q
+```
