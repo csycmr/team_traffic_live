@@ -4002,8 +4002,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
       const response = await fetch(
         "http://127.0.0.1:8000/api/oecd/rankings"
       );
-      console.info("OECD 순위 API 연결 완료", years.length);
-
+      
       if (!response.ok) {
         throw new Error(`OECD API 응답 오류: ${response.status}`);
       }
@@ -4040,6 +4039,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
           measure.style.setProperty("--level", `${(rate / 30) * 100}%`);
         });
       }
+      console.info("OECD 순위 API 연결 완료", years.length);
     } catch (error) {
       console.error("OECD 차트 데이터를 불러오지 못했어.", error);
     }
