@@ -17,6 +17,9 @@ from app.models import (
     Hotspots,
     NationalDeaths,
     OecdRankings,
+    ProtectionBoundaries,
+    ProtectionZones,
+    SchoolZones,
     ZoneBeforeAfter,
 )
 from app.services import (
@@ -27,6 +30,7 @@ from app.services import (
     comparison_service,
     oecd_service,
     population_service,
+    protection_map_service,
     protection_service,
 )
 
@@ -88,6 +92,21 @@ def get_zone_before_after():
 @app.get("/api/statistics/elderly/district-comparison", response_model=DistrictComparison)
 def get_district_comparison():
     return comparison_service.district_comparison()
+
+
+@app.get("/api/protection-zones", response_model=ProtectionZones)
+def get_protection_zones():
+    return protection_map_service.protection_zones()
+
+
+@app.get("/api/protection-zones/boundaries", response_model=ProtectionBoundaries)
+def get_protection_boundaries():
+    return protection_map_service.protection_boundaries()
+
+
+@app.get("/api/school-zones", response_model=SchoolZones)
+def get_school_zones():
+    return protection_map_service.school_zones()
 
 
 @app.get("/api/statistics/hotspots", response_model=Hotspots)

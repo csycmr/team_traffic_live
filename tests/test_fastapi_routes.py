@@ -104,3 +104,10 @@ def test_hotspot_endpoints():
     assert spots["year"] == 2025 and len(spots["locations"]) == 71
     review = client.get("/api/statistics/hotspots/review").json()
     assert (review["total"], review["overlapping"], review["outside"]) == (71, 12, 59)
+
+
+def test_protection_map_endpoints():
+    zones = client.get("/api/protection-zones").json()
+    assert zones["total"] == 195 and len(zones["facilities"]) + len(zones["unlocated"]) == 195
+    assert len(client.get("/api/protection-zones/boundaries").json()["zones"]) == 280
+    assert len(client.get("/api/school-zones").json()["zones"]) == 1601

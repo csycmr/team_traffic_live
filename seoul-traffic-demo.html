@@ -3386,6 +3386,12 @@ async function readProtectionCsv(path) {
   return parseProtectionCsv(await response.text());
 }
 
+async function readProtectionApi(path) {
+  const response = await fetch("http://127.0.0.1:8000" + path);
+  if (!response.ok) throw new Error("API HTTP " + response.status);
+  return response.json();
+}
+
 function hasProtectionCoordinates(row) {
   return Number(row.위도) >= 37 && Number(row.위도) <= 38 &&
     Number(row.경도) >= 126 && Number(row.경도) <= 128;
@@ -3468,7 +3474,7 @@ async function showAccidentHotspots(kakaoMap) {
   control.disabled = true;
 
   try {
-    const response = await fetch("./data/accident-hotspots-2025.json");
+    const response = await fetch("http://127.0.0.1:8000/api/statistics/hotspots");
     if (!response.ok) throw new Error("사고다발지역 HTTP " + response.status);
     const { year, locations } = await response.json();
     const popup = createMapPopup(kakaoMap);
@@ -3519,7 +3525,10 @@ async function showSchoolZones(kakaoMap) {
   control.disabled = true;
 
   try {
-    const rows = await readProtectionCsv("./data/09_어린이보호구역_서울.csv");
+    const rows = (await readProtectionApi("/api/school-zones")).zones.map(zone => ({
+      시설명: zone.name, 자치구명: zone.district, 도로명주소: zone.road_address ?? "",
+      지번주소: zone.lot_address ?? "", 위도: zone.lat, 경도: zone.lng, 데이터기준일: zone.data_date ?? ""
+    }));
     const popup = createMapPopup(kakaoMap);
     const pinUrl = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAcCAYAAABh2p9gAAAEzUlEQVR4nH1UW2hcZRD+Zv5zzu6mqU1SGmMvovgSSWsQ+mKaKAEviCIo9oJFfKwvjYkvqSm0pmBosZiYUrGPpSA1FeuDVPDBtKRWsBWJbbFoI22TbNMkm2xDsrvn8s/4cHbT3MjAD4fDzDffzHwzhAWmJ2BoP2xfB7wtlWUfGNJ3jWPqjOGNAGCtpG1kb1ql74anc6d3dSEoxZQwqPRxuAfc2Qq5ciy1M5Xgg5WVifqKigS8hAMQFzMKAj9CNutjetofzPvyWUN7/lwptghI0BNqqIXsr0dT3dVVbuumzeVwk54wASIgQIuJSZmhokBYCHh0ZBbjU2HPjgP5Nu1VQ/vJUn8LnOZeRJePlXU/sznRWln9WOS4zGKVVQnEDEDnC1IRECnYkEShyPT4jDM04vc0tufa+lvgEABcOZZ6u3q99/2WpypCZnZEhIgNICEQzALGjfFsCHjlALtQsWBmFZFo+E7WHc8E7zS0589T/1EkU07Zn8/VVdZ6KU9spEzMQJgHEuvAz74Prm4CAMj4AOTvM4D/EHBTUBEYhyTIB/zXzelb+Sj3vONoYm/NhmStm/RErDIxATYAUpVwmr4BoX5eBaa6CVz9BqKB9wB/BmRciFV2k57UbEjWDqftXmY2eyoqEsoEVS3OSUI4TadAqEdgAdH4BRYg1MNpOhW3AwRVgAlaUZFQZrOHXZe3up5DIqVSc8D6bVBphFXAMwBT/DwDWAVUGoH124AwB2KGiLLrOeS6vJVdl2qIaV5CkBBUvgnEC0S6wAixLKl80zxLAERMcF2q4UXeqvEEZ0eh8kgsi1xifUNnRwF245gFxmGoYypa9BXALQMy10F8GYawrIeGAOLLQOZ67BsviKoowlDHOAzlRhhEykyiJVx2EQ3sg2JwWQ8Vg4gG9sXsoHFRTBIGkYah3HBE7Nls1n95zWNJIiqWbTwgP43o0p5VdQgVEAGioGzWJxF7dmVhlzq/yqZAJc69RNjcfAAFsdqRHp2FjcQyU6xHFYAcIFkFuOXxS1bF/4pgzKQ2EpsenYVY7Wg+gAL3t8BpaM+fH8uEPVMPZlxrxRqHZH6maotjlfi7OHtmUhGxUw9m3LFM2NPQnj9fPA6Lz9eGKrf1iY3lSCQ9fXS2lmiRSP1CROmRGUxMLz5fDChoP+zhbuUd7bm2B1P+7tu3s3fFWqX5dVwkVSVSHb438zA94e/e0Z5rO9ytHF9tXbwM13rhbm9B+POh5Et1teUXH9+49tGQSgIwZMO8b64OZj998ZNc541v4W3djWBe2AsBt7cgvNYL99UjhUvD9wsXEVlihl3AUglKQ3fnJrOZ3Ek9AVN3BuGiTVnan//GYunn58LOiYkccbznJYnYqBBwZio4+dZxTOI1gH5cvKHLAHd1wfZ1wDQf8i/eSxfOkVjDDAtADKn5987cUBDku/UCGB9DlsYvAwSAnY1x1vH7wcGRdM53HCJjSPKzAU1O+kde6cRDDIGWslvV9B8YAPjt8zWn5ZcnVS89Lde/Wnfry9eR0AtgrHzdVmYIALgN1TdB2cxc1+j9XCHI+ZTJ+F0f/QQfQyCsfN1Wt76OmOXVL9ae/aNn7di1D+Guxg4AnNUAdzbGLH9HdDwK+YcXvkbYVwUDLB9Gyf4H8sitOLtbDjcAAAAASUVORK5CYII=";
     control.style.setProperty("--legend-pin", "url(" + pinUrl + ")");
@@ -3565,23 +3574,15 @@ async function showProtectionZones(kakaoMap) {
   status.hidden = false;
 
   try {
-    const [master, rows] = await Promise.all([
-      readProtectionCsv("./data/04_보호구역_마스터.csv"),
-      readProtectionCsv("./data/05_보호구역_경계.csv")
-    ]);
-    const facilities = [...new Map(
-      master.filter(row => row.명단2025 === "1").map(row => [row.시설ID, row])
-    ).values()];
-    const boundaries = new Map();
-    const matchRank = row => row.명단매칭방식?.includes("검수필요") ? 0 :
-      row.명단매칭방식 === "주소+시설명" ? 2 : 1;
-    for (const row of rows.filter(hasProtectionCoordinates)) {
-      const previous = boundaries.get(row.시설ID);
-      if (!previous || matchRank(row) > matchRank(previous) ||
-          (matchRank(row) === matchRank(previous) && row.데이터기준일 > previous.데이터기준일)) {
-        boundaries.set(row.시설ID, row);
-      }
-    }
+    const zoneData = await readProtectionApi("/api/protection-zones");
+    const facilities = zoneData.facilities.map(zone => ({
+      시설ID: zone.id, 시설명: zone.name, 자치구명: zone.district, 위치: zone.address,
+      위도: zone.lat, 경도: zone.lng, 데이터기준일: zone.data_date ?? "",
+      명단매칭방식: zone.match_method ?? "", 위치안내: zone.note ?? ""
+    }));
+    const missing = zoneData.unlocated.map(zone => ({
+      시설ID: zone.id, 시설명: zone.name, 자치구명: zone.district, 위치: zone.address
+    }));
 
     const services = kakao.maps.services;
     const geocoder = services && new services.Geocoder();
@@ -3618,17 +3619,7 @@ async function showProtectionZones(kakaoMap) {
       markers.push(marker);
     };
 
-    const missing = [];
-    for (const facility of facilities) {
-      const location = boundaries.get(facility.시설ID) ||
-        (facility.시설ID === "Z186" ? {
-          위도: 37.580216,
-          경도: 127.042424,
-          위치안내: "시장 대표 위치 · 보호구역 경계와 다를 수 있어"
-        } : null);
-      if (location) addMarker(facility, location);
-      else missing.push(facility);
-    }
+    for (const facility of facilities) addMarker(facility, facility);
 
     kakao.maps.event.addListener(kakaoMap, "click", () => popup.close());
     if (geocoder && places) {
@@ -3638,8 +3629,8 @@ async function showProtectionZones(kakaoMap) {
       }
     }
 
-    status.textContent = "노인보호구역 " + facilities.length + "곳";
-    status.title = "2025년 명단 기준 · 지도에 표시할 수 있는 시설 " + markers.length + "/" + facilities.length + "곳";
+    status.textContent = "노인보호구역 " + zoneData.total + "곳";
+    status.title = "2025년 명단 기준 · 지도에 표시할 수 있는 시설 " + markers.length + "/" + zoneData.total + "곳";
     status.disabled = false;
     status.addEventListener("click", () => {
       const visible = status.getAttribute("aria-pressed") !== "true";
@@ -3669,8 +3660,9 @@ async function showZoneOverlapMap() {
   const status = document.getElementById('zone-overlap-map-status');
   try {
     const [boundaries, hotspots] = await Promise.all([
-      readProtectionCsv('./data/05_보호구역_경계.csv'),
-      fetch('./data/accident-hotspots-2025.json').then(response => {
+      readProtectionApi('/api/protection-zones/boundaries').then(data =>
+        data.zones.map(zone => ({ 시설ID: zone.facility_id, 경계WKT: zone.wkt }))),
+      fetch('http://127.0.0.1:8000/api/statistics/hotspots').then(response => {
         if (!response.ok) throw new Error('사고다발지역 HTTP ' + response.status);
         return response.json();
       }),
@@ -4508,6 +4500,79 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
   }
 
   loadDistrictComparison();
+
+  async function loadHotspotReview() {
+    try {
+      const response = await fetch(
+        "http://127.0.0.1:8000/api/statistics/hotspots/review"
+      );
+
+      if (!response.ok) {
+        throw new Error(`사고다발지역 검토 API 응답 오류: ${response.status}`);
+      }
+
+      const review = await response.json();
+      const overlap = document.querySelector("#zone-overlap");
+      const section = document.querySelector("#zone-review");
+      const counts = overlap && overlap.querySelectorAll(".overlap-counts dd");
+      const topBody = section && section.querySelector(".review-list > .review-table-wrap tbody");
+      const restBody = section && section.querySelector(".review-details tbody");
+      const restTitle = section && section.querySelector(".review-details summary");
+      const chartSection = section && section.querySelector("[aria-labelledby='review-chart-title']");
+      const chartList = chartSection && chartSection.querySelector(".review-chart ol");
+      const chartCaption = chartSection && chartSection.querySelector(".audit-chart-caption");
+      const chartSource = chartSection && chartSection.querySelector(".review-source");
+      const candidateBody = section && section.querySelector(".review-candidates tbody");
+
+      if (!counts || counts.length !== 3 || !topBody || !restBody || !restTitle || !chartList
+          || !chartCaption || !chartSource || !candidateBody || !Array.isArray(review.items)) {
+        throw new Error("검토 자료 표나 API 값을 확인해 줘.");
+      }
+
+      // 막대 그래프 세로 축이 0~10곳으로 고정돼 있어서, 넘으면 조용히 잘리지 않게 알려 준다.
+      const tallest = Math.max(...review.districts.map((d) => d.overlapping + d.outside));
+      if (tallest > 10) {
+        throw new Error(`자치구 막대(${tallest}곳)가 그래프 축(10곳)보다 커. 축을 늘려 줘.`);
+      }
+
+      const escapeHtml = (text) =>
+        String(text).replace(/[&<>"']/g, (char) => (
+          { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[char]
+        ));
+      const rowHtml = (item) => {
+        const distance = item.overlaps
+          ? '<span class="review-badge">겹침</span>'
+          : `${item.distance_m.toLocaleString("ko-KR")}m`;
+        return `
+          <tr><th scope="row">${escapeHtml(item.name)}</th><td>${item.crashes}건</td><td>${distance}</td></tr>`;
+      };
+
+      counts[0].textContent = `${review.total}곳`;
+      counts[1].textContent = `${review.overlapping}곳`;
+      counts[2].textContent = `${review.outside}곳`;
+
+      const topCount = 12;
+      topBody.innerHTML = review.items.slice(0, topCount).map(rowHtml).join("");
+      restBody.innerHTML = review.items.slice(topCount).map(rowHtml).join("");
+      restTitle.textContent = `나머지 ${Math.max(review.items.length - topCount, 0)}곳 자료 표 보기`;
+
+      chartList.innerHTML = review.districts.map((d) => `
+            <li aria-label="${escapeHtml(d.district)}, 겹침 ${d.overlapping}곳, 보호구역 밖 ${d.outside}곳"><div class="review-stack" aria-hidden="true"><span class="review-inside" style="--count:${d.overlapping}">${d.overlapping || ""}</span><span class="review-outside" style="--count:${d.outside}">${d.outside || ""}</span></div><span aria-hidden="true">${escapeHtml(d.district)}</span></li>`).join("");
+      chartCaption.textContent =
+        `${review.year}년 사고다발지역 선정 영역 수(곳) · 선정 지역이 있는 ${review.districts.length}개 자치구`;
+      chartSource.innerHTML =
+        `판정 가능한 ${review.total}곳 중 보호구역 밖은 <strong>${review.outside}곳(${review.outside_percent.toFixed(1)}%)</strong>입니다.`;
+
+      candidateBody.innerHTML = review.candidates.map((c) => `
+          <tr><th scope="row">${escapeHtml(c.district)}</th><td>${c.selected}</td><td>${c.outside}</td><td>${c.overlapping}</td><td>${c.undetermined}</td><td>${c.accidents_per_10k.toFixed(2)}</td></tr>`).join("");
+
+      console.info("사고다발지역 검토 API 연결 완료", review.items.length);
+    } catch (error) {
+      console.error("사고다발지역 검토 자료를 불러오지 못했어.", error);
+    }
+  }
+
+  loadHotspotReview();
 </script>
 
 </body>

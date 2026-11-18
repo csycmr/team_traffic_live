@@ -207,3 +207,52 @@ class HotspotReview(BaseModel):
     items: list[HotspotReviewItem]  # 사고 많은 순
     districts: list[HotspotDistrictCount]
     candidates: list[HotspotCandidate]
+
+
+class ProtectionZone(BaseModel):
+    id: str
+    name: str
+    district: str
+    address: str
+    lat: float
+    lng: float
+    data_date: str | None  # 경계 자료 기준일(YYYYMMDD)
+    match_method: str | None  # 명단과 경계 자료를 잇는 방식
+    note: str | None  # 위치 안내
+
+
+class UnlocatedFacility(BaseModel):
+    id: str
+    name: str
+    district: str
+    address: str
+
+
+class ProtectionZones(BaseModel):
+    year: int
+    total: int = Field(ge=0)  # 명단 시설 수
+    facilities: list[ProtectionZone]  # 좌표가 있는 시설
+    unlocated: list[UnlocatedFacility]  # 좌표가 없어 지도에서 주소로 찾아야 하는 시설
+
+
+class ProtectionBoundary(BaseModel):
+    facility_id: str
+    wkt: str
+
+
+class ProtectionBoundaries(BaseModel):
+    zones: list[ProtectionBoundary]
+
+
+class SchoolZone(BaseModel):
+    name: str
+    district: str
+    road_address: str | None
+    lot_address: str | None
+    lat: float
+    lng: float
+    data_date: str | None
+
+
+class SchoolZones(BaseModel):
+    zones: list[SchoolZone]

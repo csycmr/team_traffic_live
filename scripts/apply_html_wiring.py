@@ -517,6 +517,9 @@ HOTSPOT_MAP_REPLACEMENTS = [
 ]
 
 
+PROTECTION_MAP_REPLACEMENTS = [('function hasProtectionCoordinates(row) {', 'async function readProtectionApi(path) {\n  const response = await fetch("http://127.0.0.1:8000" + path);\n  if (!response.ok) throw new Error("API HTTP " + response.status);\n  return response.json();\n}\n\nfunction hasProtectionCoordinates(row) {'), ('    const rows = await readProtectionCsv("./data/09_어린이보호구역_서울.csv");\n', '    const rows = (await readProtectionApi("/api/school-zones")).zones.map(zone => ({\n      시설명: zone.name, 자치구명: zone.district, 도로명주소: zone.road_address ?? "",\n      지번주소: zone.lot_address ?? "", 위도: zone.lat, 경도: zone.lng, 데이터기준일: zone.data_date ?? ""\n    }));\n'), ('    const [master, rows] = await Promise.all([\n      readProtectionCsv("./data/04_보호구역_마스터.csv"),\n      readProtectionCsv("./data/05_보호구역_경계.csv")\n    ]);\n    const facilities = [...new Map(\n      master.filter(row => row.명단2025 === "1").map(row => [row.시설ID, row])\n    ).values()];\n    const boundaries = new Map();\n    const matchRank = row => row.명단매칭방식?.includes("검수필요") ? 0 :\n      row.명단매칭방식 === "주소+시설명" ? 2 : 1;\n    for (const row of rows.filter(hasProtectionCoordinates)) {\n      const previous = boundaries.get(row.시설ID);\n      if (!previous || matchRank(row) > matchRank(previous) ||\n          (matchRank(row) === matchRank(previous) && row.데이터기준일 > previous.데이터기준일)) {\n        boundaries.set(row.시설ID, row);\n      }\n    }\n', '    const zoneData = await readProtectionApi("/api/protection-zones");\n    const facilities = zoneData.facilities.map(zone => ({\n      시설ID: zone.id, 시설명: zone.name, 자치구명: zone.district, 위치: zone.address,\n      위도: zone.lat, 경도: zone.lng, 데이터기준일: zone.data_date ?? "",\n      명단매칭방식: zone.match_method ?? "", 위치안내: zone.note ?? ""\n    }));\n    const missing = zoneData.unlocated.map(zone => ({\n      시설ID: zone.id, 시설명: zone.name, 자치구명: zone.district, 위치: zone.address\n    }));\n'), ('    const missing = [];\n    for (const facility of facilities) {\n      const location = boundaries.get(facility.시설ID) ||\n        (facility.시설ID === "Z186" ? {\n          위도: 37.580216,\n          경도: 127.042424,\n          위치안내: "시장 대표 위치 · 보호구역 경계와 다를 수 있어"\n        } : null);\n      if (location) addMarker(facility, location);\n      else missing.push(facility);\n    }\n', '    for (const facility of facilities) addMarker(facility, facility);\n'), ('    status.textContent = "노인보호구역 " + facilities.length + "곳";\n', '    status.textContent = "노인보호구역 " + zoneData.total + "곳";\n'), ('"2025년 명단 기준 · 지도에 표시할 수 있는 시설 " + markers.length + "/" + facilities.length + "곳";', '"2025년 명단 기준 · 지도에 표시할 수 있는 시설 " + markers.length + "/" + zoneData.total + "곳";'), ("      readProtectionCsv('./data/05_보호구역_경계.csv'),\n", "      readProtectionApi('/api/protection-zones/boundaries').then(data =>\n        data.zones.map(zone => ({ 시설ID: zone.facility_id, 경계WKT: zone.wkt }))),\n")]
+
+
 def append_script(text, marker, script, required, label):
     """마지막 </script> 앞에 함수를 추가한다. (새 텍스트, 상태)를 돌려준다."""
     if marker in text:
@@ -616,6 +619,10 @@ STEPS = [
     (
         "지도의 사고다발지역 점",
         lambda t: replace_exact(t, 'fetch("http://127.0.0.1:8000/api/statistics/hotspots")', HOTSPOT_MAP_REPLACEMENTS),
+    ),
+    (
+        "지도의 보호구역·어린이보호구역",
+        lambda t: replace_exact(t, "readProtectionApi", PROTECTION_MAP_REPLACEMENTS),
     ),
 ]
 
