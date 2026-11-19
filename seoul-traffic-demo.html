@@ -1219,6 +1219,13 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
 .change-table .decrease { color: #75acff }
 .change-table td:last-child { white-space: nowrap }
 .change-table thead tr:first-child th:first-child { text-align: left }
+/* Center the group title between the two right-aligned four-digit years. */
+.change-table th[scope="colgroup"] span {
+  display: inline-block;
+  position: relative;
+  right: calc(25% + 4px + 2ch);
+  transform: translateX(50%);
+}
 .change-table thead th { padding-block: 2px; vertical-align: middle; background: #21364a }
 .change-tip {
   position: absolute; z-index: 5; pointer-events: none; width: max-content;
@@ -2193,7 +2200,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
               <thead>
                 <tr>
                   <th scope="col" rowspan="2">자치구</th>
-                  <th scope="colgroup" colspan="2">사고 건수</th>
+                  <th scope="colgroup" colspan="2"><span>사고 건수</span></th>
                   <th scope="col" rowspan="2">증감(건)</th>
                 </tr>
                 <tr>
