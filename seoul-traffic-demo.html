@@ -1211,15 +1211,15 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
 .change-stage { position: relative; min-width: 0 }
 .change-key { max-width: 320px; margin: 6px auto 0 }
 .change-summary { min-width: 0 }
-.change-table-scroll { max-height: min(60svh, 600px); overflow: auto }
+.change-summary .audit-chart-caption { margin: 0 0 5px }
 .change-table { width: 100%; table-layout: fixed; border-collapse: separate; border-spacing: 0; font-variant-numeric: tabular-nums; font-size: clamp(12px, 1.5svh, 14px) }
-.change-table th, .change-table td { padding: 2px 8px; text-align: right; line-height: 1.18; border-bottom: 1px solid var(--line) }
+.change-table th, .change-table td { padding: clamp(0px, calc(0.5svh - 3px), 2px) 8px; text-align: right; line-height: 1.12; border-bottom: 1px solid var(--line) }
 .change-table tbody tr > :first-child { text-align: left }
 .change-table .increase { color: #ff7681 }
 .change-table .decrease { color: #75acff }
 .change-table td:last-child { white-space: nowrap }
-.change-table thead { position: sticky; top: 0; z-index: 1 }
-.change-table thead th { padding-block: 4px; text-align: center; vertical-align: middle; background: #21364a }
+.change-table thead tr:first-child th:first-child { text-align: left }
+.change-table thead th { padding-block: 2px; vertical-align: middle; background: #21364a }
 .change-tip {
   position: absolute; z-index: 5; pointer-events: none; width: max-content;
   max-width: 100%; padding: 10px 13px; border: 1px solid #8395a7; border-radius: 8px;
@@ -1233,7 +1233,6 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
 @media (max-width: 680px) {
   .change-layout { grid-template-columns: 1fr }
   .change-map { height: auto }
-  .change-table-scroll { max-height: none }
 }
 
 .designation-charts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; margin-block: 14px }
@@ -2186,7 +2185,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
         </div>
         <div class="change-summary">
           <p class="audit-chart-caption">자치구별 고령 보행사고 건수</p>
-          <div class="change-table-scroll" tabindex="0" role="region" aria-label="자치구별 2024년과 2025년 고령 보행사고 건수">
+          <div role="region" aria-label="자치구별 2024년과 2025년 고령 보행사고 건수">
             <table class="change-table">
               <colgroup span="1"></colgroup>
               <colgroup span="2"></colgroup>
