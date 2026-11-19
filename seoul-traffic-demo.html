@@ -828,7 +828,21 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
 .policy-player iframe { display: block; width: 100%; height: 100%; border: 0 }
 .policy-jeju-copy p, .policy-actions dd { margin-top: 6px; font-size: 13px; line-height: 1.5 }
 .policy-content .policy-source { margin-top: 7px; font-size: 11px; line-height: 1.5 }
-.source-links { display: flex; flex-wrap: wrap; column-gap: .8em; align-items: baseline }
+/* Let each citation follow the width of its own column. */
+:is(p, figcaption):has(> .source-links), .child-policy-timeline li {
+  container-type: inline-size;
+}
+body :is(.source-links a, a.timeline-source):any-link {
+  color: #c4acff;
+  text-decoration: underline;
+  text-underline-offset: .12em;
+}
+.source-links a + a { margin-inline-start: .4em }
+@media (min-height: 700px) {
+  @container (min-width: 480px) {
+    .source-links, .child-policy-timeline .timeline-source { display: block }
+  }
+}
 .policy-content a { color: #c1dcf5 }
 .policy-jeju { border-left: 3px solid #b6e746 }
 .policy-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin: 9px 0 0 }
@@ -929,7 +943,6 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
 }
 .child-policy-timeline time { color: #ffd166; font-weight: 700; display: block }
 .child-policy-timeline strong { display: block; margin-block: 2px }
-.child-policy-timeline .timeline-source { display: block; width: fit-content; margin-top: 3px }
 .child-data-grid, .child-examples { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 12px }
 .child-series { min-width: 0; margin: 8px 0 0 }
 .child-series svg { display: block; width: 100%; max-height: 156px }
@@ -1000,7 +1013,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
 .review-inside { background:#79dfcd }
 .review-outside { background:#f5ab6e }
 .review-method { grid-column:1/-1; background:#162536; border:1px solid #293b4d; border-radius:10px; padding:10px 14px; font-size:12px; line-height:1.45 }
-.review-method p { margin:3px 0 0 }
+.review-method p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5 }
 @media(max-width:850px) {
   .review-content { grid-template-columns:minmax(0,1fr) }
   .review-list { grid-row:auto }
@@ -1018,7 +1031,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
   background: #44381e;
   color: #ffe09a;
 }
-.child-policy-timeline .timeline-source { font-size: 11px; line-height: 1.4; margin-top: 5px }
+.child-policy-timeline .timeline-source { font-size: 11px; line-height: 1.4 }
 .child-precedent > [aria-labelledby="child-trends-title"],
 .child-examples > .audit-diagnosis { display: flex; flex-direction: column }
 .child-precedent .child-data-grid { margin-block: clamp(16px, 2.5svh, 26px) clamp(18px, 3svh, 30px) }
@@ -1463,7 +1476,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
         </dl>
         <dl class="stat"><dt>어린이 보행사고 사망자수</dt><dd><strong id="child-pedestrian-deaths">—</strong><small>명</small></dd></dl>
       </div>
-      <p class="muted safety-board-note">서울 · 고령층 65세 이상 · 어린이 12세 이하<span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/10_어린이보호구역_교통안전_요약.csv">집계 자료</a></span></p>
+      <p class="muted safety-board-note">서울 · 고령층 65세 이상 · 어린이 12세 이하 <span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/10_어린이보호구역_교통안전_요약.csv">집계 자료</a></span></p>
     </section>
     <section class="feed" aria-labelledby="senior-accident-rates">
       <div class="panel-title"><h3 id="senior-accident-rates">노인 교통사고율</h3></div>
@@ -1477,7 +1490,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
           <dd><strong id="elderly-death-share">—</strong><small>%</small></dd>
         </dl>
       </div>
-      <p class="muted panel-source">서울 · 65세 이상<span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/01_%EC%9E%90%EC%B9%98%EA%B5%AC%EC%97%B0%EB%8F%84_%ED%8C%A8%EB%84%90.csv">집계 자료</a></span></p>
+      <p class="muted panel-source">서울 · 65세 이상 <span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/01_%EC%9E%90%EC%B9%98%EA%B5%AC%EC%97%B0%EB%8F%84_%ED%8C%A8%EB%84%90.csv">집계 자료</a></span></p>
     </section>
   </aside>
 </main>
@@ -1572,7 +1585,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
           <tr><th scope="row">2025</th><td>—</td><td>—</td></tr>
           </tbody>
         </table>
-        <p class="oecd-sources">경찰 접수 교통사고 · 최신 연간 집계 2025년<span class="source-links"><a href="https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdTrend.do?dbClCode=01&amp;menuId=WEB_KMP_OVT_TAC_TCO">TAAS 전국</a> <a href="https://taas.koroad.or.kr/sta/acs/gus/selectSignguTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAG_SGT">TAAS 서울</a> <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/15_TAAS_%EC%8B%9C%EB%8F%84%EC%8B%9C%EA%B5%B0%EA%B5%AC_%EA%B5%90%ED%86%B5%EC%82%AC%EA%B3%A0_2020-2025.csv">집계 자료 (2020~2025)</a></span></p>
+        <p class="oecd-sources">경찰 접수 교통사고 · 최신 연간 집계 2025년 <span class="source-links"><a href="https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdTrend.do?dbClCode=01&amp;menuId=WEB_KMP_OVT_TAC_TCO">TAAS 전국</a> <a href="https://taas.koroad.or.kr/sta/acs/gus/selectSignguTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAG_SGT">TAAS 서울</a> <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/15_TAAS_%EC%8B%9C%EB%8F%84%EC%8B%9C%EA%B5%B0%EA%B5%AC_%EA%B5%90%ED%86%B5%EC%82%AC%EA%B3%A0_2020-2025.csv">집계 자료 (2020~2025)</a></span></p>
       </section>
     </div>
         <section class="audit-pedestrian" aria-labelledby="oecd-senior-title">
@@ -1890,7 +1903,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
       </div>
       <div class="oecd-sources">
         <p>각 연도 자료 수록 국가 전체를 기준으로 순위를 매기고, 그래프에는 상위 10개국을 표시했어. 국가 수는 2020년 29개국, 2021년 32개국, 2022년 32개국, 2023년 35개국이야. 2023년 대한민국은 13.1명으로 자료 수록 35개국 중 5위야.</p>
-        <p>한국도로교통공단 《OECD 회원국 교통사고 비교》 2022~2025년판<span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/13_OECD_%EA%B3%A0%EB%A0%B9%EC%A7%80%ED%91%9C_wide.csv">연도별 정제 데이터</a> <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/13_OECD_%EC%A0%95%EC%A0%9C.csv">전체 정제 데이터(판본·원문각주 포함)</a></span></p>
+        <p>한국도로교통공단 《OECD 회원국 교통사고 비교》 2022~2025년판 <span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/13_OECD_%EA%B3%A0%EB%A0%B9%EC%A7%80%ED%91%9C_wide.csv">연도별 정제 데이터</a> <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/13_OECD_%EC%A0%95%EC%A0%9C.csv">전체 정제 데이터(판본·원문각주 포함)</a></span></p>
       </div>
     </section>
   </div>
@@ -1992,7 +2005,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
             <line x1="42" x2="510" y1="34" y2="34"/><text class="population-tick" x="36" y="38">1,100</text>
             <polyline pathLength="1" points=""/>
           </svg>
-          <p class="oecd-sources">2022~2025년 12월 말, 2026년 10월 말<span class="source-links"><a href="https://jumin.mois.go.kr/etcStatOldAge.do">행정안전부 주민등록 인구통계</a></span></p>
+          <p class="oecd-sources">2022~2025년 12월 말, 2026년 10월 말 <span class="source-links"><a href="https://jumin.mois.go.kr/etcStatOldAge.do">행정안전부 주민등록 인구통계</a></span></p>
         </figure>
       </article>
       <article class="national-card" aria-labelledby="national-status">
@@ -2029,7 +2042,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
     <div class="oecd-sources">
       <p>한국도로교통공단 《OECD 회원국 교통사고 비교》 2022~2025년판 표 II-2, II-6, II-8, II-10, II-12</p>
       <p>비중은 전체 사망자 중 65세 이상 사망자의 비율입니다. ‘그 외’는 65세 이상 전체에서 표에 표시된 네 가지 상태의 사망자 수를 뺀 값입니다.</p>
-      <p>2024~2025년 막대그래프<span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/17_%EC%A0%84%EA%B5%AD%EC%82%AC%EB%A7%9D%EC%9E%90_%EB%A7%89%EB%8C%80%EB%8F%84%EB%84%9B.csv">집계 자료</a> <a href="https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdOccrrncSttus.do?menuId=WEB_KMP_OVT_MVT_TAC_TOS">한국도로교통공단 TAAS 전체 사망자</a> <a href="https://www.police.go.kr/www/open/publice/publice0204.jsp">경찰청 65세 이상 사망자</a></span></p>
+      <p>2024~2025년 막대그래프 <span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/17_%EC%A0%84%EA%B5%AD%EC%82%AC%EB%A7%9D%EC%9E%90_%EB%A7%89%EB%8C%80%EB%8F%84%EB%84%9B.csv">집계 자료</a> <a href="https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdOccrrncSttus.do?menuId=WEB_KMP_OVT_MVT_TAC_TOS">한국도로교통공단 TAAS 전체 사망자</a> <a href="https://www.police.go.kr/www/open/publice/publice0204.jsp">경찰청 65세 이상 사망자</a></span></p>
     </div>
   </div>
 </section>
@@ -2217,7 +2230,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
           </div>
         </div>
       </div>
-      <p class="muted policy-source">TAAS 사고 통계 및 인구 집계<span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/01_%EC%9E%90%EC%B9%98%EA%B5%AC%EC%97%B0%EB%8F%84_%ED%8C%A8%EB%84%90.csv">자치구·연도 패널 원자료</a></span></p>
+      <p class="muted policy-source">TAAS 사고 통계 및 인구 집계 <span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/01_%EC%9E%90%EC%B9%98%EA%B5%AC%EC%97%B0%EB%8F%84_%ED%8C%A8%EB%84%90.csv">자치구·연도 패널 원자료</a></span></p>
     </section>
   </div>
 </section>
@@ -2350,7 +2363,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
       <p class="overlap-caveat">중첩은 두 구역의 경계를 기준으로 계산했어. 확보한 보호구역 경계에는 공식 명단의 일부 시설이 빠져 있어, 비중첩만으로 보호구역의 필요성이나 정책 효과를 판단하기 어려워.</p>
       <div class="overlap-legend"><span>● 사고다발지역 대표 좌표</span><span>■ 노인보호구역 API 경계</span></div>
       <div class="overlap-map" id="zone-overlap-map" role="region" aria-label="사고다발지역과 노인보호구역 경계 카카오맵 · 휠로 확대 및 축소"><p class="muted" id="zone-overlap-map-status">지도를 불러오는 중</p></div>
-      <p class="muted overlap-note">지도 위에서 휠을 굴리면 확대·축소할 수 있어. 주황 점은 사고다발지역의 대표 위치야. 중첩 수치는 사고다발지역과 보호구역 경계를 비교한 결과야.<span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/03_%EB%8B%A4%EB%B0%9C%EC%A7%80%EC%97%AD_%EC%84%9C%EC%9A%B8.csv">TAAS 사고다발지역 목록</a> <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/06_%EB%8B%A4%EB%B0%9C%EC%A7%80%EC%97%AD_%EB%B3%B4%ED%98%B8%EA%B5%AC%EC%97%AD_%EC%97%B0%EA%B2%B0.csv">다발지역·보호구역 연결표</a></span></p>
+      <p class="muted overlap-note">지도 위에서 휠을 굴리면 확대·축소할 수 있어. 주황 점은 사고다발지역의 대표 위치야. 중첩 수치는 사고다발지역과 보호구역 경계를 비교한 결과야. <span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/03_%EB%8B%A4%EB%B0%9C%EC%A7%80%EC%97%AD_%EC%84%9C%EC%9A%B8.csv">TAAS 사고다발지역 목록</a> <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/06_%EB%8B%A4%EB%B0%9C%EC%A7%80%EC%97%AD_%EB%B3%B4%ED%98%B8%EA%B5%AC%EC%97%AD_%EC%97%B0%EA%B2%B0.csv">다발지역·보호구역 연결표</a></span></p>
     </section>
   </div>
 </section>
@@ -2395,7 +2408,6 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
       </table></div>
     </section>
     <aside class="review-method" aria-label="자료 해석 기준">
-      <strong>이 자료를 읽을 때</strong>
       <p>거리는 자치구 경계와 관계없이 서울 전체에서 가장 가까운 보호구역 경계까지의 직선거리입니다. 현재 확보한 API 경계는 공식 지정 시설 일부가 빠져 있을 수 있습니다. 선정 영역과 개별 사고 건수는 서로 다른 지표이며, 중첩 결과만으로 정책 효과를 판단하기 어렵습니다.</p>
     </aside>
   </div>
@@ -2455,7 +2467,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
   </svg>
 </figure>
       </div>
-      <p class="muted policy-source">점선: 2020년 민식이법 시행. 전국 추이에는 통행량 등 다른 요인도 반영됩니다.<span class="source-links"><a href="https://www.nabo.go.kr/board/file/down.do?fid=33318243">2019~2023년 국회예산정책처·한국도로교통공단</a> <a href="https://taas.koroad.or.kr/sta/acs/gus/selectChildPdstrnTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAS_CPT">2024~2025년 TAAS</a></span></p>
+      <p class="muted policy-source">점선: 2020년 민식이법 시행. 전국 추이에는 통행량 등 다른 요인도 반영됩니다. <span class="source-links"><a href="https://www.nabo.go.kr/board/file/down.do?fid=33318243">2019~2023년 국회예산정책처·한국도로교통공단</a> <a href="https://taas.koroad.or.kr/sta/acs/gus/selectChildPdstrnTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAS_CPT">2024~2025년 TAAS</a></span></p>
     </section>
     <div class="child-examples">
     <section class="audit-diagnosis" aria-labelledby="policy-school-zones">
@@ -2464,7 +2476,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
         <div><dt>설치 전<br>2018~2019년</dt><dd><strong>—</strong><span style="--bar-height: 0px" aria-hidden="true"></span></dd></div>
         <div><dt>설치 후<br>2021~2022년</dt><dd><strong>—</strong><span style="--bar-height: 0px" aria-hidden="true"></span></dd></div>
       </dl>
-      <p class="muted policy-source">서울시 무인단속카메라 107대 설치 대상지의 전후 각 2년 집계<span class="source-links"><a href="https://clik.nanet.go.kr/clikr-collection/policyinfo/77/313/2023/CLIKC9541231271682321_attach_2.pdf">서울시 보도자료(2023-12-01)</a> <a href="https://m.easylaw.go.kr/MOB/IssueQnaRetrieve.laf?issueqaSeq=115">2021년 제재 변경</a></span></p>
+      <p class="muted policy-source">서울시 무인단속카메라 107대 설치 대상지의 전후 각 2년 집계 <span class="source-links"><a href="https://clik.nanet.go.kr/clikr-collection/policyinfo/77/313/2023/CLIKC9541231271682321_attach_2.pdf">서울시 보도자료(2023-12-01)</a> <a href="https://m.easylaw.go.kr/MOB/IssueQnaRetrieve.laf?issueqaSeq=115">2021년 제재 변경</a></span></p>
     </section>
     <section class="audit-diagnosis school-zone-overview" aria-labelledby="zone-summary">
       <h2 class="audit-heading" id="zone-summary">서울 보호구역 현황</h2>
@@ -2486,7 +2498,7 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
           <div class="zone-density-axis" aria-hidden="true"><span>0</span><span>10</span><span>20</span><span>30곳</span></div>
         </div>
         <p class="muted policy-source">—</p>
-        <figcaption class="muted">인구 1만 명당 보호구역은 지정 구역 수를 해당 연령 인구수로 나눈 뒤 10,000을 곱했습니다. 인구는 2026년 9월 말 기준입니다. 어린이는 경찰청 2026년 6월 말 서울 지정 현황의 기재 항목 합계(조례시설 미기재), 노인은 2025년 명단 기준입니다.<span class="source-links"><a href="./data/12_경찰청_어린이보호구역_지정현황_20260630.csv">어린이보호구역 집계표</a> <a href="./data/11_서울_연령별_주민등록인구_202609.csv">인구 집계표</a> <a href="https://kosis.kr/statisticsList/mass/mass_list.jsp?org_id=101&amp;tbl_id=DT_1B04006" target="_blank" rel="noopener">KOSIS 원자료</a></span></figcaption>
+        <figcaption class="muted">인구 1만 명당 보호구역은 지정 구역 수를 해당 연령 인구수로 나눈 뒤 10,000을 곱했습니다. 인구는 2026년 9월 말 기준입니다. 어린이는 경찰청 2026년 6월 말 서울 지정 현황의 기재 항목 합계(조례시설 미기재), 노인은 2025년 명단 기준입니다. <span class="source-links"><a href="./data/12_경찰청_어린이보호구역_지정현황_20260630.csv">어린이보호구역 집계표</a> <a href="./data/11_서울_연령별_주민등록인구_202609.csv">인구 집계표</a> <a href="https://kosis.kr/statisticsList/mass/mass_list.jsp?org_id=101&amp;tbl_id=DT_1B04006" target="_blank" rel="noopener">KOSIS 원자료</a></span></figcaption>
       </figure>
     </section>
     </div>
@@ -2613,13 +2625,13 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
           <h3 id="policy-jeju-case">제주, 형광녹색으로 노인보호구역 표시</h3>
           <p>제주경찰청과 제주자치경찰단은 2026년 8월 전국 첫 형광녹색 디자인 시범사업 추진을 발표했습니다. 첫 구간은 <strong>서귀포시 매일올레시장 일원</strong>입니다.</p>
           <p>전주·가로등 같은 시설물에 형광녹색 시트지를 붙이고, 보도가 없는 곳은 도로 표면을 같은 색으로 포장하는 계획입니다.</p>
-            <p class="muted policy-source">위: 기존 모습 · 아래: 형광녹색 적용 구상 · 제주도 자치경찰단 제공 이미지<span class="source-links"><a href="https://www.khan.co.kr/article/202608112059015">경향신문 · 2026년 8월 11일</a></span></p>
+            <p class="muted policy-source">위: 기존 모습 · 아래: 형광녹색 적용 구상 · 제주도 자치경찰단 제공 이미지 <span class="source-links"><a href="https://www.khan.co.kr/article/202608112059015">경향신문 · 2026년 8월 11일</a></span></p>
           </div>
           <figure class="policy-jeju-photo">
             <a href="./assets/jeju-silver-zone-pilot.jpg" target="_blank" rel="noopener"><img src="./assets/jeju-silver-zone-pilot.jpg" width="848" height="1248" loading="lazy" alt="서귀포시 매일올레시장 일원 기존 모습과 형광녹색 적용 구상 비교"></a>
           </figure>
         </section>
-      <p class="muted policy-source">시민 인터뷰 사례<span class="source-links"><a href="https://youtu.be/edblldUy484?t=18">유튜브에서 18초부터 보기</a></span></p>
+      <p class="muted policy-source">시민 인터뷰 사례 <span class="source-links"><a href="https://youtu.be/edblldUy484?t=18">유튜브에서 18초부터 보기</a></span></p>
     </div>
     <section aria-labelledby="policy-seoul">
       <h2 class="audit-heading" id="policy-seoul">서울시에 제안하는 3가지 제안</h2>
