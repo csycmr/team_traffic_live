@@ -1370,6 +1370,14 @@ body :is(.source-links a, a.timeline-source):any-link {
   }
   @keyframes designation-mark-in { from { opacity: 0 } to { opacity: 1 } }
 }
+/* Use one size for notes below charts, including live selection details. */
+body :is(.oecd-sources, .oecd-sources p, .panel-source, .safety-board-note,
+         .policy-source, .review-source, .review-method p, .overlap-note,
+         .national-note, figcaption.muted, .designation-card output, #zone-budget p.muted) {
+  font-size: 12px;
+  line-height: 1.5;
+}
+.designation-card output { color: var(--muted) }
 </style>
 </head>
 <body>
@@ -1585,7 +1593,7 @@ body :is(.source-links a, a.timeline-source):any-link {
           <tr><th scope="row">2025</th><td>—</td><td>—</td></tr>
           </tbody>
         </table>
-        <p class="oecd-sources">경찰 접수 교통사고 · 최신 연간 집계 2025년 <span class="source-links"><a href="https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdTrend.do?dbClCode=01&amp;menuId=WEB_KMP_OVT_TAC_TCO">TAAS 전국</a> <a href="https://taas.koroad.or.kr/sta/acs/gus/selectSignguTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAG_SGT">TAAS 서울</a> <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/15_TAAS_%EC%8B%9C%EB%8F%84%EC%8B%9C%EA%B5%B0%EA%B5%AC_%EA%B5%90%ED%86%B5%EC%82%AC%EA%B3%A0_2020-2025.csv">집계 자료 (2020~2025)</a></span></p>
+        <p class="oecd-sources">경찰에 접수된 교통사고 기준이며, 최신 연간 집계는 2025년입니다. <span class="source-links"><a href="https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdTrend.do?dbClCode=01&amp;menuId=WEB_KMP_OVT_TAC_TCO">TAAS 전국</a> <a href="https://taas.koroad.or.kr/sta/acs/gus/selectSignguTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAG_SGT">TAAS 서울</a> <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/15_TAAS_%EC%8B%9C%EB%8F%84%EC%8B%9C%EA%B5%B0%EA%B5%AC_%EA%B5%90%ED%86%B5%EC%82%AC%EA%B3%A0_2020-2025.csv">집계 자료 (2020~2025)</a></span></p>
       </section>
     </div>
         <section class="audit-pedestrian" aria-labelledby="oecd-senior-title">
@@ -1903,7 +1911,7 @@ body :is(.source-links a, a.timeline-source):any-link {
       </div>
       <div class="oecd-sources">
         <p>각 연도 자료 수록 국가 전체를 기준으로 순위를 매기고, 그래프에는 상위 10개국을 표시했습니다. 국가 수는 2020년 29개국, 2021년 32개국, 2022년 32개국, 2023년 35개국입니다. 2023년 대한민국은 13.1명으로 자료 수록 35개국 중 5위입니다.</p>
-        <p>한국도로교통공단 《OECD 회원국 교통사고 비교》 2022년판부터 2025년판까지 <span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/13_OECD_%EA%B3%A0%EB%A0%B9%EC%A7%80%ED%91%9C_wide.csv">연도별 정제 데이터</a> <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/13_OECD_%EC%A0%95%EC%A0%9C.csv">전체 정제 데이터(판본·원문각주 포함)</a></span></p>
+        <p>한국도로교통공단 《OECD 회원국 교통사고 비교》 2022~<wbr>2025년판 <span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/13_OECD_%EA%B3%A0%EB%A0%B9%EC%A7%80%ED%91%9C_wide.csv">연도별 정제 데이터</a> <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/13_OECD_%EC%A0%95%EC%A0%9C.csv">전체 정제 데이터(판본·원문각주 포함)</a></span></p>
       </div>
     </section>
   </div>
@@ -2005,7 +2013,7 @@ body :is(.source-links a, a.timeline-source):any-link {
             <line x1="42" x2="510" y1="34" y2="34"/><text class="population-tick" x="36" y="38">1,100</text>
             <polyline pathLength="1" points=""/>
           </svg>
-          <p class="oecd-sources">2022~2025년 12월 말, 2026년 10월 말 <span class="source-links"><a href="https://jumin.mois.go.kr/etcStatOldAge.do">행정안전부 주민등록 인구통계</a></span></p>
+          <p class="oecd-sources">2022~2025년은 12월 말, 2026년은 10월 말 기준입니다. <span class="source-links"><a href="https://jumin.mois.go.kr/etcStatOldAge.do">행정안전부 주민등록 인구통계</a></span></p>
         </figure>
       </article>
       <article class="national-card" aria-labelledby="national-status">
@@ -2042,7 +2050,7 @@ body :is(.source-links a, a.timeline-source):any-link {
     <div class="oecd-sources">
       <p>한국도로교통공단 《OECD 회원국 교통사고 비교》 2022~2025년판 표 II-2, II-6, II-8, II-10, II-12</p>
       <p>비중은 전체 사망자 중 65세 이상 사망자의 비율입니다. ‘그 외’는 65세 이상 전체에서 표에 표시된 네 가지 상태의 사망자 수를 뺀 값입니다.</p>
-      <p>2024~2025년 막대그래프 <span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/17_%EC%A0%84%EA%B5%AD%EC%82%AC%EB%A7%9D%EC%9E%90_%EB%A7%89%EB%8C%80%EB%8F%84%EB%84%9B.csv">집계 자료</a> <a href="https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdOccrrncSttus.do?menuId=WEB_KMP_OVT_MVT_TAC_TOS">한국도로교통공단 TAAS 전체 사망자</a> <a href="https://www.police.go.kr/www/open/publice/publice0204.jsp">경찰청 65세 이상 사망자</a></span></p>
+      <p>2024~2025년 막대그래프에 사용한 자료입니다. <span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/17_%EC%A0%84%EA%B5%AD%EC%82%AC%EB%A7%9D%EC%9E%90_%EB%A7%89%EB%8C%80%EB%8F%84%EB%84%9B.csv">집계 자료</a> <a href="https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdOccrrncSttus.do?menuId=WEB_KMP_OVT_MVT_TAC_TOS">한국도로교통공단 TAAS 전체 사망자</a> <a href="https://www.police.go.kr/www/open/publice/publice0204.jsp">경찰청 65세 이상 사망자</a></span></p>
     </div>
   </div>
 </section>
@@ -2230,7 +2238,7 @@ body :is(.source-links a, a.timeline-source):any-link {
           </div>
         </div>
       </div>
-      <p class="muted policy-source">TAAS 사고 통계 및 인구 집계 <span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/01_%EC%9E%90%EC%B9%98%EA%B5%AC%EC%97%B0%EB%8F%84_%ED%8C%A8%EB%84%90.csv">자치구·연도 패널 원자료</a></span></p>
+      <p class="muted policy-source">TAAS 사고 통계와 인구 집계를 사용했습니다. <span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/01_%EC%9E%90%EC%B9%98%EA%B5%AC%EC%97%B0%EB%8F%84_%ED%8C%A8%EB%84%90.csv">자치구·연도 패널 원자료</a></span></p>
     </section>
   </div>
 </section>
@@ -2327,12 +2335,12 @@ body :is(.source-links a, a.timeline-source):any-link {
         <figure class="designation-card" data-year="2023">
           <figcaption>2023년 지정 · 4개 자치구</figcaption>
           <svg viewBox="0 0 418 276" role="group" aria-label="2022~2024년 자치구별 고령 보행사고 건수"></svg>
-          <output>점을 선택하면 자치구·연도·사고 건수가 표시돼.</output>
+          <output>점을 선택하면 자치구·연도·사고 건수가 표시됩니다.</output>
         </figure>
         <figure class="designation-card" data-year="2024">
           <figcaption>2024년 지정 · 5개 자치구</figcaption>
           <svg viewBox="0 0 418 276" role="group" aria-label="2023~2025년 자치구별 고령 보행사고 건수"></svg>
-          <output>점을 선택하면 자치구·연도·사고 건수가 표시돼.</output>
+          <output>점을 선택하면 자치구·연도·사고 건수가 표시됩니다.</output>
         </figure>
       </div>
       <p class="muted policy-source">각 선은 자치구 전체의 고령 보행사고 건수입니다. 보호구역 지정의 효과를 판단하려면 지정 구간 주변의 사고 변화를 별도로 확인해야 합니다.</p>
@@ -2354,16 +2362,16 @@ body :is(.source-links a, a.timeline-source):any-link {
   </header>
   <div class="oecd-content">
     <section class="audit-diagnosis" aria-labelledby="zone-overlap-title">
-      <p class="audit-chart-caption">공식 선정 사고다발지역과 확보된 노인보호구역 경계를 비교했어.</p>
+      <p class="audit-chart-caption">공식 선정 사고다발지역과 확보된 노인보호구역 경계를 비교했습니다.</p>
       <dl class="overlap-counts">
         <div class="stat"><dt>비교 가능한 다발지역</dt><dd>—</dd></div>
         <div class="stat"><dt>경계 중첩</dt><dd>—</dd></div>
         <div class="stat"><dt>경계 비중첩</dt><dd>—</dd></div>
       </dl>
-      <p class="overlap-caveat">중첩은 두 구역의 경계를 기준으로 계산했어. 확보한 보호구역 경계에는 공식 명단의 일부 시설이 빠져 있어, 비중첩만으로 보호구역의 필요성이나 정책 효과를 판단하기 어려워.</p>
+      <p class="overlap-caveat">중첩은 두 구역의 경계를 기준으로 계산했습니다. 확보한 보호구역 경계에는 공식 명단의 일부 시설이 빠져 있어 비중첩만으로 보호구역의 필요성이나 정책 효과를 판단하기 어렵습니다.</p>
       <div class="overlap-legend"><span>● 사고다발지역 대표 좌표</span><span>■ 노인보호구역 API 경계</span></div>
       <div class="overlap-map" id="zone-overlap-map" role="region" aria-label="사고다발지역과 노인보호구역 경계 카카오맵 · 휠로 확대 및 축소"><p class="muted" id="zone-overlap-map-status">지도를 불러오는 중</p></div>
-      <p class="muted overlap-note">지도 위에서 휠을 굴리면 확대·축소할 수 있어. 주황 점은 사고다발지역의 대표 위치야. 중첩 수치는 사고다발지역과 보호구역 경계를 비교한 결과야. <span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/03_%EB%8B%A4%EB%B0%9C%EC%A7%80%EC%97%AD_%EC%84%9C%EC%9A%B8.csv">TAAS 사고다발지역 목록</a> <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/06_%EB%8B%A4%EB%B0%9C%EC%A7%80%EC%97%AD_%EB%B3%B4%ED%98%B8%EA%B5%AC%EC%97%AD_%EC%97%B0%EA%B2%B0.csv">다발지역·보호구역 연결표</a></span></p>
+      <p class="muted overlap-note">지도 위에서 휠을 굴리면 확대·축소할 수 있습니다. 주황색 점은 사고다발지역의 대표 위치입니다. 중첩 수치는 사고다발지역과 보호구역 경계를 비교한 결과입니다. <span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/03_%EB%8B%A4%EB%B0%9C%EC%A7%80%EC%97%AD_%EC%84%9C%EC%9A%B8.csv">TAAS 사고다발지역 목록</a> <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/06_%EB%8B%A4%EB%B0%9C%EC%A7%80%EC%97%AD_%EB%B3%B4%ED%98%B8%EA%B5%AC%EC%97%AD_%EC%97%B0%EA%B2%B0.csv">다발지역·보호구역 연결표</a></span></p>
     </section>
   </div>
 </section>
@@ -2467,7 +2475,7 @@ body :is(.source-links a, a.timeline-source):any-link {
   </svg>
 </figure>
       </div>
-      <p class="muted policy-source">점선: 2020년 민식이법 시행. 전국 추이에는 통행량 등 다른 요인도 반영됩니다. <span class="source-links"><a href="https://www.nabo.go.kr/board/file/down.do?fid=33318243">2019~2023년 국회예산정책처·한국도로교통공단</a> <a href="https://taas.koroad.or.kr/sta/acs/gus/selectChildPdstrnTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAS_CPT">2024~2025년 TAAS</a></span></p>
+      <p class="muted policy-source">점선은 민식이법이 시행된 2020년을 나타냅니다. 전국 추이에는 통행량 등 다른 요인도 반영됩니다. <span class="source-links"><a href="https://www.nabo.go.kr/board/file/down.do?fid=33318243">2019~2023년 국회예산정책처·한국도로교통공단</a> <a href="https://taas.koroad.or.kr/sta/acs/gus/selectChildPdstrnTfcacd.do?menuId=WEB_KMP_OVT_MVT_TAS_CPT">2024~2025년 TAAS</a></span></p>
     </section>
     <div class="child-examples">
     <section class="audit-diagnosis" aria-labelledby="policy-school-zones">
@@ -2476,7 +2484,7 @@ body :is(.source-links a, a.timeline-source):any-link {
         <div><dt>설치 전<br>2018~2019년</dt><dd><strong>—</strong><span style="--bar-height: 0px" aria-hidden="true"></span></dd></div>
         <div><dt>설치 후<br>2021~2022년</dt><dd><strong>—</strong><span style="--bar-height: 0px" aria-hidden="true"></span></dd></div>
       </dl>
-      <p class="muted policy-source">서울시 무인단속카메라 107대 설치 대상지의 전후 각 2년 집계 <span class="source-links"><a href="https://clik.nanet.go.kr/clikr-collection/policyinfo/77/313/2023/CLIKC9541231271682321_attach_2.pdf">서울시 보도자료(2023-12-01)</a> <a href="https://m.easylaw.go.kr/MOB/IssueQnaRetrieve.laf?issueqaSeq=115">2021년 제재 변경</a></span></p>
+      <p class="muted policy-source">서울시 무인단속카메라 107대 설치 대상지에서 설치 전후 각각 2년간 집계한 결과입니다. <span class="source-links"><a href="https://clik.nanet.go.kr/clikr-collection/policyinfo/77/313/2023/CLIKC9541231271682321_attach_2.pdf">서울시 보도자료(2023-12-01)</a> <a href="https://m.easylaw.go.kr/MOB/IssueQnaRetrieve.laf?issueqaSeq=115">2021년 제재 변경</a></span></p>
     </section>
     <section class="audit-diagnosis school-zone-overview" aria-labelledby="zone-summary">
       <h2 class="audit-heading" id="zone-summary">서울 보호구역 현황</h2>
@@ -4673,7 +4681,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
         values[index].textContent = `${group.zones_per_10k.toFixed(2)}곳`;
         people[index].textContent = `약 ${group.people_per_zone.toLocaleString("ko-KR")}명`;
       });
-      source.textContent = `어린이 ${data.child.population.toLocaleString("ko-KR")}명 · ${data.child.zones.toLocaleString("ko-KR")}곳(${data.child_zone_date.slice(0, 4)}년) | 노인 ${data.elderly.population.toLocaleString("ko-KR")}명 · ${data.elderly.zones.toLocaleString("ko-KR")}곳(${data.elderly_year}년)`;
+      source.textContent = `어린이 인구는 ${data.child.population.toLocaleString("ko-KR")}명이며 어린이보호구역은 ${data.child_zone_date.slice(0, 4)}년 기준 ${data.child.zones.toLocaleString("ko-KR")}곳입니다. 노인 인구는 ${data.elderly.population.toLocaleString("ko-KR")}명이며 노인보호구역은 ${data.elderly_year}년 기준 ${data.elderly.zones.toLocaleString("ko-KR")}곳입니다.`;
 
       console.info("서울 보호구역 현황 API 연결 완료", 2);
     } catch (error) {
