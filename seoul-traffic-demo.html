@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="ko">
 <head>
+<meta name="format-detection" content="telephone=no">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>서울 교통안전 라이브</title>
@@ -1378,6 +1379,20 @@ body :is(.oecd-sources, .oecd-sources p, .panel-source, .safety-board-note,
   line-height: 1.5;
 }
 .designation-card output { color: var(--muted) }
+
+.budget-group { margin-top: 10px }
+.budget-group h4 { margin: 0 0 5px; font-size: 14px }
+.budget-group p { margin: 4px 0; font-size: 12px; color: var(--muted) }
+.budget-row, .budget-axis {
+  display: grid; grid-template-columns: 4ch minmax(0, 1fr) 8em;
+  align-items: center; gap: 8px; font-size: 12px; font-variant-numeric: tabular-nums;
+}
+.budget-row + .budget-row { margin-top: 4px }
+.budget-track { background: #203447; border-radius: 4px }
+.budget-bar { display: block; height: 12px; border-radius: 4px; background: #83a9d1 }
+.budget-row + .budget-row .budget-bar { background: var(--mint) }
+.budget-ticks { display: flex; justify-content: space-between; color: var(--muted); border-top: 1px solid var(--line); padding-top: 4px }
+.budget-axis { margin-top: 8px; color: var(--muted) }
 </style>
 </head>
 <body>
@@ -2013,7 +2028,7 @@ body :is(.oecd-sources, .oecd-sources p, .panel-source, .safety-board-note,
             <line x1="42" x2="510" y1="34" y2="34"/><text class="population-tick" x="36" y="38">1,100</text>
             <polyline pathLength="1" points=""/>
           </svg>
-          <p class="oecd-sources">2022~2025년은 12월 말, 2026년은 10월 말 기준입니다. <span class="source-links"><a href="https://jumin.mois.go.kr/etcStatOldAge.do">행정안전부 주민등록 인구통계</a></span></p>
+          <p class="oecd-sources">2022~<wbr>2025년은 12월 말, 2026년은 10월 말 기준입니다. <span class="source-links"><a href="https://jumin.mois.go.kr/etcStatOldAge.do">행정안전부 주민등록 인구통계</a></span></p>
         </figure>
       </article>
       <article class="national-card" aria-labelledby="national-status">
@@ -2048,9 +2063,9 @@ body :is(.oecd-sources, .oecd-sources p, .panel-source, .safety-board-note,
       </article>
     </div>
     <div class="oecd-sources">
-      <p>한국도로교통공단 《OECD 회원국 교통사고 비교》 2022~2025년판 표 II-2, II-6, II-8, II-10, II-12</p>
+      <p>한국도로교통공단 《OECD 회원국 교통사고 비교》 2022~<wbr>2025년판 표 II-2, II-6, II-8, II-10, II-12</p>
       <p>비중은 전체 사망자 중 65세 이상 사망자의 비율입니다. ‘그 외’는 65세 이상 전체에서 표에 표시된 네 가지 상태의 사망자 수를 뺀 값입니다.</p>
-      <p>2024~2025년 막대그래프에 사용한 자료입니다. <span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/17_%EC%A0%84%EA%B5%AD%EC%82%AC%EB%A7%9D%EC%9E%90_%EB%A7%89%EB%8C%80%EB%8F%84%EB%84%9B.csv">집계 자료</a> <a href="https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdOccrrncSttus.do?menuId=WEB_KMP_OVT_MVT_TAC_TOS">한국도로교통공단 TAAS 전체 사망자</a> <a href="https://www.police.go.kr/www/open/publice/publice0204.jsp">경찰청 65세 이상 사망자</a></span></p>
+      <p>2024~<wbr>2025년 막대그래프에 사용한 자료입니다. <span class="source-links"><a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/17_%EC%A0%84%EA%B5%AD%EC%82%AC%EB%A7%9D%EC%9E%90_%EB%A7%89%EB%8C%80%EB%8F%84%EB%84%9B.csv">집계 자료</a> <a href="https://taas.koroad.or.kr/sta/acs/gus/selectTfcacdOccrrncSttus.do?menuId=WEB_KMP_OVT_MVT_TAC_TOS">한국도로교통공단 TAAS 전체 사망자</a> <a href="https://www.police.go.kr/www/open/publice/publice0204.jsp">경찰청 65세 이상 사망자</a></span></p>
     </div>
   </div>
 </section>
@@ -2522,6 +2537,10 @@ body :is(.oecd-sources, .oecd-sources p, .panel-source, .safety-board-note,
     </nav>
   </header>
   <div class="oecd-content policy-content" style="grid-template-columns: minmax(0, 1fr)">
+    <section class="audit-diagnosis" aria-labelledby="zone-budget-chart-title">
+      <h3 class="audit-heading" id="zone-budget-chart-title">두 보호구역 개선사업 예산, 얼마나 줄었나?</h3>
+      <div id="zone-budget-chart"></div>
+    </section>
     <section class="audit-diagnosis" aria-labelledby="zone-budget-table-title">
       <h3 class="audit-heading" id="zone-budget-table-title">2025–2026년 세부사업 편성액</h3>
       <div class="policy-law-scroll" tabindex="0" role="region" aria-labelledby="zone-budget-table-title">
@@ -4756,6 +4775,36 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
         td[2].textContent = `${number(project[`zones_${year}`])}${zoneSuffix}`;
         td[3].textContent = `약 ${number(project[`per_zone_${year}_man_won`])}만 원${limit}`;
       });
+
+
+      const projects = [
+        ["어린이보호구역 개선", data.child],
+        ["노인·장애인보호구역 개선", data.elderly_disabled],
+      ];
+      const step = Math.max(1, Math.ceil(Math.max(...projects.flatMap(([, project]) =>
+        [project.budget_2025, project.budget_2026])) / 5000000)) * 50;
+      const axisMax = step * 5 * 100000;
+      const changeFormat = new Intl.NumberFormat("ko-KR", {
+        signDisplay: "exceptZero", maximumFractionDigits: 1, minimumFractionDigits: 1,
+      });
+      const groups = projects.map(([name, project]) => {
+        const before = project.budget_2025;
+        const after = project.budget_2026;
+        const difference = after - before;
+        const percent = before ? ` · ${changeFormat.format(difference / before * 100)}%` : "";
+        const sign = difference < 0 ? "−" : difference > 0 ? "+" : "";
+        const bars = [["2025", before], ["2026", after]].map(([year, amount]) => `
+          <div class="budget-row">
+            <span>${year}</span>
+            <span class="budget-track" aria-hidden="true"><span class="budget-bar" style="width:${amount / axisMax * 100}%"></span></span>
+            <strong>${billion(amount)}</strong>
+          </div>`).join("");
+        return `<div class="budget-group"><h4>${name}</h4>${bars}
+          <p>전년 대비 ${sign}${billion(Math.abs(difference))}${percent}</p></div>`;
+      });
+      const ticks = Array.from({ length: 6 }, (_, index) => `<span>${index * step}</span>`).join("");
+      document.getElementById("zone-budget-chart").innerHTML = groups.join("") +
+        `<div class="budget-axis" aria-hidden="true"><span></span><div class="budget-ticks">${ticks}</div><span>억 원</span></div>`;
 
       console.info("보호구역 개선 예산 API 연결 완료", 4);
     } catch (error) {
