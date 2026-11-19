@@ -1380,19 +1380,25 @@ body :is(.oecd-sources, .oecd-sources p, .panel-source, .safety-board-note,
 }
 .designation-card output { color: var(--muted) }
 
-.budget-group { margin-top: 10px }
-.budget-group h4 { margin: 0 0 5px; font-size: 14px }
-.budget-group p { margin: 4px 0; font-size: 12px; color: var(--muted) }
-.budget-row, .budget-axis {
-  display: grid; grid-template-columns: 4ch minmax(0, 1fr) 8em;
-  align-items: center; gap: 8px; font-size: 12px; font-variant-numeric: tabular-nums;
+#zone-budget .budget-layout { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 16px }
+.budget-layout .policy-law-table { min-width: 0 }
+#zone-budget-chart { --plot-height: clamp(154px, 25svh, 248px); margin-top: 12px }
+.budget-plot { display: grid; grid-template-columns: auto repeat(2, minmax(0, 1fr)); column-gap: 8px }
+.budget-unit, .budget-group p, .budget-y-axis { color: var(--muted); font-size: 12px }
+.budget-y-axis { display: flex; flex-direction: column; justify-content: space-between; align-items: end; height: var(--plot-height); line-height: 1 }
+.budget-bars { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; border-bottom: 1px solid var(--line);
+  background: repeating-linear-gradient(to top, transparent 0 calc(20% - 1px), var(--line) calc(20% - 1px) 20%) }
+.budget-track { display: flex; align-items: end; justify-content: center; position: relative; height: var(--plot-height) }
+.budget-bar { position: relative; width: min(66%, 64px); border-radius: 4px 4px 0 0; background: #83a9d1 }
+.budget-track + .budget-track .budget-bar { background: var(--mint) }
+.budget-bar strong { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: clamp(10px, 1vw, 13px) }
+.budget-years { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; font-size: 12px; color: var(--muted) }
+.budget-group { text-align: center }
+.budget-group h4 { margin: 7px 0 4px; font-size: 14px }
+.budget-group p { margin: 0 }
+@media (max-width: 900px) {
+  #zone-budget .budget-layout { grid-template-columns: minmax(0, 1fr) }
 }
-.budget-row + .budget-row { margin-top: 4px }
-.budget-track { background: #203447; border-radius: 4px }
-.budget-bar { display: block; height: 12px; border-radius: 4px; background: #83a9d1 }
-.budget-row + .budget-row .budget-bar { background: var(--mint) }
-.budget-ticks { display: flex; justify-content: space-between; color: var(--muted); border-top: 1px solid var(--line); padding-top: 4px }
-.budget-axis { margin-top: 8px; color: var(--muted) }
 </style>
 </head>
 <body>
@@ -2536,11 +2542,7 @@ body :is(.oecd-sources, .oecd-sources p, .panel-source, .safety-board-note,
       <button class="traffic-jump background-video-toggle" type="button" aria-label="배경 영상" aria-pressed="false"><span aria-hidden="true">배경 영상 꺼짐</span></button>
     </nav>
   </header>
-  <div class="oecd-content policy-content" style="grid-template-columns: minmax(0, 1fr)">
-    <section class="audit-diagnosis" aria-labelledby="zone-budget-chart-title">
-      <h3 class="audit-heading" id="zone-budget-chart-title">두 보호구역 개선사업 예산, 얼마나 줄었나?</h3>
-      <div id="zone-budget-chart"></div>
-    </section>
+  <div class="oecd-content policy-content budget-layout">
     <section class="audit-diagnosis" aria-labelledby="zone-budget-table-title">
       <h3 class="audit-heading" id="zone-budget-table-title">2025–2026년 세부사업 편성액</h3>
       <div class="policy-law-scroll" tabindex="0" role="region" aria-labelledby="zone-budget-table-title">
@@ -2557,6 +2559,10 @@ body :is(.oecd-sources, .oecd-sources p, .panel-source, .safety-board-note,
       <p class="muted">1곳당 환산액은 연간 예산을 지정 구역 수로 나눈 평균입니다. 어린이는 2025년 예산에 2025년 12월 31일, 2026년 예산에 2026년 6월 30일 기준 구역 수를, 노인·장애인은 2025년 명단 기준 구역 수를 썼습니다. 노인 보호구역의 ‘이하’ 금액은 장애인 보호구역과 합산 편성된 예산을 지정된 노인 보호구역 수로 나눈 상한 추정치입니다.</p>
       <p class="muted">서울시 교통실의 두 개선 세부사업 기준입니다. 별도 보호구역 시설 개선 사업과 자치구 자체 예산은 제외했습니다.</p>
       <p class="muted policy-source"><span class="source-links"><a href="https://news.seoul.go.kr/gov/archives/574426">서울시 2026년 예산서 교통실 610쪽</a> <a href="https://data.seoul.go.kr/dataList/OA-2799/F/1/datasetView.do">서울열린데이터광장 어린이 보호구역 지정 현황</a> <a href="https://github.com/schwatara-eng/team1_traffic_live/blob/main/data/04_보호구역_마스터.csv">팀 노인 보호구역 명단</a></span></p>
+    </section>
+    <section class="audit-diagnosis" aria-labelledby="zone-budget-chart-title">
+      <h3 class="audit-heading" id="zone-budget-chart-title">두 보호구역 개선사업 예산, 얼마나 줄었나?</h3>
+      <div id="zone-budget-chart"></div>
     </section>
   </div>
 </section>
@@ -4782,7 +4788,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
         ["노인·장애인보호구역 개선", data.elderly_disabled],
       ];
       const step = Math.max(1, Math.ceil(Math.max(...projects.flatMap(([, project]) =>
-        [project.budget_2025, project.budget_2026])) / 5000000)) * 50;
+        [project.budget_2025, project.budget_2026])) / 25000000)) * 50;
       const axisMax = step * 5 * 100000;
       const changeFormat = new Intl.NumberFormat("ko-KR", {
         signDisplay: "exceptZero", maximumFractionDigits: 1, minimumFractionDigits: 1,
@@ -4793,18 +4799,23 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
         const difference = after - before;
         const percent = before ? ` · ${changeFormat.format(difference / before * 100)}%` : "";
         const sign = difference < 0 ? "−" : difference > 0 ? "+" : "";
-        const bars = [["2025", before], ["2026", after]].map(([year, amount]) => `
-          <div class="budget-row">
-            <span>${year}</span>
-            <span class="budget-track" aria-hidden="true"><span class="budget-bar" style="width:${amount / axisMax * 100}%"></span></span>
-            <strong>${billion(amount)}</strong>
+        const bars = [before, after].map(amount => `
+          <div class="budget-track">
+            <div class="budget-bar" style="height:${amount / axisMax * 100}%">
+              <strong>${billion(amount)}</strong>
+            </div>
           </div>`).join("");
-        return `<div class="budget-group"><h4>${name}</h4>${bars}
-          <p>전년 대비 ${sign}${billion(Math.abs(difference))}${percent}</p></div>`;
+        return `<div class="budget-group">
+          <div class="budget-bars">${bars}</div>
+          <div class="budget-years"><span>2025년</span><span>2026년</span></div>
+          <h4>${name}</h4>
+          <p>전년 대비 ${sign}${billion(Math.abs(difference))}${percent}</p>
+        </div>`;
       });
-      const ticks = Array.from({ length: 6 }, (_, index) => `<span>${index * step}</span>`).join("");
-      document.getElementById("zone-budget-chart").innerHTML = groups.join("") +
-        `<div class="budget-axis" aria-hidden="true"><span></span><div class="budget-ticks">${ticks}</div><span>억 원</span></div>`;
+      const ticks = Array.from({ length: 6 }, (_, index) => `<span>${(5 - index) * step}</span>`).join("");
+      document.getElementById("zone-budget-chart").innerHTML = `
+        <p class="budget-unit">단위: 억 원</p>
+        <div class="budget-plot"><div class="budget-y-axis">${ticks}</div>${groups.join("")}</div>`;
 
       console.info("보호구역 개선 예산 API 연결 완료", 4);
     } catch (error) {
