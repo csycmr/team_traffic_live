@@ -4431,8 +4431,8 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
       const end = y(values[2]);
       const label = Math.max(end, previousLabel + 17);
       previousLabel = label;
-      line(xs[2] + 4, end, 347, label, color).classList.add("designation-mark");
-      element("text", { x: 351, y: label + 4, class: "designation-mark", style: "fill:" + color }, row.district);
+      line(xs[2] + 4, end, 347, label, color);
+      element("text", { x: 351, y: label + 4, style: "fill:" + color }, row.district);
       values.forEach((value, index) => {
         const key = index + "/" + value;
         if (!points.has(key)) points.set(key, { index, value, names: [], color });
