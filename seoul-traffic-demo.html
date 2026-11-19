@@ -1393,6 +1393,13 @@ body :is(.oecd-sources, .oecd-sources p, .panel-source, .safety-board-note,
 .budget-track { display: flex; align-items: end; justify-content: center; position: relative; height: var(--plot-height) }
 .budget-bar { position: relative; width: min(66%, 64px); border-radius: 4px 4px 0 0; background: #83a9d1 }
 .budget-track + .budget-track .budget-bar { background: var(--mint) }
+@media (prefers-reduced-motion: no-preference) {
+  .budget-bar { transform-origin: center bottom }
+  .budget-chart.chart-awaiting .budget-bar { transform: scaleY(0) }
+  .budget-chart.chart-entered .budget-bar { animation: audit-trend-rise 850ms ease-out both }
+  .budget-chart.chart-awaiting .budget-bar strong { opacity: 0 }
+  .budget-chart.chart-entered .budget-bar strong { animation: reveal-metric-value 180ms ease-out 800ms both }
+}
 .budget-bar strong { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: clamp(10px, 1vw, 13px) }
 .budget-years { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; font-size: 12px; color: var(--muted) }
 .budget-group { text-align: center }
@@ -3803,7 +3810,27 @@ for (const button of document.querySelectorAll('[data-risk-metric]')) {
   });
 }
 
-if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-motion: no-preference)').matches) {
+const chartEntranceObserver = 'IntersectionObserver' in window &&
+  window.matchMedia('(prefers-reduced-motion: no-preference)').matches
+  ? new IntersectionObserver((entries, observer) => {
+      for (const { target, isIntersecting, intersectionRatio } of entries) {
+        if (!isIntersecting || intersectionRatio < 0.05) continue;
+        target.classList.replace('chart-awaiting', 'chart-entered');
+        observer.unobserve(target);
+        if (target.classList.contains('national-donut')) animateDonut(target, performance.now());
+      }
+    }, { threshold: 0.05 })
+  : null;
+
+function observeChartEntrance(selector) {
+  if (!chartEntranceObserver) return;
+  for (const chart of document.querySelectorAll(selector)) {
+    chart.classList.add('chart-awaiting');
+    chartEntranceObserver.observe(chart);
+  }
+}
+
+if (chartEntranceObserver) {
   for (const series of document.querySelectorAll('.child-series')) {
     series.querySelector('polyline')?.setAttribute('pathLength', '1');
     for (const point of series.querySelectorAll('circle, .child-value')) {
@@ -3812,20 +3839,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
     }
   }
 
-  const chartObserver = new IntersectionObserver((entries, observer) => {
-    const startedAt = performance.now();
-    for (const entry of entries) {
-      if (entry.intersectionRatio < 0.35) continue;
-      if (entry.target.classList.contains('national-donut')) animateDonut(entry.target, startedAt);
-      entry.target.classList.replace('chart-awaiting', 'chart-entered');
-      observer.unobserve(entry.target);
-    }
-  }, { threshold: 0.35 });
-
-  for (const chart of document.querySelectorAll('#national-fatalities .national-plot, #national-fatalities .national-population, #national-fatalities .national-donut, #audit-video .oecd-chart, #audit-video .audit-trend-plot, #district-risk .district-table-scroll, #zone-review .review-chart, #school-zone-precedent .child-series, #school-zone-precedent .school-study-bars, #school-zone-precedent .zone-density, #school-zone-fines .parking-fine-bars, #district-comparison .risk-comparison-plot')) {
-    chart.classList.add('chart-awaiting');
-    chartObserver.observe(chart);
-  }
+  observeChartEntrance('#school-zone-precedent .child-series, #school-zone-fines .parking-fine-bars');
 }
 </script>
 <script>
@@ -3983,6 +3997,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
           measure.style.setProperty("--level", `${(rate / 30) * 100}%`);
         });
       }
+      observeChartEntrance("#audit-video .oecd-chart");
       console.info("OECD 순위 API 연결 완료", years.length);
     } catch (error) {
       console.error("OECD 차트 데이터를 불러오지 못했어.", error);
@@ -4065,6 +4080,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
         group.querySelector("polyline").setAttribute("points", points.join(" "));
       }
 
+      observeChartEntrance("#audit-video .audit-trend-plot");
       console.info("전국·서울 교통사고 추이 API 연결 완료", years.length);
     } catch (error) {
       console.error("교통사고 추이 데이터를 불러오지 못했어.", error);
@@ -4303,6 +4319,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
             <td class="district-name-end">${escapeHtml(row.district)}</td></tr>`).join("");
 
       drawChangeMap(districts);
+      observeChartEntrance("#district-risk .district-table-scroll");
       console.info("자치구 고령 보행사고율 API 연결 완료", districts.length);
     } catch (error) {
       console.error("자치구 고령 보행사고율을 불러오지 못했어.", error);
@@ -4364,6 +4381,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
         }
       });
 
+      observeChartEntrance("#national-fatalities .national-plot");
       console.info("전국 사망자 API 연결 완료", years.length);
     } catch (error) {
       console.error("전국 사망자 막대를 불러오지 못했어.", error);
@@ -4427,6 +4445,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
       });
       svg.setAttribute("aria-label", shapes.map((shape) => shape.title).join(", "));
 
+      observeChartEntrance("#national-fatalities .national-population");
       console.info("65세 이상 주민등록인구 API 연결 완료", points.length);
     } catch (error) {
       console.error("65세 이상 주민등록인구를 불러오지 못했어.", error);
@@ -4609,6 +4628,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
         return `<tr><th scope="row">${year}</th><td>${escapeHtml(item.name)}</td><td>${formatCount.format(point.population_65plus)}</td><td>${formatCount.format(point.accidents)}</td><td>${point.accidents_per_10k.toFixed(2)}</td></tr>`;
       }).join("\n")).join("\n");
 
+      observeChartEntrance("#district-comparison .risk-comparison-plot");
       console.info("자치구 비교 추이 API 연결 완료", series.length);
     } catch (error) {
       console.error("자치구 비교 추이를 불러오지 못했어.", error);
@@ -4682,6 +4702,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
       candidateBody.innerHTML = review.candidates.map((c) => `
           <tr><th scope="row">${escapeHtml(c.district)}</th><td>${c.selected}</td><td>${c.outside}</td><td>${c.overlapping}</td><td>${c.undetermined}</td><td>${c.accidents_per_10k.toFixed(2)}</td></tr>`).join("");
 
+      observeChartEntrance("#zone-review .review-chart");
       console.info("사고다발지역 검토 API 연결 완료", review.items.length);
     } catch (error) {
       console.error("사고다발지역 검토 자료를 불러오지 못했어.", error);
@@ -4717,6 +4738,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
       });
       source.textContent = `어린이 인구는 ${data.child.population.toLocaleString("ko-KR")}명이며 어린이보호구역은 ${data.child_zone_date.slice(0, 4)}년 기준 ${data.child.zones.toLocaleString("ko-KR")}곳입니다. 노인 인구는 ${data.elderly.population.toLocaleString("ko-KR")}명이며 노인보호구역은 ${data.elderly_year}년 기준 ${data.elderly.zones.toLocaleString("ko-KR")}곳입니다.`;
 
+      observeChartEntrance("#school-zone-precedent .zone-density");
       console.info("서울 보호구역 현황 API 연결 완료", 2);
     } catch (error) {
       console.error("서울 보호구역 현황을 불러오지 못했어.", error);
@@ -4750,6 +4772,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
       });
       caption.textContent = `어린이 보행사고 ${data.before.accidents}건 → ${data.after.accidents}건 · ${data.accidents_reduction_percent}% 감소`;
 
+      observeChartEntrance("#school-zone-precedent .school-study-bars");
       console.info("어린이보호구역 카메라 전후 API 연결 완료", 2);
     } catch (error) {
       console.error("어린이 무인단속카메라 전후 비교를 불러오지 못했어.", error);
@@ -4834,6 +4857,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
           <div class="budget-plot"><div class="budget-y-axis">${ticks}</div>${groups.join("")}</div>`;
       }
 
+      observeChartEntrance("#zone-budget .budget-chart");
       console.info("보호구역 개선 예산 API 연결 완료", 4);
     } catch (error) {
       console.error("보호구역 개선 예산을 불러오지 못했어.", error);
@@ -4945,7 +4969,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
 
         if (!figure) {
           figure = document.createElement("figure");
-          figure.className = "national-donut chart-entered";
+          figure.className = "national-donut";
           figure.setAttribute("aria-labelledby", `national-donut-${row.year}`);
           figure.innerHTML = `<figcaption id="national-donut-${row.year}">${row.year}년</figcaption><svg class="national-donut-shape" viewBox="0 0 246 184" aria-hidden="true"></svg><p class="oecd-sr"></p><ul class="oecd-sr" role="list"></ul>`;
           container.append(figure);
@@ -4971,6 +4995,7 @@ if ('IntersectionObserver' in window && window.matchMedia('(prefers-reduced-moti
         ? `단위 명 · 보행 중 사망이 ${years.length}년 연속 가장 많았습니다.`
         : "단위 명";
 
+      observeChartEntrance("#national-fatalities .national-donut");
       console.info("65세 이상 사망자 상태 도넛 API 연결 완료", years.length);
     } catch (error) {
       console.error("65세 이상 사망자 상태 도넛을 불러오지 못했어.", error);
