@@ -125,15 +125,21 @@ def _validated_text(title: str, content: str):
     return title, content
 
 
+
 def draft_for_idea(engine: Engine, idea_id: int) -> dict | None:
     with engine.connect() as conn:
-        row = conn.execute(text("""
-            SELECT id, story_idea_id, title, content, status, updated_at, reporter_guidance, validation_result
-            FROM articles WHERE story_idea_id=:id ORDER BY id DESC LIMIT 1
-        """), {"id": idea_id}).mappings().first()
-    result = dict(row) if row else None
-    if result: result['validation_result'] = _json(result['validation_result']) if result['validation_result'] else None
-    return result
+        article_id = conn.execute(text("""
+            SELECT id
+            FROM articles
+            WHERE story_idea_id = :idea_id
+            ORDER BY id DESC
+            LIMIT 1
+        """), {"idea_id": idea_id}).scalar_one_or_none()
+
+    if article_id is None:
+        return None
+
+    return load_draft(engine, int(article_id))
 
 
 def save_draft(engine: Engine, context: dict, title: str, content: str,
@@ -185,14 +191,212 @@ def save_draft(engine: Engine, context: dict, title: str, content: str,
     return article_id
 
 
+
+
 def load_draft(engine: Engine, article_id: int) -> dict:
     with engine.connect() as conn:
         row = conn.execute(text("""
-            SELECT id, story_idea_id, title, content, status, validation_passed,
-                   updated_at, reporter_guidance, validation_result FROM articles WHERE id=:id
+            SELECT id, story_idea_id, title, content, status,
+                   validation_passed, updated_at, reporter_guidance,
+                   validation_result
+            FROM articles
+            WHERE id = :id
         """), {"id": article_id}).mappings().first()
-    if not row:
-        raise ValueError("저장된 기사 초안을 찾지 못했습니다.")
+
+        if not row:
+            raise ValueError("저장된 기사 초안을 찾지 못했습니다.")
+
+        evidence_rows = conn.execute(text("""
+            SELECT
+                ae.id,
+                ae.evidence_role,
+                ae.analysis_id,
+                ae.source_document_id,
+                ae.location_label,
+                ae.explanation,
+                sd.title AS source_title,
+                sd.source_org,
+                sd.source_url,
+                sd.content_excerpt,
+                sd.verification_status AS source_status,
+                a.verification_status AS analysis_status
+            FROM article_evidence ae
+            LEFT JOIN source_documents sd
+                ON ae.source_document_id = sd.id
+            LEFT JOIN analysis_snapshots a
+                ON ae.analysis_id = a.id
+            WHERE ae.article_id = :article_id
+            ORDER BY ae.id
+        """), {"article_id": article_id}).mappings().all()
+
     result = dict(row)
-    result['validation_result'] = _json(result['validation_result']) if result['validation_result'] else None
+    result["validation_result"] = (
+        _json(result["validation_result"])
+        if result["validation_result"] else None
+    )
+
+    result["evidence"] = [
+        {
+            "id": item["id"],
+            "role": item["evidence_role"],
+            "title": (
+                item["source_title"]
+                if item["evidence_role"] == "CONTEXT"
+                else "기사거리 분석 통계"
+            ),
+            "organization": item["source_org"],
+            "url": item["source_url"],
+            "excerpt": item["content_excerpt"],
+            "location": item["location_label"],
+            "explanation": item["explanation"],
+            "verification_status": (
+                item["source_status"]
+                if item["evidence_role"] == "CONTEXT"
+                else item["analysis_status"]
+            ),
+            "source_document_id": item["source_document_id"],
+            "analysis_id": item["analysis_id"],
+        }
+        for item in evidence_rows
+    ]
+
     return result
+
+def attach_rag_law_evidence(
+    engine: Engine,
+    article_id: int,
+    evidence_id: str,
+    original_checked: bool = False,
+) -> dict:
+    """RAG 법령 근거를 기존 기사 근거 테이블에 연결한다."""
+    import hashlib
+    from pathlib import Path
+
+    source_path = Path(__file__).resolve().parents[1] / "data" / "rag_sources.json"
+    sources = json.loads(source_path.read_text(encoding="utf-8"))
+    source = next((s for s in sources if s["id"] == evidence_id), None)
+
+    if not source or not evidence_id.startswith(("LAW-", "RULE-")):
+        raise ValueError("연결할 수 있는 법령 근거 ID가 아닙니다.")
+
+    url = source.get("url", "")
+    excerpt = source.get("excerpt", "").strip()
+    
+    from urllib.parse import urlparse
+
+    parsed = urlparse(url)
+
+    if parsed.scheme != "https" or parsed.hostname not in {
+        "law.go.kr",
+        "www.law.go.kr",
+    }:
+        raise ValueError("공식 법령 원문 주소가 아닙니다.")
+
+    if not excerpt:
+        raise ValueError("법령 발췌문이 없습니다.")
+
+    verification = "VERIFIED" if original_checked else "METADATA_ONLY"
+    
+    source_hash = hashlib.sha256(
+        f"RAG:{evidence_id}:{url}".encode("utf-8")
+    ).hexdigest()
+
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
+
+    with engine.begin() as conn:
+        article = conn.execute(text("""
+            SELECT id, status FROM articles
+            WHERE id = :id FOR UPDATE
+        """), {"id": article_id}).mappings().first()
+
+        if not article:
+            raise ValueError("기사를 찾을 수 없습니다.")
+        if article["status"] != "검토대기":
+            raise ValueError("검토대기 기사에만 근거를 연결할 수 있습니다.")
+
+        conn.execute(text("""
+            INSERT INTO source_documents (
+                title, source_org, source_type, source_url,
+                published_at, retrieved_at, content_excerpt,
+                content_hash, verification_status
+            )
+            VALUES (
+                :title, :org, 'POLICY', :url,
+                NULL, :retrieved, :excerpt, :hash, :verification
+            )
+            ON DUPLICATE KEY UPDATE
+                retrieved_at = VALUES(retrieved_at),
+                content_excerpt = CASE
+                    WHEN VALUES(verification_status) = 'VERIFIED'
+                    THEN VALUES(content_excerpt)
+                    ELSE content_excerpt
+                END,
+                verification_status = CASE
+                    WHEN VALUES(verification_status) = 'VERIFIED'
+                    THEN 'VERIFIED'
+                    ELSE verification_status
+                END
+        """), {
+            "title": source["title"][:500],
+            "org": source.get("organization", "법제처")[:200],
+            "url": url,
+            "retrieved": now,
+            "excerpt": excerpt if original_checked else None,
+            "hash": source_hash,
+            "verification": verification,
+        })
+
+        document = conn.execute(text("""
+            SELECT id, verification_status
+            FROM source_documents
+            WHERE content_hash = :hash
+        """), {"hash": source_hash}).mappings().one()
+
+        existing = conn.execute(text("""
+            SELECT id FROM article_evidence
+            WHERE article_id = :article_id
+              AND source_document_id = :document_id
+        """), {
+            "article_id": article_id,
+            "document_id": document["id"],
+        }).scalar_one_or_none()
+
+        if existing is None:
+            conn.execute(text("""
+                INSERT INTO article_evidence (
+                    article_id, analysis_id, source_document_id,
+                    evidence_role, location_label, explanation
+                )
+                VALUES (
+                    :article_id, NULL, :document_id,
+                    'CONTEXT', :location, :explanation
+                )
+            """), {
+                "article_id": article_id,
+                "document_id": document["id"],
+                "location": source.get("section", "법령"),
+                "explanation": f"RAG 근거 {evidence_id} · 기자 선택",
+            })
+
+
+        # 근거가 바뀌면 기존 검수 결과는 다시 확인해야 한다.
+        conn.execute(text("""
+            UPDATE articles SET
+                validation_passed = FALSE,
+                validation_result = NULL,
+                validated_hash = NULL,
+                reviewed_by = NULL,
+                reviewed_at = NULL,
+                review_note = NULL,
+                updated_at = :now
+            WHERE id = :article_id
+        """), {"article_id": article_id, "now": now})
+
+    return {
+        "article_id": article_id,
+        "evidence_id": evidence_id,
+        "source_document_id": int(document["id"]),
+        "verification_status": document["verification_status"],
+        "linked": True,
+    }
+

@@ -175,6 +175,57 @@
     return message;
   }
 
+  let activeArticleId = null;
+  let activeArticleEditable = false;
+
+  document.addEventListener("newsroom:draft-selected", event => {
+    activeArticleId = event.detail.articleId;
+    activeArticleEditable = event.detail.editable;
+  });
+
+  async function attachEvidence(item, checked, statusElement, button) {
+    if (!activeArticleId || !activeArticleEditable) {
+      statusElement.textContent =
+        "기사 초안 메뉴에서 검토대기 기사를 먼저 선택하세요.";
+      return;
+    }
+
+    const articleId = activeArticleId;
+    button.disabled = true;
+    statusElement.textContent = "근거 저장 중…";
+
+    try {
+      const response = await fetch(
+        `/api/newsroom/drafts/${articleId}/rag-evidence`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            evidence_id: item.id,
+            original_checked: checked
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "근거 연결 실패");
+      }
+
+      statusElement.textContent =
+        `기사 #${articleId}에 연결 완료 · ` +
+        (data.verification_status === "VERIFIED"
+          ? "원문 대조 확인"
+          : "원문 확인 필요");
+
+    } catch (error) {
+      statusElement.textContent = `오류: ${error.message}`;
+    } finally {
+      button.disabled = false;
+    }
+  }
+
   function addEvidence(message, evidence) {
     if (!Array.isArray(evidence) || !evidence.length) return;
 
@@ -207,6 +258,49 @@
         } catch (_) {
           // 유효하지 않은 출처 URL은 링크로 표시하지 않음
         }
+      }
+
+      if (
+        typeof item.id === "string" &&
+        /^(LAW|RULE)-/.test(item.id)
+      ) {
+        const controls = document.createElement("div");
+        controls.style.marginTop = "10px";
+
+        const label = document.createElement("label");
+        label.style.display = "block";
+        label.style.marginBottom = "8px";
+
+        const checkbox = document.createElement("input");
+        checkbox.type = "checkbox";
+
+        label.append(
+          checkbox,
+          document.createTextNode(
+            " 법제처 원문과 발췌문을 직접 대조했습니다"
+          )
+        );
+
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = "선택한 기사에 근거 연결";
+        button.style.padding = "7px 10px";
+        button.style.borderRadius = "6px";
+        button.style.background = "#70edc8";
+        button.style.color = "#102133";
+        button.style.border = "0";
+        button.style.cursor = "pointer";
+
+        const result = document.createElement("p");
+        result.setAttribute("role", "status");
+        result.style.marginTop = "8px";
+
+        button.addEventListener("click", () => {
+          attachEvidence(item, checkbox.checked, result, button);
+        });
+
+        controls.append(label, button, result);
+        block.appendChild(controls);
       }
 
       details.appendChild(block);
