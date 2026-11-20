@@ -538,10 +538,11 @@ def newsroom_attach_rag_evidence(article_id):
 
     if not isinstance(original_checked, bool):
         return jsonify(error="원문 확인 상태가 올바르지 않습니다."), 400
-
     engine = None
+    
     try:
         engine = engine_from_env()
+
         result = attach_rag_law_evidence(
             engine,
             article_id,
@@ -558,6 +559,7 @@ def newsroom_attach_rag_evidence(article_id):
     finally:
         if engine is not None:
             engine.dispose()
+
 
 @app.post("/api/rag/ask")
 def api_rag_ask():

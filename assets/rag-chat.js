@@ -25,6 +25,10 @@
       width: min(400px, calc(100vw - 32px));
       height: min(500px, calc(100dvh - 170px));
       min-height: 180px;
+      min-width: 280px;
+      max-width: calc(100vw - 16px);
+      max-height: calc(100dvh - 16px);
+      resize: both;
       display: flex;
       flex-direction: column;
       overflow: hidden;
@@ -45,6 +49,10 @@
     .rag-room-header {
       justify-content: space-between;
       border-bottom: 1px solid #344966;
+      min-width: 280px;
+      max-width: calc(100vw - 16px);
+      max-height: calc(100dvh - 16px);
+      resize: both;
     }
     .rag-room-header button {
       background: transparent;
@@ -152,11 +160,136 @@
   const messages = panel.querySelector("#rag-room-messages");
   const submit = form.querySelector('button[type="submit"]');
 
+  const header = panel.querySelector(".rag-room-header");
+  const layoutKey = "trafficRagWindowLayout";
+  let layoutRestored = false;
+
+  function saveWindowLayout() {
+    if (panel.hidden) return;
+    const rect = panel.getBoundingClientRect();
+
+    try {
+      localStorage.setItem(layoutKey, JSON.stringify({
+        x: rect.left,
+        y: rect.top,
+        width: rect.width,
+        height: rect.height
+      }));
+    } catch (_) {
+      // 브라우저 저장소를 사용할 수 없어도 창은 동작한다.
+    }
+  }
+
+  function keepWindowVisible() {
+    if (panel.hidden) return;
+
+    const rect = panel.getBoundingClientRect();
+    const margin = 8;
+
+    const width = Math.min(rect.width, window.innerWidth - margin * 2);
+    const height = Math.min(rect.height, window.innerHeight - margin * 2);
+
+    panel.style.width = `${width}px`;
+    panel.style.height = `${height}px`;
+    panel.style.left = `${Math.max(margin, Math.min(
+      rect.left, window.innerWidth - width - margin
+    ))}px`;
+    panel.style.top = `${Math.max(margin, Math.min(
+      rect.top, window.innerHeight - height - margin
+    ))}px`;
+
+    panel.style.right = "auto";
+    panel.style.bottom = "auto";
+  }
+
+  function restoreWindowLayout() {
+    if (layoutRestored) return;
+    layoutRestored = true;
+
+    try {
+      const saved = JSON.parse(localStorage.getItem(layoutKey) || "null");
+
+      if (saved &&
+          [saved.x, saved.y, saved.width, saved.height]
+            .every(Number.isFinite)) {
+        panel.style.width = `${saved.width}px`;
+        panel.style.height = `${saved.height}px`;
+        panel.style.left = `${saved.x}px`;
+        panel.style.top = `${saved.y}px`;
+        panel.style.right = "auto";
+        panel.style.bottom = "auto";
+      }
+    } catch (_) {
+      // 저장된 배치가 없으면 기본 위치를 사용한다.
+    }
+
+    keepWindowVisible();
+  }
+
+  header.addEventListener("pointerdown", event => {
+    if (event.button !== 0 || event.target.closest("button")) return;
+
+    const rect = panel.getBoundingClientRect();
+    const offsetX = event.clientX - rect.left;
+    const offsetY = event.clientY - rect.top;
+
+    panel.style.left = `${rect.left}px`;
+    panel.style.top = `${rect.top}px`;
+    panel.style.right = "auto";
+    panel.style.bottom = "auto";
+
+    header.setPointerCapture(event.pointerId);
+
+    function move(event) {
+      panel.style.left = `${Math.max(8, Math.min(
+        event.clientX - offsetX,
+        window.innerWidth - panel.offsetWidth - 8
+      ))}px`;
+
+      panel.style.top = `${Math.max(8, Math.min(
+        event.clientY - offsetY,
+        window.innerHeight - panel.offsetHeight - 8
+      ))}px`;
+    }
+
+    function stop() {
+      header.removeEventListener("pointermove", move);
+      header.removeEventListener("pointerup", stop);
+      header.removeEventListener("pointercancel", stop);
+      keepWindowVisible();
+      saveWindowLayout();
+    }
+
+    header.addEventListener("pointermove", move);
+    header.addEventListener("pointerup", stop);
+    header.addEventListener("pointercancel", stop);
+  });
+
+  const windowResizeObserver = new ResizeObserver(() => {
+    if (!panel.hidden) saveWindowLayout();
+  });
+  windowResizeObserver.observe(panel);
+
+  window.addEventListener("resize", () => {
+    if (!panel.hidden) {
+      keepWindowVisible();
+      saveWindowLayout();
+    }
+  });
+
+
+  
   function setOpen(open) {
     panel.hidden = !open;
     launcher.setAttribute("aria-expanded", String(open));
-    if (open) input.focus();
-    else launcher.focus();
+
+    if (open) {
+      restoreWindowLayout();
+      keepWindowVisible();
+      input.focus();
+    } else {
+      launcher.focus();
+    }
   }
 
   launcher.addEventListener("click", () => setOpen(panel.hidden));
