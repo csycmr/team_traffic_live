@@ -50,11 +50,11 @@ def newsroom_facts():
     except (OSError, ValueError, KeyError) as error:
         return jsonify(error=str(error)), 400
 
-from newsroom.article_draft import (
-    load_idea_context,
-    generate_draft,
-    save_draft,
-    draft_for_idea,
+    from newsroom.article_draft import (
+        load_idea_context,
+        generate_draft,
+        save_draft,
+        draft_for_idea,
 )
 
 
@@ -512,6 +512,45 @@ def newsroom_public_article(article_id):
     except Exception:
         app.logger.exception("승인 기사 상세 조회 실패")
         return jsonify(error="기사를 불러오지 못했습니다."), 500
+    finally:
+        if engine is not None:
+            engine.dispose()
+
+@app.post("/api/newsroom/drafts/<int:article_id>/rag-evidence")
+def newsroom_attach_rag_evidence(article_id):
+    from newsroom.article_draft import attach_rag_law_evidence
+    from newsroom.persistence import engine_from_env
+
+    payload = request.get_json(silent=True)
+
+    if not isinstance(payload, dict):
+        return jsonify(error="JSON 입력이 필요합니다."), 400
+
+    evidence_id = payload.get("evidence_id")
+    original_checked = payload.get("original_checked", False)
+
+    if not isinstance(evidence_id, str) or not evidence_id.strip():
+        return jsonify(error="근거 ID가 필요합니다."), 400
+
+    if not isinstance(original_checked, bool):
+        return jsonify(error="원문 확인 상태가 올바르지 않습니다."), 400
+
+    engine = None
+    try:
+        engine = engine_from_env()
+        result = attach_rag_law_evidence(
+            engine,
+            article_id,
+            evidence_id.strip(),
+            original_checked=original_checked,
+        )
+        return jsonify(result), 201
+
+    except ValueError as error:
+        return jsonify(error=str(error)), 400
+    except Exception:
+        app.logger.exception("RAG 근거 연결 실패")
+        return jsonify(error="근거 저장 중 오류가 발생했습니다."), 500
     finally:
         if engine is not None:
             engine.dispose()

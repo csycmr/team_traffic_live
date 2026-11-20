@@ -719,6 +719,13 @@
   }
   function applyDraft(draft) {
     currentDraft = draft;
+    
+document.dispatchEvent(new CustomEvent("newsroom:draft-selected", {
+  detail: {
+    articleId: draft?.id || null,
+    editable: draft?.status === "검토대기"
+  }
+}));
     $('draftGuidanceSaved').textContent = draft?.reporter_guidance || '기록된 지침 없음 (이전 초안 또는 지침 미입력)';
     $('draftTitle').value = draft?.title || '';
     $('draftContent').value = draft?.content || '';
@@ -731,6 +738,9 @@
     if (currentDraft && ($('draftTitle').value !== currentDraft.title || $('draftContent').value !== currentDraft.content) && !confirm('저장하지 않은 수정 사항이 있습니다. 다른 기사거리로 이동할까요?')) return;
     ideaId = idea.id;
     currentDraft = null;
+document.dispatchEvent(new CustomEvent("newsroom:draft-selected", {
+  detail: { articleId: null, editable: false }
+}));
     $('draftGuidance').value = '';
     $('draftTitle').value = '';
     $('draftContent').value = '';
