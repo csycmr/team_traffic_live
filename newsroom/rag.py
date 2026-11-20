@@ -174,6 +174,12 @@ def search_statistics(question: str) -> dict | None:
             "evidence": [],
         }
 
+    if re.search(r"어린이|아동|유아|초등학생|(?:만\s*)?\d+\s*세\s*이하", question):
+        return unavailable(
+            "질문하신 연령대의 통계를 확인할 수 없습니다. "
+            "현재 챗봇에서 조회할 수 있는 보행자 사고 통계는 고령 보행자 기준입니다."
+        )
+
     state = dataset_state()
     if state["missing"]:
         return unavailable("사고 통계 파일이 누락됐습니다.")
@@ -187,10 +193,12 @@ def search_statistics(question: str) -> dict | None:
 
     districts = [
         d for d in panel["자치구명"].dropna().unique()
-        if isinstance(d, str) and d in question
+        if isinstance(d, str) and d != "서울 전체" and d in question
     ]
 
-    if "서울 전체" in question:
+    if re.search(r"서울\s*(?:시\s*)?전체|서울특별시\s*전체", question):
+        districts.append("서울 전체")
+    elif not districts and re.search(r"서울(?:특별시|시)?", question):
         districts.append("서울 전체")
 
     # 서울 25개 자치구의 고령 보행자 사망자 순위
@@ -201,7 +209,12 @@ def search_statistics(question: str) -> dict | None:
         word in question for word in ("사망", "죽")
     )
 
-    if is_ranking and asks_deaths and not districts and len(years) == 1:
+    if (
+        is_ranking
+        and asks_deaths
+        and districts in ([], ["서울 전체"])
+        and len(years) == 1
+    ):
         year = years[0]
         rows = panel[
             (panel["사고연도"] == year)
