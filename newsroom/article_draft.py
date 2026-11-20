@@ -125,15 +125,21 @@ def _validated_text(title: str, content: str):
     return title, content
 
 
+
 def draft_for_idea(engine: Engine, idea_id: int) -> dict | None:
     with engine.connect() as conn:
-        row = conn.execute(text("""
-            SELECT id, story_idea_id, title, content, status, updated_at, reporter_guidance, validation_result
-            FROM articles WHERE story_idea_id=:id ORDER BY id DESC LIMIT 1
-        """), {"id": idea_id}).mappings().first()
-    result = dict(row) if row else None
-    if result: result['validation_result'] = _json(result['validation_result']) if result['validation_result'] else None
-    return result
+        article_id = conn.execute(text("""
+            SELECT id
+            FROM articles
+            WHERE story_idea_id = :idea_id
+            ORDER BY id DESC
+            LIMIT 1
+        """), {"idea_id": idea_id}).scalar_one_or_none()
+
+    if article_id is None:
+        return None
+
+    return load_draft(engine, int(article_id))
 
 
 def save_draft(engine: Engine, context: dict, title: str, content: str,
@@ -185,16 +191,75 @@ def save_draft(engine: Engine, context: dict, title: str, content: str,
     return article_id
 
 
+
+
 def load_draft(engine: Engine, article_id: int) -> dict:
     with engine.connect() as conn:
         row = conn.execute(text("""
-            SELECT id, story_idea_id, title, content, status, validation_passed,
-                   updated_at, reporter_guidance, validation_result FROM articles WHERE id=:id
+            SELECT id, story_idea_id, title, content, status,
+                   validation_passed, updated_at, reporter_guidance,
+                   validation_result
+            FROM articles
+            WHERE id = :id
         """), {"id": article_id}).mappings().first()
-    if not row:
-        raise ValueError("저장된 기사 초안을 찾지 못했습니다.")
+
+        if not row:
+            raise ValueError("저장된 기사 초안을 찾지 못했습니다.")
+
+        evidence_rows = conn.execute(text("""
+            SELECT
+                ae.id,
+                ae.evidence_role,
+                ae.analysis_id,
+                ae.source_document_id,
+                ae.location_label,
+                ae.explanation,
+                sd.title AS source_title,
+                sd.source_org,
+                sd.source_url,
+                sd.content_excerpt,
+                sd.verification_status AS source_status,
+                a.verification_status AS analysis_status
+            FROM article_evidence ae
+            LEFT JOIN source_documents sd
+                ON ae.source_document_id = sd.id
+            LEFT JOIN analysis_snapshots a
+                ON ae.analysis_id = a.id
+            WHERE ae.article_id = :article_id
+            ORDER BY ae.id
+        """), {"article_id": article_id}).mappings().all()
+
     result = dict(row)
-    result['validation_result'] = _json(result['validation_result']) if result['validation_result'] else None
+    result["validation_result"] = (
+        _json(result["validation_result"])
+        if result["validation_result"] else None
+    )
+
+    result["evidence"] = [
+        {
+            "id": item["id"],
+            "role": item["evidence_role"],
+            "title": (
+                item["source_title"]
+                if item["evidence_role"] == "CONTEXT"
+                else "기사거리 분석 통계"
+            ),
+            "organization": item["source_org"],
+            "url": item["source_url"],
+            "excerpt": item["content_excerpt"],
+            "location": item["location_label"],
+            "explanation": item["explanation"],
+            "verification_status": (
+                item["source_status"]
+                if item["evidence_role"] == "CONTEXT"
+                else item["analysis_status"]
+            ),
+            "source_document_id": item["source_document_id"],
+            "analysis_id": item["analysis_id"],
+        }
+        for item in evidence_rows
+    ]
+
     return result
 
 def attach_rag_law_evidence(

@@ -50,13 +50,13 @@ def newsroom_facts():
     except (OSError, ValueError, KeyError) as error:
         return jsonify(error=str(error)), 400
 
-    from newsroom.article_draft import (
-        load_idea_context,
-        generate_draft,
-        save_draft,
-        draft_for_idea,
+from newsroom.article_draft import (
+    generate_draft,
+    save_draft,
+    draft_for_idea,
+    load_idea_context,
+    load_draft,
 )
-
 
 @app.get("/api/newsroom/ideas")
 def newsroom_saved_ideas():
