@@ -151,15 +151,16 @@ def search_statistics(question: str) -> dict | None:
 
     # 숫자 조회 질문만 통계 검색으로 처리한다.
     metric_words = (
-        "사고", "사망", "고령인구",
+        "사고", "사망", "인구",
         "보호구역", "다발지역", "부상",
     )
     number_words = (
         "몇", "건수", "수는", "얼마",
         "비율", "차이", "비교", "중첩",
         "겹치", "많", "적", "1만 명당",
-        "1만명당",
+        "1만명당", "인구", "규모",
     )
+
 
     if not (
         any(w in question for w in metric_words)
@@ -179,6 +180,85 @@ def search_statistics(question: str) -> dict | None:
             "질문하신 연령대의 통계를 확인할 수 없습니다. "
             "현재 챗봇에서 조회할 수 있는 보행자 사고 통계는 고령 보행자 기준입니다."
         )
+
+    elderly_words = ("고령", "노인", "어르신", "65세", "고령자")
+    asks_elderly = any(w in question for w in elderly_words)
+
+    # 전체 교통사고와 고령 보행자 사고는 다른 통계다.
+    if "교통사고" in question and "보행자" not in question:
+        if asks_elderly:
+            return unavailable(
+                "고령자 전체 교통사고와 고령 보행자 사고는 "
+                "집계 범위가 다릅니다. 어느 통계를 원하시나요?"
+            )
+
+        years = list(dict.fromkeys(
+            int(y) for y in re.findall(r"20\d{2}", question)
+        ))
+        if len(years) != 1:
+            return unavailable("조회할 연도를 하나 명시해 주세요.")
+
+        path = (
+            Path(__file__).resolve().parents[1]
+            / "data"
+            / "15_TAAS_시도시군구_교통사고_2020-2025.csv"
+        )
+        if not path.exists():
+            return unavailable("TAAS 교통사고 통계 파일이 없습니다.")
+
+        taas = pd.read_csv(path, encoding="utf-8-sig")
+
+        if "서울" not in question:
+            return unavailable("조회할 지역을 명시해 주세요.")
+
+        names = taas.loc[
+            (taas["시도"] == "서울") & (taas["시군구"] != "합계"),
+            "시군구"
+        ].dropna().unique()
+
+        matched = [name for name in names if name in question]
+        if len(matched) > 1:
+            return unavailable("조회할 자치구를 하나만 지정해 주세요.")
+
+        district = matched[0] if matched else "합계"
+        column = (
+            "사망자수" if "사망" in question
+            else "부상자수" if "부상" in question
+            else "사고건수"
+        )
+        unit = "건" if column == "사고건수" else "명"
+
+        rows = taas.loc[
+            (taas["연도"] == years[0])
+            & (taas["시도"] == "서울")
+            & (taas["시군구"] == district)
+        ]
+
+        if len(rows) != 1 or pd.isna(rows.iloc[0][column]):
+            return unavailable("해당 지역의 통계를 확인할 수 없습니다.")
+
+        value = int(rows.iloc[0][column])
+        region = "서울 전체" if district == "합계" else f"서울 {district}"
+        label = {
+            "사고건수": "교통사고 발생 건수",
+            "사망자수": "교통사고 사망자 수",
+            "부상자수": "교통사고 부상자 수",
+        }[column]
+
+        return {
+            "status": "ANSWERED",
+            "answer": f"{years[0]}년 {region}의 {label}는 {value:,}{unit}입니다.",
+            "evidence": [{
+                "id": f"DATA-TAAS-{years[0]}-서울-{district}",
+                "title": "TAAS 시도·시군구 교통사고 통계",
+                "source_type": "STATISTIC",
+                "source_file": f"data/{path.name}",
+                "year": years[0],
+                "district": region,
+                "metric": column,
+                "column": column,
+            }],
+        }
 
     state = dataset_state()
     if state["missing"]:
@@ -200,6 +280,79 @@ def search_statistics(question: str) -> dict | None:
         districts.append("서울 전체")
     elif not districts and re.search(r"서울(?:특별시|시)?", question):
         districts.append("서울 전체")
+
+    # 노인 인구는 사고 여부와 별개의 인구 통계다.
+    asks_population = (
+        any(w in question for w in (
+            "노인", "고령", "어르신", "65세"
+        ))
+        and "인구" in question
+        and not any(w in question for w in (
+            "사고", "보행자", "보호구역", "사망", "부상"
+        ))
+    )
+
+    # 노인 인구 질문에 연도가 없으면 보유한 최신 연도를 사용
+    if asks_population and not years:
+        years = [int(panel["사고연도"].max())]
+
+    # 전체 보행자 사고와 고령 보행자 사고 구분
+    asks_all_pedestrians = (
+        "보행자" in question
+        and not asks_elderly
+        and "사고" in question
+    )
+
+    if asks_population or asks_all_pedestrians:
+        if len(years) != 1:
+            return unavailable("조회할 연도를 하나 명시해 주세요.")
+
+        # 지역이 없을 때는 서울 전체 기준으로 답한다.
+        region = districts[0] if len(districts) == 1 else "서울 전체"
+        if len(districts) > 1:
+            return unavailable("조회할 지역을 하나만 명시해 주세요.")
+
+        column = (
+            "고령인구" if asks_population
+            else "전체보행자_사고건수"
+        )
+        rows = panel[panel["사고연도"] == years[0]].copy()
+
+        if region != "서울 전체":
+            rows = rows[rows["자치구명"] == region]
+        else:
+            rows = rows[rows["자치구명"] != "서울 전체"]
+            if len(rows) != 25 or rows["자치구명"].nunique() != 25:
+                return unavailable("서울 25개 자치구 자료가 완전하지 않습니다.")
+
+        values = pd.to_numeric(rows[column], errors="coerce")
+        if rows.empty or values.isna().any():
+            return unavailable("해당 통계를 확인할 수 없습니다.")
+
+        value = int(values.sum())
+        label = (
+            "65세 이상 인구" if asks_population
+            else "전체 보행자 사고 건수"
+        )
+        unit = "명" if asks_population else "건"
+
+        return {
+            "status": "ANSWERED",
+            "answer": (
+                f"{years[0]}년 {region}의 {label}는 "
+                f"{value:,}{unit}입니다."
+            ),
+            "evidence": [{
+                "id": f"DATA-PANEL-{years[0]}-{region}",
+                "title": "자치구·연도별 보행자 안전 통계",
+                "source_type": "STATISTIC",
+                "source_file": "data/01_자치구연도_패널.csv",
+                "year": years[0],
+                "district": region,
+                "metric": "population" if asks_population else "pedestrian_accidents",
+                "column": column,
+            }],
+        }
 
     # 서울 25개 자치구의 고령 보행자 사망자 순위
     is_ranking = any(
