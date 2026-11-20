@@ -5228,6 +5228,48 @@ if (chartEntranceObserver) {
     message.appendChild(details);
   }
 
+  const historyKey = "trafficRagChatHistory";
+
+  function readHistory() {
+    try {
+      const history = JSON.parse(
+        sessionStorage.getItem(historyKey) || "[]"
+      );
+      return Array.isArray(history) ? history : [];
+    } catch {
+      return [];
+    }
+  }
+
+  function saveExchange(question, answer, evidence = []) {
+    try {
+      const history = readHistory();
+      history.push({ question, answer, evidence });
+      sessionStorage.setItem(
+        historyKey,
+        JSON.stringify(history.slice(-30))
+      );
+    } catch {
+      // 저장 실패 시에도 채팅은 계속 사용 가능
+    }
+  }
+
+  function restoreHistory() {
+    for (const item of readHistory()) {
+      if (!item || typeof item.question !== "string"
+          || typeof item.answer !== "string") continue;
+
+      addMessage(item.question, "user");
+      const reply = addMessage(item.answer);
+      showEvidence(
+        reply,
+        Array.isArray(item.evidence) ? item.evidence : []
+      );
+    }
+  }
+
+  restoreHistory();
+
   form.addEventListener("submit", async event => {
     event.preventDefault();
 
@@ -5255,6 +5297,12 @@ if (chartEntranceObserver) {
 
       reply.textContent = data.answer || "답변이 없습니다.";
       showEvidence(reply, data.evidence);
+
+      saveExchange(
+        question,
+        data.answer || "답변이 없습니다.",
+        data.evidence
+      );
 
     } catch (error) {
       reply.textContent = "오류: " + error.message;
