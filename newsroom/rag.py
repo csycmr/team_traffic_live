@@ -175,6 +175,84 @@ def search_statistics(question: str) -> dict | None:
             "evidence": [],
         }
 
+    # 전국 노인 교통사고 / 노인운전자 교통사고
+    asks_elderly_traffic = (
+        "교통사고" in question
+        and "보행자" not in question
+        and any(word in question for word in (
+            "노인", "고령자", "고령층", "65세 이상", "어르신"
+        ))
+    )
+
+    if asks_elderly_traffic:
+        if "서울" in question:
+            return unavailable(
+                "이 자료는 전국 집계입니다. "
+                "서울 지역의 노인 교통사고 수치는 "
+                "이 자료만으로 확인할 수 없습니다."
+            )
+
+        years = list(dict.fromkeys(
+            int(y) for y in re.findall(r"20\d{2}", question)
+        ))
+
+        if len(years) != 1:
+            return {
+                "status": "NEEDS_CLARIFICATION",
+                "answer": "어느 연도의 노인 교통사고를 조회할까요?",
+                "evidence": [],
+            }
+
+        source_path = (
+            Path(__file__).resolve().parents[1]
+            / "data"
+            / "16_경찰청_2024-2025_교통사고_요약.csv"
+        )
+
+        if not source_path.exists():
+            return unavailable("경찰청 교통사고 요약 파일이 없습니다.")
+
+        police = pd.read_csv(source_path, encoding="utf-8-sig")
+
+        category = (
+            "노인운전자 교통사고"
+            if any(word in question for word in (
+                "운전자", "운전한", "운전자가"
+            ))
+            else "노인 교통사고"
+        )
+
+        rows = police.loc[
+            (police["연도"] == years[0])
+            & (police["부문"] == category)
+        ]
+
+        if len(rows) != 1 or pd.isna(rows.iloc[0]["사고건수"]):
+            return unavailable(
+                f"{years[0]}년 {category} 집계가 없습니다."
+            )
+
+        value = int(rows.iloc[0]["사고건수"])
+
+        return {
+            "status": "ANSWERED",
+            "answer": (
+                f"{years[0]}년 전국 {category}는 "
+                f"{value:,}건입니다. "
+                "경찰청 교통사고 통계 기준입니다."
+            ),
+            "evidence": [{
+                "id": f"DATA-POLICE-{years[0]}-{category}",
+                "title": "경찰청 2024~2025년 교통사고 요약",
+                "source_type": "STATISTIC",
+                "source_file": f"data/{source_path.name}",
+                "year": years[0],
+                "district": "전국",
+                "metric": "accidents",
+                "column": "사고건수",
+            }],
+        }
+
     if re.search(r"어린이|아동|유아|초등학생|(?:만\s*)?\d+\s*세\s*이하", question):
         return unavailable(
             "질문하신 연령대의 통계를 확인할 수 없습니다. "
