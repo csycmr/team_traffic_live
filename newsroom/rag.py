@@ -193,6 +193,65 @@ def search_statistics(question: str) -> dict | None:
     if "서울 전체" in question:
         districts.append("서울 전체")
 
+    # 서울 25개 자치구의 고령 보행자 사망자 순위
+    is_ranking = any(
+        word in question for word in ("가장", "제일", "최다")
+    )
+    asks_deaths = any(
+        word in question for word in ("사망", "죽")
+    )
+
+    if is_ranking and asks_deaths and not districts and len(years) == 1:
+        year = years[0]
+        rows = panel[
+            (panel["사고연도"] == year)
+            & (panel["자치구명"] != "서울 전체")
+        ].copy()
+
+        column = "고령보행자_사망자수"
+        rows[column] = pd.to_numeric(rows[column], errors="coerce")
+
+        if (
+            len(rows) != 25
+            or rows["자치구명"].nunique() != 25
+            or rows[column].isna().any()
+        ):
+            return unavailable(
+                f"{year}년 서울 25개 자치구의 사망자 통계를 "
+                "완전하게 확인할 수 없습니다."
+            )
+
+        highest = rows[column].max()
+        winners = rows[rows[column] == highest]
+        names = winners["자치구명"].tolist()
+
+        evidence = []
+        for district in names:
+            facts = fact_sheet(panel, data["links"], year, district)
+            evidence.append({
+                "id": f"DATA-PANEL-{year}-{district}",
+                "title": "자치구·연도별 보행자 안전 통계",
+                "source_type": "STATISTIC",
+                "source_file": "data/01_자치구연도_패널.csv",
+                "year": year,
+                "district": district,
+                "metric": "deaths",
+                "column": column,
+                "calculation_status": facts["calculation_status"],
+                "limitations": facts["limitations"],
+            })
+
+        return {
+            "status": "ANSWERED",
+            "answer": (
+                f"{year}년 서울에서 고령 보행자 사망자가 "
+                f"가장 많은 자치구는 {', '.join(names)}이며, "
+                f"각 {highest:,.0f}명입니다."
+            ),
+            "evidence": evidence,
+        }
+
+
     if len(years) != 1 or len(districts) not in (1, 2):
         return {
             "status": "NEEDS_CLARIFICATION",
@@ -310,7 +369,7 @@ def search_statistics(question: str) -> dict | None:
     if len(districts) == 1:
         district = districts[0]
         answer = (
-            f"{year}년 {district}의 {label}은 "
+            f"{year}년 {district}의 {label}: "
             f"{display(values[district])}{unit}입니다."
         )
     else:
@@ -318,7 +377,7 @@ def search_statistics(question: str) -> dict | None:
         difference = abs(values[first] - values[second])
 
         answer = (
-            f"{year}년 {label}은 "
+            f"{year}년 {label}: "
             f"{first} {display(values[first])}{unit}, "
             f"{second} {display(values[second])}{unit}입니다. "
             f"차이는 {display(difference)}{unit}입니다."
