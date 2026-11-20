@@ -820,8 +820,14 @@ main > .zone-panel > .citydata-totals > .panel-title { min-height: 0 }
   .policy-evidence .policy-jeju-photo > a { position: absolute; inset: 0 }
   .policy-evidence .policy-player { min-height: 100% }
 }
+.policy-evidence > .policy-interview-source {
+  grid-column: 1;
+  grid-row: 2;
+  text-align: right;
+}
+.policy-interview-source > .source-links { display: inline }
 @media (max-width: 850px) {
-  .policy-evidence > .policy-source { grid-row: 2; margin-bottom: 12px }
+  .policy-evidence > .policy-interview-source { margin-bottom: 12px }
 }
 
 #policy-alternatives .audit-diagnosis { padding: clamp(10px, 1.6svh, 17px) }
@@ -2682,7 +2688,7 @@ body :is(.oecd-sources, .oecd-sources p, .panel-source, .safety-board-note,
             <a href="./assets/jeju-silver-zone-pilot.jpg" target="_blank" rel="noopener"><img src="./assets/jeju-silver-zone-pilot.jpg" width="848" height="1248" loading="lazy" alt="서귀포시 매일올레시장 일원 기존 모습과 형광녹색 적용 구상 비교"></a>
           </figure>
         </section>
-      <p class="muted policy-source">시민 인터뷰 사례 <span class="source-links"><a href="https://youtu.be/edblldUy484?t=18">유튜브에서 18초부터 보기</a></span></p>
+      <p class="muted policy-source policy-interview-source">시민 인터뷰 사례 · <span class="source-links"><a href="https://youtu.be/edblldUy484?t=18">유튜브에서 18초부터 보기</a></span></p>
     </div>
     <section aria-labelledby="policy-seoul">
       <h2 class="audit-heading" id="policy-seoul">서울시에 제안하는 3가지 제안</h2>
