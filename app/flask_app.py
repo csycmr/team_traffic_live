@@ -273,16 +273,20 @@ def newsroom_recommend():
 @app.get("/")
 def dashboard():
     kakao_key = os.getenv("KAKAO_MAP_JS_KEY", "").strip()
-    if not kakao_key:
+    statistics_origin = os.getenv("STATISTICS_API_ORIGIN", "").strip().rstrip("/")
+    if not kakao_key and not statistics_origin:
         return send_from_directory(ROOT, "seoul-traffic-demo.html")
 
     html = (ROOT / "seoul-traffic-demo.html").read_text(encoding="utf-8")
-    html = re.sub(
-        r"(https://dapi\.kakao\.com/v2/maps/sdk\.js\?appkey=)[^&\"]+",
-        lambda match: match[1] + quote(kakao_key, safe=""),
-        html,
-        count=1,
-    )
+    if statistics_origin:
+        html = html.replace("http://127.0.0.1:8000", statistics_origin)
+    if kakao_key:
+        html = re.sub(
+            r"(https://dapi\.kakao\.com/v2/maps/sdk\.js\?appkey=)[^&\"]+",
+            lambda match: match[1] + quote(kakao_key, safe=""),
+            html,
+            count=1,
+        )
     return Response(html, mimetype="text/html")
 
 
