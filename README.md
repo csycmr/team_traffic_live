@@ -2,7 +2,10 @@
 
 서울의 교통 상황을 시연하고, 노인·어린이 보행사고와 보호구역 현황을 한 화면에서 살펴보는 데이터 저널리즘 팀 프로젝트입니다.
 
-[서울 교통안전 라이브 열기](https://seoul-traffic-newsroom-z0ffv.beigemango7.chatgpt.site/)
+**배포 사이트 (Railway)**
+
+- [대시보드](https://flask-production-343483a0.up.railway.app/)
+- [기자용 뉴스룸](https://flask-production-343483a0.up.railway.app/newsroom)
 
 ## 화면 구성
 
@@ -38,15 +41,22 @@
 
 기사 초안 생성 시 입력한 기자 지침은 `articles.reporter_guidance` 열에 저장합니다. **이 열을 로컬 MySQL에 추가한 이력은 Git 커밋만으로 팀원의 DB에 적용되지 않습니다.** 다른 환경에서는 해당 스키마 변경을 반영해야 합니다.
 
-**현재 공개 링크는 대시보드 시연용 정적 사이트입니다.** 로컬에서 통합된 Flask 뉴스룸을 누구나 웹주소만으로 사용할 수 있는 서비스로 배포한 상태를 의미하지 않습니다.
+### Railway 배포
+
+Flask 앱(대시보드 + 뉴스룸)은 Railway에 배포되어 있습니다: [https://flask-production-343483a0.up.railway.app/](https://flask-production-343483a0.up.railway.app/)
+
+- 배포 환경의 `DATABASE_URL`, `OPENAI_API_KEY`, `EDITOR_PASSWORD_HASH` 등은 Railway 서비스의 Variables에서 설정합니다. 값은 Git·README·로그에 남기지 않습니다.
+- `DATABASE_URL`은 `mysql+pymysql://` 형식이어야 합니다.
+- 배포 DB와 로컬 DB는 별개일 수 있습니다. 로컬에서 바꾼 스키마는 배포 DB에 자동으로 반영되지 않으므로, 새 DB는 [newsroom_mysql_schema.sql](newsroom_mysql_schema.sql) 기준으로 구성하고 열이 추가되면 배포 DB에도 같은 변경을 적용합니다.
+- 뉴스룸에서 "기존 초안을 불러오지 못했습니다" 같은 일반 오류가 보이면, Railway 서비스의 Deploy Logs에서 해당 문구로 검색해 실제 예외(테이블·열 누락, 접속 실패 등)를 먼저 확인합니다.
 
 ### 남은 작업 (백로그)
 
-- Flask 뉴스룸 서버의 공개 배포 및 팀원이 함께 사용할 **공유 DB** 구성·데이터 이전
+- 팀원이 함께 사용할 **공유 DB** 구성 및 배포 DB 스키마를 `newsroom_mysql_schema.sql`과 일치시키기
 - 공개 환경에서의 접근 제어, 편집장 권한 보호, API 키·설정값 관리
 - 배포된 주소에서 기사 추천 → 초안 → 검수 → 승인 → 조회의 실제 종단간 동작 확인
 
-공개 배포와 DB 이전은 **현 단계의 개발을 중단시키는 선행 작업이 아니라 후속 과제**로 관리합니다.
+DB 이전은 **현 단계의 개발을 중단시키는 선행 작업이 아니라 후속 과제**로 관리합니다.
 
 ## 데이터와 기준
 
@@ -108,7 +118,7 @@ Remove-Variable itsKey, itsCredential
 .\.venv\Scripts\python.exe -m app.flask_app
 ```
 
-[로컬 CCTV API](http://127.0.0.1:5001/api/cctv)를 열면 `source_count`(API 응답 건수), `seoul_count`(서울시 경계 안의 건수), `cameras`(이름·좌표·영상 주소 등)를 확인할 수 있습니다. 이 API는 로컬 Flask 서버에서 제공됩니다. 공개 사이트는 정적 페이지이며, 전광판의 CCTV 상태는 시연용입니다.
+[로컬 CCTV API](http://127.0.0.1:5001/api/cctv)를 열면 `source_count`(API 응답 건수), `seoul_count`(서울시 경계 안의 건수), `cameras`(이름·좌표·영상 주소 등)를 확인할 수 있습니다. 이 API는 Flask 서버에서 제공되며, 배포 환경에서는 Railway Variables에 `ITS_CCTV_API_KEY`가 설정되어 있어야 합니다. 전광판의 CCTV 상태는 시연용입니다.
 
 ## 주요 파일
 
@@ -126,6 +136,7 @@ Remove-Variable itsKey, itsCredential
 | [docs/](docs/) | [데이터 흐름과 폴더 구조](docs/DATA_STRUCTURE.md), API 키 안내 |
 | [scripts/](scripts/) | 실행·테스트 스크립트와 자료 정제 코드. `apply_html_wiring.py`는 화면 HTML에 API 연결 코드를 적용합니다(여러 번 실행해도 안전). |
 | [make_child_zone_list.py](make_child_zone_list.py) | 어린이보호구역 지정현황 엑셀을 `21_`·`22_` 목록용 CSV로 바꿉니다. `openpyxl`이 필요합니다. |
+| [newsroom_mysql_schema.sql](newsroom_mysql_schema.sql) | 뉴스룸 MySQL 8 스키마(`analysis_snapshots`, `story_ideas`, `articles`, `source_documents`, `article_evidence`) |
 | [requirements.txt](requirements.txt) | 로컬 실행에 필요한 Python 패키지 |
 | [assets/](assets/) | 배경 영상과 대표 이미지 |
 | [data/](data/) | 교통사고·보호구역 분석 자료와 지도 경계 |
