@@ -146,7 +146,7 @@
     <div id="rag-room-messages" role="log" aria-live="polite"></div>
     <form id="rag-room-form" class="rag-room-form">
       <input id="rag-room-input" type="text"
-        placeholder="교통안전 자료를 질문하세요"
+        placeholder="placeholder="정확한 답변을 위해 연도·지역(시도/자치구)·통계 대상을 포함해 질문해 주세요."
         aria-label="질문" maxlength="2000" required>
       <button type="submit">전송</button>
     </form>
@@ -453,16 +453,18 @@
     }
   }
 
-  function saveExchange(question, answer, evidence = []) {
+  
+  
+  function saveExchange(question, answer, evidence = [], resolvedQuestion = question) {
     try {
       const history = readHistory();
-      history.push({ question, answer, evidence });
+      history.push({ question, answer, evidence, resolvedQuestion });
       sessionStorage.setItem(
         historyKey,
         JSON.stringify(history.slice(-30))
       );
     } catch {
-      // 저장할 수 없어도 채팅 자체는 계속 작동
+      // 저장에 실패해도 채팅은 계속 작동
     }
   }
 
@@ -500,8 +502,24 @@
     try {
       const response = await fetch("/api/rag/ask", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ question })
+        headers: { "Content-Type": "application/json" },   
+        body: JSON.stringify({
+          question,
+          history: readHistory()
+            .filter(item =>
+              item &&
+              typeof item.question === "string" &&
+              typeof item.answer === "string" &&
+              !item.answer.startsWith("오류:") &&
+              !item.answer.includes("근거만으로는") &&
+              !item.answer.includes("근거를 찾지 못했습니다")
+            )
+            .slice(-3)
+            .map(item => ({
+              question: item.question,
+              resolvedQuestion: item.resolvedQuestion || item.question
+            }))
+        })
       });
 
       const data = await response.json();
@@ -514,9 +532,9 @@
       saveExchange(
         question,
         data.answer || "답변이 없습니다.",
-        data.evidence
+        data.evidence,
+        data.resolved_question || question
       );
-
 
     } catch (error) {
       reply.textContent = "오류: " + error.message;
